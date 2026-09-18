@@ -9,14 +9,22 @@ description: Creative design across graphic design, 3D, motion, and interactive 
   and renders one tile per project. Add/remove/reorder projects from the
   /admin panel and this grid updates on its own — nothing here needs to
   change when you add a project.
+
+  Note on the "cover" line below: the CMS saves each gallery item as a
+  plain path string, but a hand-written project file might instead use
+  the older {image: path} object form. The line accepts either, so both
+  keep working.
 #}
 
 {% if collections.projects.length %}
 <div class="work-grid">
   {% for project in collections.projects %}
+  {% set gallery = project.data.gallery %}
+  {% set first = gallery[0] if gallery and gallery.length else none %}
+  {% set cover = (first.image if first.image else first) if first else none %}
   <a class="work-tile" href="{{ project.url | url }}">
-    {% if project.data.gallery and project.data.gallery.length %}
-    <img src="{{ project.data.gallery[0].image | url }}" alt="{{ project.data.title }}" loading="lazy">
+    {% if cover %}
+    <img src="{{ cover | url }}" alt="{{ project.data.title }}" loading="lazy">
     {% endif %}
     <div class="work-tile__caption">
       <p class="work-tile__title">{{ project.data.title }}</p>
