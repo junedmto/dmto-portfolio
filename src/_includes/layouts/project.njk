@@ -29,8 +29,9 @@ layout: layouts/base.njk
     {% if gallery and gallery.length %}
     <div class="gallery">
       {% for item in gallery %}
+      {% set src = item.image if item.image else item %}
       <figure class="gallery__item {% if loop.index0 % 3 == 0 %}gallery__item--full{% else %}gallery__item--half{% endif %}" data-lightbox-trigger>
-        <img src="{{ item.image | url }}" alt="{{ title }} — image {{ loop.index }}" loading="lazy">
+        <img src="{{ src | url }}" alt="{{ title }} — image {{ loop.index }}" loading="lazy">
       </figure>
       {% endfor %}
     </div>
