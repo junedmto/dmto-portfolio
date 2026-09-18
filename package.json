@@ -2,12 +2,15 @@
   "name": "dmto-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "DMTO portfolio site \u2014 static site built with Eleventy, edited through Sveltia CMS.",
+  "description": "DMTO portfolio site — static site built with Eleventy, edited through Sveltia CMS.",
   "scripts": {
     "start": "eleventy --serve",
     "build": "eleventy"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.6"
+  },
+  "dependencies": {
+    "image-size": "^2.0.4"
   }
 }

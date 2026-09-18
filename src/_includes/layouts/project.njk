@@ -15,6 +15,7 @@ layout: layouts/base.njk
 #}
 
 <article>
+  {# Title and description sit in the centered text column... #}
   <div class="wrap">
     <header class="project-header">
       {% if category %}<p class="project-header__category">{{ category }}</p>{% endif %}
@@ -25,18 +26,26 @@ layout: layouts/base.njk
       <p>{{ description }}</p>
       {{ content | safe }}
     </div>
+  </div>
 
-    {% if gallery and gallery.length %}
-    <div class="gallery">
-      {% for item in gallery %}
-      {% set src = item.image if item.image else item %}
-      <figure class="gallery__item {% if loop.index0 % 3 == 0 %}gallery__item--full{% else %}gallery__item--half{% endif %}" data-lightbox-trigger>
-        <img src="{{ src | url }}" alt="{{ title }} — image {{ loop.index }}" loading="lazy">
-      </figure>
-      {% endfor %}
-    </div>
-    {% endif %}
+  {# ...but the gallery sits outside it, so it spans the full page width
+     with only its own side inset, exactly like the homepage grid. #}
+  {% if gallery and gallery.length %}
+  <div class="justified-gallery">
+    {% for item in gallery %}
+    {% set src = item.image if item.image else item %}
+    {% set ratio = src | aspectRatio %}
+    <figure class="justified-gallery__item justified-gallery__item--zoom" data-lightbox-trigger
+            style="flex-grow: {{ ratio }}; flex-basis: calc({{ ratio }} * 20rem); aspect-ratio: {{ ratio }};">
+      <img src="{{ src | url }}" alt="{{ title }} — image {{ loop.index }}" loading="lazy">
+    </figure>
+    {% endfor %}
+    <i class="justified-gallery__spacer"></i>
+    <i class="justified-gallery__spacer"></i>
+  </div>
+  {% endif %}
 
+  <div class="wrap">
     <a class="back-link" href="{{ '/' | url }}">← Back to work</a>
   </div>
 </article>

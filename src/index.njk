@@ -10,28 +10,43 @@ description: Creative design across graphic design, 3D, motion, and interactive 
   /admin panel and this grid updates on its own — nothing here needs to
   change when you add a project.
 
-  Note on the "cover" line below: the CMS saves each gallery item as a
-  plain path string, but a hand-written project file might instead use
-  the older {image: path} object form. The line accepts either, so both
-  keep working.
+  Layout note: this is a "justified" gallery — every row is a different
+  height, chosen so the images in it line up and fill the full width
+  without being cropped or squashed. That works by giving each tile a
+  flex-grow and flex-basis proportional to its real width-to-height
+  ratio (measured at build time by the aspectRatio filter). See the
+  .gallery-row rules in style.css for how the two halves fit together.
+
+  The "cover" line accepts either gallery format: a plain path string
+  (what the CMS writes) or an {image: path} object (older hand-written
+  files).
 #}
 
 {% if collections.projects.length %}
-<div class="work-grid">
+<div class="justified-gallery">
   {% for project in collections.projects %}
   {% set gallery = project.data.gallery %}
   {% set first = gallery[0] if gallery and gallery.length else none %}
   {% set cover = (first.image if first.image else first) if first else none %}
-  <a class="work-tile" href="{{ project.url | url }}">
-    {% if cover %}
+  {% if cover %}
+  {% set ratio = cover | aspectRatio %}
+  <a class="justified-gallery__item" href="{{ project.url | url }}"
+     style="flex-grow: {{ ratio }}; flex-basis: calc({{ ratio }} * 24rem); aspect-ratio: {{ ratio }};">
     <img src="{{ cover | url }}" alt="{{ project.data.title }}" loading="lazy">
-    {% endif %}
-    <div class="work-tile__caption">
-      <p class="work-tile__title">{{ project.data.title }}</p>
-      {% if project.data.category %}<p class="work-tile__category">{{ project.data.category }}</p>{% endif %}
+    <div class="justified-gallery__caption">
+      <p class="justified-gallery__title">{{ project.data.title }}</p>
+      {% if project.data.category %}<p class="justified-gallery__meta">{{ project.data.category }}</p>{% endif %}
     </div>
   </a>
+  {% endif %}
   {% endfor %}
+  {#
+    Spacers stop a short final row from stretching its images to an
+    absurd size. They take up leftover space but have no height, so
+    they're invisible.
+  #}
+  <i class="justified-gallery__spacer"></i>
+  <i class="justified-gallery__spacer"></i>
 </div>
 {% else %}
 <div class="wrap">
