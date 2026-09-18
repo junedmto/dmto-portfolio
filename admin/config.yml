@@ -17,7 +17,7 @@
 
 backend:
   name: github
-  repo: junedmto/dmto-portfolio
+  repo: YOUR-GITHUB-USERNAME/YOUR-REPO-NAME
   branch: main
 
 media_folder: "src/assets/img/uploads"
@@ -52,6 +52,10 @@ collections:
           - Residential Architectural Design
       - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD" }
       - { label: Description, name: description, widget: text }
+      # Because this list uses a single "field" (not "fields"), the CMS
+      # saves the gallery as a plain list of image paths. The templates
+      # also accept the older {image: path} object form, so hand-written
+      # project files using that shape keep working too.
       - label: Gallery
         name: gallery
         widget: list
