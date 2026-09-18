@@ -1,8 +1,10 @@
 ---
-title: Test Project 2
-category: 3D Modelling
+title: AI Photoshoot
+category: Artificial Intelligence
 date: 2026-09-18
-description: Blablabla
+description: Emma AI
 gallery:
-  - /assets/img/uploads/gin7.png
+  - /assets/img/uploads/LQ1.jpg
+  - /assets/img/uploads/LQ2.jpg
+  - /assets/img/uploads/LQ3.jpg
 ---
