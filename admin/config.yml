@@ -1,0 +1,100 @@
+# admin/config.yml
+# -----------------
+# This file defines every editable form in /admin. Read top to bottom:
+#
+#   backend        — where content is saved. "github" means every save
+#                    here is a real commit to your repo, which is what
+#                    triggers the site to rebuild and republish.
+#   media_folder    — where uploaded images are stored in the repo.
+#   public_folder   — the URL path those images are served at on the
+#                      live site (must match .eleventy.js's passthrough).
+#   collections     — the actual editable content types: Projects (one
+#                      entry per project, unlimited), and Pages (About
+#                      and Contact, exactly one of each).
+#
+# IMPORTANT: change "repo" below to your actual "github-username/repo-name"
+# once you've created the repository — see the README for the full setup.
+
+backend:
+  name: github
+  repo: junedmto/dmto-portfolio
+  branch: main
+
+media_folder: "src/assets/img/uploads"
+public_folder: "/assets/img/uploads"
+
+collections:
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: src/projects
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    summary: "{{title}} — {{category}}"
+    sortable_fields: [date, title]
+    fields:
+      - { label: Title, name: title, widget: string }
+      - label: Category
+        name: category
+        widget: select
+        options:
+          - Graphic Design
+          - Motion Graphics
+          - Illustration
+          - 3D Modelling
+          - Animation
+          - Editorial Design
+          - Packaging
+          - ArchViz
+          - Interactive Web Design
+          - Artificial Intelligence
+          - Residential Architectural Design
+      - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD" }
+      - { label: Description, name: description, widget: text }
+      - label: Gallery
+        name: gallery
+        widget: list
+        field: { label: Image, name: image, widget: image }
+      - { label: Extra notes (optional), name: body, widget: markdown, required: false }
+
+  - name: pages
+    label: Pages
+    editor:
+      preview: false
+    files:
+      - name: about
+        label: About
+        file: src/about.md
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: SEO description, name: description, widget: string }
+          - { label: Bio, name: body, widget: markdown }
+          - label: Education
+            name: education
+            widget: list
+            fields:
+              - { label: School, name: school, widget: string }
+              - { label: Degree, name: degree, widget: string }
+          - label: Publications
+            name: publications
+            widget: list
+            required: false
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: URL, name: url, widget: string }
+          - label: Skills
+            name: skills
+            widget: list
+            field: { label: Skill, name: skill, widget: string }
+
+      - name: contact
+        label: Contact
+        file: src/contact.md
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: SEO description, name: description, widget: string }
+          - { label: Note, name: body, widget: markdown }
+          - { label: Email, name: email, widget: string }
+          - { label: Phone, name: phone, widget: string, required: false }
+          - { label: Instagram URL, name: instagram, widget: string, required: false }

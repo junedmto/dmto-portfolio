@@ -1,0 +1,32 @@
+---
+layout: layouts/base.njk
+title: DMTO
+description: Creative design across graphic design, 3D, motion, and interactive web.
+---
+{#
+  index.njk — the homepage.
+  Loops over every file in src/projects/ (newest first, see .eleventy.js)
+  and renders one tile per project. Add/remove/reorder projects from the
+  /admin panel and this grid updates on its own — nothing here needs to
+  change when you add a project.
+#}
+
+{% if collections.projects.length %}
+<div class="work-grid">
+  {% for project in collections.projects %}
+  <a class="work-tile" href="{{ project.url | url }}">
+    {% if project.data.gallery and project.data.gallery.length %}
+    <img src="{{ project.data.gallery[0].image | url }}" alt="{{ project.data.title }}" loading="lazy">
+    {% endif %}
+    <div class="work-tile__caption">
+      <p class="work-tile__title">{{ project.data.title }}</p>
+      {% if project.data.category %}<p class="work-tile__category">{{ project.data.category }}</p>{% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="wrap">
+  <p class="work-empty">Projects added from /admin will appear here.</p>
+</div>
+{% endif %}

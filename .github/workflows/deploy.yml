@@ -1,0 +1,66 @@
+# .github/workflows/deploy.yml
+#
+# What this does: every time something is committed to "main" — whether
+# that's you pushing from your computer, or Sveltia CMS committing a save
+# from /admin — this workflow builds the site with Eleventy and publishes
+# the result to GitHub Pages. There's nothing to run by hand; once this
+# is set up (see the README), publishing is automatic.
+
+name: Build and deploy site
+
+on:
+  push:
+    branches: ["main"]
+  # Lets you also trigger a rebuild manually from the Actions tab.
+  workflow_dispatch:
+
+# Grants the workflow permission to publish to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the site
+        # --pathprefix tells Eleventy the site is currently published at
+        # https://junedmto.github.io/dmto-portfolio/ (a subfolder), not at
+        # the root of a domain, so it can prefix internal links and asset
+        # paths correctly. ONCE YOUR CUSTOM DOMAIN IS CONNECTED (see the
+        # README), a custom domain serves the site at its own root, so
+        # delete the --pathprefix flag below and use: run: npm run build
+        run: npx eleventy --pathprefix=/dmto-portfolio/
+
+      - name: Upload build output
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

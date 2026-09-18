@@ -1,0 +1,25 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/contact.njk
+  Renders src/contact.md. "content" is the short note written in the
+  Markdown body. email/phone/instagram are simple text fields set in
+  that file's front matter (editable from /admin).
+#}
+
+<div class="wrap">
+  <header class="page-header">
+    <h1>{{ title }}</h1>
+  </header>
+
+  <div class="page-body">
+    {{ content | safe }}
+  </div>
+
+  <ul class="contact-links">
+    {% if email %}<li><a href="mailto:{{ email }}">{{ email }}</a></li>{% endif %}
+    {% if phone %}<li><a href="tel:{{ phone | replace(' ', '') }}">{{ phone }}</a></li>{% endif %}
+    {% if instagram %}<li><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a></li>{% endif %}
+  </ul>
+</div>

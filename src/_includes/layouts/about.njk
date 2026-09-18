@@ -1,0 +1,43 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/about.njk
+  Renders src/about.md. "content" is the bio paragraph(s) written in the
+  Markdown body of that file. education/publications/skills are structured
+  list fields set in the file's front matter (editable from /admin).
+#}
+
+<div class="wrap">
+  <header class="page-header">
+    <h1>{{ title }}</h1>
+  </header>
+
+  <div class="page-body">
+    {{ content | safe }}
+  </div>
+
+  {% if education and education.length %}
+  <ul class="detail-list" aria-label="Education">
+    {% for item in education %}
+    <li><span>{{ item.school }}</span><span>{{ item.degree }}</span></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if publications and publications.length %}
+  <ul class="detail-list" aria-label="Publications">
+    {% for item in publications %}
+    <li><a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.title }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if skills and skills.length %}
+  <ul class="tag-list" aria-label="Skills">
+    {% for skill in skills %}
+    <li>{{ skill }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>

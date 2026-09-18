@@ -1,0 +1,47 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/project.njk
+  --------------------
+  Every file in src/projects/*.md is rendered through this template, so
+  every project page automatically has the same shape: category, title,
+  description, gallery. This is the one place to change if you ever want
+  to adjust what a project page looks like — it updates all of them.
+
+  "content" below is the Markdown body of the project file, in case you
+  ever want to write extra copy under the description. "gallery" is the
+  list of images set in the CMS (or written by hand in the front matter).
+#}
+
+<article>
+  <div class="wrap">
+    <header class="project-header">
+      {% if category %}<p class="project-header__category">{{ category }}</p>{% endif %}
+      <h1>{{ title }}</h1>
+    </header>
+
+    <div class="project-description">
+      <p>{{ description }}</p>
+      {{ content | safe }}
+    </div>
+
+    {% if gallery and gallery.length %}
+    <div class="gallery">
+      {% for item in gallery %}
+      <figure class="gallery__item {% if loop.index0 % 3 == 0 %}gallery__item--full{% else %}gallery__item--half{% endif %}" data-lightbox-trigger>
+        <img src="{{ item.image | url }}" alt="{{ title }} — image {{ loop.index }}" loading="lazy">
+      </figure>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <a class="back-link" href="{{ '/' | url }}">← Back to work</a>
+  </div>
+</article>
+
+<!-- Full-screen viewer: clicking any gallery image opens it larger.
+     Markup lives here once; behaviour is in assets/js/main.js -->
+<div class="lightbox" data-lightbox>
+  <img src="" alt="" data-lightbox-image>
+</div>

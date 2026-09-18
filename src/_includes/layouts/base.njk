@@ -1,0 +1,68 @@
+{#
+  base.njk
+  --------
+  The shell every page is wrapped in: head (title, meta, fonts, css),
+  the top nav, then whatever the page itself contains, then the footer.
+  Individual pages (index.njk, layouts/project.njk, layouts/page.njk)
+  only need to worry about what goes inside main.
+
+  Note for future edits: comments in this file use Nunjucks-style
+  curly-brace comments, not plain HTML comments. A plain HTML comment
+  is just text to Nunjucks, so a template expression written inside one
+  still runs and leaks its output into the page.
+#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}{% if title != site.name %} — {{ site.name }}{% endif %}</title>
+  <meta name="description" content="{{ description or site.description }}">
+
+  <!-- Social share preview tags (what shows up when a link is pasted into
+       iMessage, Instagram, LinkedIn, etc). Each project page overrides
+       "image" with its own first gallery photo. -->
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description or site.description }}">
+  {% if image %}<meta property="og:image" content="{{ image | url }}">{% endif %}
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="{{ '/favicon.svg' | url }}" type="image/svg+xml">
+
+  <!-- Poppins carries the "dmto." wordmark and headings, Inter carries
+       everything meant to be read (nav, body copy, UI text). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | url }}">
+</head>
+<body>
+
+  <header class="site-nav">
+    <div class="wrap site-nav__row">
+      <nav class="site-nav__side site-nav__side--left">
+        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
+      </nav>
+      <a class="site-nav__brand" href="{{ '/' | url }}">{{ site.name }}.</a>
+      <nav class="site-nav__side site-nav__side--right">
+        <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {{ content | safe }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>{{ site.name }}. {{ currentYear }}</span>
+      <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </footer>
+
+  <script src="{{ '/assets/js/main.js' | url }}"></script>
+</body>
+</html>

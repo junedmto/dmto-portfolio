@@ -1,0 +1,19 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/page.njk
+  A bare-bones layout for simple one-off pages that are just a title and
+  some text — currently only used by 404.md. About and Contact have their
+  own more specific layouts (layouts/about.njk, layouts/contact.njk)
+  because they each show extra structured info beyond plain text.
+#}
+
+<div class="wrap">
+  <header class="page-header">
+    <h1>{{ title }}</h1>
+  </header>
+  <div class="page-body">
+    {{ content | safe }}
+  </div>
+</div>

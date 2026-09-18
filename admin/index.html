@@ -1,0 +1,26 @@
+<!--
+  admin/index.html
+  -----------------
+  This is the whole admin panel. Nothing on the public site links here —
+  it's only reachable if you type /admin into the address bar yourself,
+  which is what makes it "invisible" to visitors. It is NOT secret,
+  though: anyone who guesses the URL can open this page. What actually
+  protects your content is the GitHub sign-in on the next screen — only
+  someone with write access to your GitHub repo can save any changes.
+
+  This page just loads the Sveltia CMS app and points it at config.yml,
+  which defines what "Projects", "About", and "Contact" look like as
+  editable forms.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DMTO — Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <script type="module" src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+</body>
+</html>
