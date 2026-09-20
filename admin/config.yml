@@ -33,7 +33,7 @@ collections:
     slug: "{{slug}}"
     summary: "{{title}} — {{category}}"
     sortable_fields: [date, title]
-    indentation: reorder:
+    reorder:
     key: order
     fields:
       - { label: Title, name: title, widget: string }
