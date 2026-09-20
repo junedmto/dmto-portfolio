@@ -33,6 +33,8 @@ collections:
     slug: "{{slug}}"
     summary: "{{title}} — {{category}}"
     sortable_fields: [date, title]
+    reorder:
+    key: order
     fields:
       - { label: Title, name: title, widget: string }
       - label: Category
