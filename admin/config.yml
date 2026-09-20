@@ -17,7 +17,7 @@
 
 backend:
   name: github
-  repo: YOUR-GITHUB-USERNAME/YOUR-REPO-NAME
+  repo: junedmto/dmto-portfolio
   branch: main
 
 media_folder: "src/assets/img/uploads"
