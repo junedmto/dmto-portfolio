@@ -28,6 +28,7 @@ description: Creative design across graphic design, 3D, motion, and interactive 
   {% set gallery = project.data.gallery %}
   {% set first = gallery[0] if gallery and gallery.length else none %}
   {% set cover = (first.image if first.image else first) if first else none %}
+  {% set displayCategory = project.data.category_other if project.data.category_other else project.data.category %}
   {% if cover %}
   {% set ratio = cover | aspectRatio %}
   <a class="justified-gallery__item" href="{{ project.url | url }}"
@@ -35,7 +36,7 @@ description: Creative design across graphic design, 3D, motion, and interactive 
     <img src="{{ cover | url }}" alt="{{ project.data.title }}" loading="lazy">
     <div class="justified-gallery__caption">
       <p class="justified-gallery__title">{{ project.data.title }}</p>
-      {% if project.data.category %}<p class="justified-gallery__meta">{{ project.data.category }}</p>{% endif %}
+      {% if displayCategory %}<p class="justified-gallery__meta">{{ displayCategory }}</p>{% endif %}
     </div>
   </a>
   {% endif %}

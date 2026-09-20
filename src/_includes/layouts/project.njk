@@ -16,9 +16,10 @@ layout: layouts/base.njk
 
 <article>
   {# Title and description sit in the centered text column... #}
+  {% set displayCategory = category_other if category_other else category %}
   <div class="wrap">
     <header class="project-header">
-      {% if category %}<p class="project-header__category">{{ category }}</p>{% endif %}
+      {% if displayCategory %}<p class="project-header__category">{{ displayCategory }}</p>{% endif %}
       <h1>{{ title }}</h1>
     </header>
 
