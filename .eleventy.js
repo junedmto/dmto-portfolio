@@ -53,10 +53,18 @@ module.exports = function (eleventyConfig) {
     return ratio;
   });
 
-  // "projects" is the collection of every project page, newest first.
-  // The homepage loops over this collection to build the work grid.
+  // "projects" is the collection of every project page. Order comes from
+  // dragging entries around in /admin (stored as the "order" field —
+  // see admin/config.yml's "reorder" option); any project that hasn't
+  // been manually placed yet (no "order" set) falls back to newest-first
+  // by date, and sorts after every manually-ordered project.
   eleventyConfig.addCollection("projects", (collectionApi) => {
     return collectionApi.getFilteredByGlob("src/projects/*.md").sort((a, b) => {
+      const orderA = a.data.order;
+      const orderB = b.data.order;
+      if (orderA != null && orderB != null) return orderA - orderB;
+      if (orderA != null) return -1;
+      if (orderB != null) return 1;
       return (b.data.date || 0) - (a.data.date || 0);
     });
   });

@@ -198,6 +198,12 @@ main {
    every item in a row ends up with a width proportional to its ratio,
    their heights all come out equal. The browser handles the wrapping.
 
+   Every row, including the last, stretches to fill the full width — so
+   a final row with very few images (or one very tall/narrow one) can
+   come out taller than the rows above it. If that ever looks odd with
+   your real photos, the fix is usually just adding one more image so
+   the last row has enough items to stretch sensibly.
+
    --gallery-gap is the space between images; the container's side
    padding is deliberately a little larger so the outer margin reads as
    intentional rather than cramped. -- */
@@ -231,16 +237,6 @@ main {
   /* The item's aspect-ratio matches the image exactly, so this scales
      the image to fill without actually cropping anything. */
   object-fit: cover;
-}
-
-/* Spacers absorb leftover space on a short final row so its images
-   don't stretch to an unnatural size. They have no height, so they're
-   invisible. */
-.justified-gallery__spacer {
-  flex-grow: 10;
-  height: 0;
-  margin: 0;
-  padding: 0;
 }
 
 /* Captions: hidden until hover/focus, so the grid reads as pure imagery
@@ -408,10 +404,6 @@ main {
   .justified-gallery__item {
     flex-basis: 100% !important;
     flex-grow: 1 !important;
-  }
-
-  .justified-gallery__spacer {
-    display: none;
   }
 
   /* Captions can't be hovered on touch screens, so show them always. */
