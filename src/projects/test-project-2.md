@@ -1,4 +1,5 @@
 ---
+order: 1
 title: AI Photoshoot
 category: Artificial Intelligence
 date: 2026-09-18
