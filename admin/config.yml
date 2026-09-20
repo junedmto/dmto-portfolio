@@ -32,37 +32,47 @@ collections:
     delete: true
     slug: "{{slug}}"
     summary: "{{title}} — {{category}}"
-    sortable_fields: [date, title]
+    sortable_fields: [title]
     reorder: true
     key: order
     fields:
-      - { label: Title, name: title, widget: string }
-      - label: Category
-        name: category
-        widget: select
-        options:
-          - Graphic Design
-          - Motion Graphics
-          - Illustration
-          - 3D Modelling
-          - Animation
-          - Editorial Design
-          - Packaging
-          - ArchViz
-          - Interactive Web Design
-          - Artificial Intelligence
-          - Residential Architectural Design
-      - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DD" }
-      - { label: Description, name: description, widget: text }
-      # Because this list uses a single "field" (not "fields"), the CMS
-      # saves the gallery as a plain list of image paths. The templates
-      # also accept the older {image: path} object form, so hand-written
-      # project files using that shape keep working too.
-      - label: Gallery
-        name: gallery
-        widget: list
-        field: { label: Image, name: image, widget: image }
-      - { label: Extra notes (optional), name: body, widget: markdown, required: false }
+  - { label: Title, name: title, widget: string }
+  - label: Category
+    name: category
+    widget: select
+    options:
+      - Graphic Design
+      - Motion Graphics
+      - Illustration
+      - 3D Modelling
+      - Animation
+      - Editorial Design
+      - Packaging
+      - ArchViz
+      - Interactive Web Design
+      - Artificial Intelligence
+      - Residential Architectural Design
+      - Other
+  # Only used when "Other" is picked above — the CMS can't yet show
+  # this field conditionally, so it's just left blank the rest of
+  # the time. Whatever's typed here takes priority over the
+  # dropdown when the site displays the category.
+  - label: Custom category (only if you picked "Other" above)
+    name: category_other
+    widget: string
+    required: false
+  - { label: Description, name: description, widget: text }
+  # "multiple: true" lets you select or drag in several photos at
+  # once in the file picker — Sveltia saves the result as a plain
+  # list of image paths. The templates also accept the older
+  # {image: path} object form, so any hand-written project files
+  # using that shape keep working too.
+  - label: Gallery
+    name: gallery
+    widget: image
+    multiple: true
+  - { label: Extra notes (optional), name: body, widget: markdown, required: false }
+        
 
   - name: pages
     label: Pages
