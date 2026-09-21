@@ -141,6 +141,17 @@ p {
   letter-spacing: -0.01em;
   text-decoration: none;
   color: var(--color-ink);
+  display: flex;
+  align-items: center;
+}
+
+/* Sized to sit at roughly the same visual weight as the old text
+   wordmark did. Adjust --logo-height if your actual logo reads too
+   big or small once it's in. */
+.site-nav__logo {
+  --logo-height: 1.75rem;
+  height: var(--logo-height);
+  width: auto;
 }
 
 .site-nav__side a {
@@ -150,7 +161,9 @@ p {
 }
 
 .site-nav__side a[aria-current="page"] {
-  color: var(--color-accent);
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 .site-nav__side--right {
@@ -290,7 +303,7 @@ main {
 
 .project-header__category {
   font-family: var(--font-display);
-  color: var(--color-accent);
+  color: var(--color-ink);
   margin: 0 0 var(--space-1);
 }
 

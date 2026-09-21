@@ -20,6 +20,18 @@ module.exports = function (eleventyConfig) {
   // Makes {{ currentYear }} available in any template — used in the footer.
   eleventyConfig.addGlobalData("currentYear", () => new Date().getFullYear());
 
+  // Makes {{ hasLogo }} available in any template. True only if a real
+  // file exists at the path set in src/_data/site.json's "logo" value —
+  // so the nav shows your logo automatically once you add that file,
+  // and safely falls back to the text wordmark until then (rather than
+  // a broken image icon).
+  eleventyConfig.addGlobalData("hasLogo", () => {
+    const site = require("./src/_data/site.json");
+    if (!site.logo) return false;
+    const diskPath = path.join(__dirname, "src", site.logo.replace(/^\//, ""));
+    return fs.existsSync(diskPath);
+  });
+
   // aspectRatio: given an image path as stored by the CMS (e.g.
   // "/assets/img/uploads/photo.jpg"), reads the actual file on disk and
   // returns its width divided by its height.
