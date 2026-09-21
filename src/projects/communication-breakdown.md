@@ -7,4 +7,5 @@ description: Asadfsasddf
 gallery:
   - /assets/img/uploads/Magazine JPG.jpg
   - /assets/img/uploads/Magazine2.jpg
+  - /assets/img/uploads/Magazine JPG3.jpg
 ---
