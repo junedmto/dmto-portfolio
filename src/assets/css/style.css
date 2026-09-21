@@ -149,7 +149,7 @@ p {
    wordmark did. Adjust --logo-height if your actual logo reads too
    big or small once it's in. */
 .site-nav__logo {
-  --logo-height: 1.75rem;
+  --logo-height: 2.5rem;
   height: var(--logo-height);
   width: auto;
 }
