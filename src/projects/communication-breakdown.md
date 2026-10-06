@@ -1,5 +1,5 @@
 ---
-order: 2
+order: 3
 title: Communication Breakdown
 category: Editorial Design
 date: 2026-09-18

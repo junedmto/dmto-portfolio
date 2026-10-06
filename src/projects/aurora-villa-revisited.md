@@ -1,5 +1,5 @@
 ---
-order: 3
+order: 2
 title: Aurora Villa Revisited
 category: Residential Architectural Design
 date: 2026-09-20
