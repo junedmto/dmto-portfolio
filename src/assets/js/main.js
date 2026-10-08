@@ -1,7 +1,39 @@
 // main.js
-// The only interactive behaviour on the site: clicking a gallery image on
-// a project page opens it full-screen; clicking again (or Escape) closes
-// it. No build step, no dependencies — this file is loaded as-is.
+// The only interactive behaviour on the site, in two small pieces:
+//   1. Clicking a gallery image on a project page opens it full-screen;
+//      clicking again (or Escape) closes it.
+//   2. On the Contact page, keeps the scrolling greeting moving at a
+//      steady speed whatever the length of the text.
+// No build step, no dependencies — this file is loaded as-is.
+
+// -- 2. Scrolling greeting speed ------------------------------------------
+// The scrolling itself is a CSS animation (see .marquee in style.css). CSS
+// can't work out "how long should one loop take at a given speed", so this
+// measures the text and sets the loop duration to match. If this script
+// doesn't run, the CSS falls back to a fixed 60-second loop.
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".marquee__track");
+  if (!track) return; // not the Contact page
+
+  const group = track.querySelector(".marquee__group");
+  const PIXELS_PER_SECOND = 110; // raise to scroll faster, lower for slower
+
+  function setSpeed() {
+    track.style.setProperty(
+      "--marquee-duration",
+      group.offsetWidth / PIXELS_PER_SECOND + "s"
+    );
+  }
+
+  setSpeed();
+  window.addEventListener("resize", setSpeed);
+  // The text gets wider once the web font has loaded, so measure again.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(setSpeed);
+  }
+});
+
+// -- 1. Gallery image viewer ----------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
   const lightbox = document.querySelector("[data-lightbox]");

@@ -39,6 +39,9 @@
   --font-display: "Poppins", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
 
+  /* Only used for the huge scrolling greeting on the Contact page. */
+  --font-marquee: "Source Serif 4", Georgia, "Times New Roman", serif;
+
   /* A simple, consistent scale (roughly a 1.25 ratio). */
   --step-0: 1rem;
   --step-1: 1.25rem;
@@ -117,6 +120,12 @@ p {
   * {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /* An endless loop can't be "sped up to instant", so the scrolling
+     greeting simply stays still for people who've asked for less motion. */
+  .marquee__track {
+    animation: none !important;
   }
 }
 
@@ -449,16 +458,101 @@ main {
   border: 0;
 }
 
-.contact-links {
-  list-style: none;
-  margin: var(--space-3) 0;
-  padding: 0;
-  font-family: var(--font-display);
-  font-size: var(--step-2);
+/* -- Contact page --------------------------------------------------------
+   A huge endlessly scrolling greeting across the full window width, then
+   the intro text, then two small blocks of contact details. */
+
+.marquee {
+  overflow: hidden;
+  padding: 0.5rem 0 0;
 }
 
-.contact-links li {
-  padding: var(--space-1) 0;
+/* The track holds two identical groups side by side and slides left by
+   exactly one group's width, then restarts: since the second group is by
+   then where the first one began, the jump is invisible and the text
+   appears to scroll forever. The duration is set from main.js (so the
+   speed stays the same whatever the text length); 60s is the fallback. */
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 60s) linear infinite;
+  will-change: transform;
+}
+
+.marquee__group {
+  flex: none;
+  /* Never narrower than the window, so even a very short greeting can't
+     leave a gap at the end of the loop. */
+  min-width: 100vw;
+  padding-right: 0.3em;
+  font-family: var(--font-marquee);
+  font-weight: 700;
+  font-size: clamp(5rem, 17vw, 16rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.contact {
+  --contact-inset: clamp(var(--page-inset), 3.3vw, 2.75rem);
+  display: grid;
+  gap: clamp(3rem, 7.5vw, 6rem);
+  padding: clamp(2.5rem, 7.5vw, 6rem) var(--contact-inset) var(--space-6);
+}
+
+/* First paragraph bold, the rest lighter - same idea as the About bio. */
+.contact__text {
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  line-height: 1.4;
+}
+
+.contact__text p {
+  margin: 0;
+}
+
+.contact__text p:first-child {
+  font-weight: 600;
+}
+
+.contact__details {
+  display: grid;
+  gap: 2.75rem;
+  justify-items: start;
+}
+
+/* Each block starts with a short thin rule, then a light label above
+   bolder details. */
+.contact__block {
+  display: grid;
+  width: max-content;
+  min-width: 12rem;
+  max-width: 100%;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-ink);
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+
+.contact__label {
+  margin: 0;
+  font-weight: 400;
+}
+
+.contact__block a {
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.contact__block a:hover,
+.contact__block a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 /* 5. Responsive ----------------------------------------------------------- */
