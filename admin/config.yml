@@ -86,6 +86,7 @@ collections:
           - { label: Title, name: title, widget: string }
           - { label: SEO description, name: description, widget: string }
           - { label: Bio, name: body, widget: markdown }
+          - { label: Photo, name: photo, widget: image, required: false }
           - label: Education
             name: education
             widget: list
