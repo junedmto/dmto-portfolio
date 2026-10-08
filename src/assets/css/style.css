@@ -27,6 +27,12 @@
   --color-accent: #2c4c7c;
   --color-accent-soft: #eef1f6;
 
+  /* Shared by the galleries and the About page so their left and right
+     edges line up, and so every photo has the same softly rounded
+     corners. */
+  --page-inset: 0.875rem;
+  --radius-image: 6px;
+
   /* Type. Poppins (rounded, geometric, bold) carries the wordmark and
      headings; Inter (neutral, highly legible) carries everything
      that's meant to be read. */
@@ -149,7 +155,7 @@ p {
    wordmark did. Adjust --logo-height if your actual logo reads too
    big or small once it's in. */
 .site-nav__logo {
-  --logo-height: 2.5rem;
+  --logo-height: 1.75rem;
   height: var(--logo-height);
   width: auto;
 }
@@ -162,8 +168,7 @@ p {
 
 .site-nav__side a[aria-current="page"] {
   color: var(--color-ink);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  font-weight: 600;
 }
 
 .site-nav__side--right {
@@ -223,7 +228,7 @@ main {
 
 .justified-gallery {
   --gallery-gap: 0.5rem;
-  --gallery-inset: 0.875rem;
+  --gallery-inset: var(--page-inset);
 
   display: flex;
   flex-wrap: wrap;
@@ -236,7 +241,7 @@ main {
   display: block;
   margin: 0;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: var(--radius-image);
   background: var(--color-accent-soft);
   text-decoration: none;
   color: inherit;
@@ -365,35 +370,83 @@ main {
   margin-top: 0;
 }
 
-.detail-list {
+/* -- About page: four columns across the full page width, using the
+      same side inset as the galleries so the left edges line up. Text is
+      deliberately small with tight line spacing; headings are the same
+      size as the text, just bolder. -- */
+.about {
+  display: grid;
+  grid-template-columns: 1.5fr 1.15fr 0.85fr 1.15fr;
+  column-gap: var(--space-4);
+  align-items: start;
+  padding: var(--space-5) var(--page-inset) var(--space-6);
+  font-size: 1.0625rem;
+  line-height: 1.2;
+}
+
+.about__col {
+  min-width: 0; /* lets long words and URLs wrap instead of overflowing */
+}
+
+/* The first paragraph of the bio is the bold intro. */
+.about__bio p {
+  margin: 0 0 1.2em;
+}
+
+.about__bio p:first-child {
+  font-weight: 600;
+}
+
+.about__block + .about__block {
+  margin-top: 2.4em;
+}
+
+.about h2 {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  line-height: inherit;
+  margin: 0 0 1.2em;
+}
+
+.about__list {
   list-style: none;
-  margin: 0 0 var(--space-4);
+  margin: 0;
   padding: 0;
-  max-width: var(--measure);
 }
 
-.detail-list li {
-  padding: var(--space-1) 0;
-  border-top: 1px solid var(--color-line);
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-2);
-  font-size: var(--step-0);
+.about__list li + li {
+  margin-top: 1.2em;
 }
 
-.detail-list li:last-child {
-  border-bottom: 1px solid var(--color-line);
+/* Skills sit one per line with no gaps between them. */
+.about__list--tight li + li {
+  margin-top: 0;
 }
 
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-3);
-  list-style: none;
-  margin: 0 0 var(--space-4);
+.about__link {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.about__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-image);
+}
+
+/* Hidden on screen but still read by screen readers and search engines. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
   padding: 0;
-  font-family: var(--font-display);
-  max-width: var(--measure);
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .contact-links {
@@ -410,7 +463,18 @@ main {
 
 /* 5. Responsive ----------------------------------------------------------- */
 
+@media (max-width: 1024px) {
+  .about {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: var(--space-5);
+  }
+}
+
 @media (max-width: 640px) {
+  .about {
+    grid-template-columns: 1fr;
+  }
+
   /* On a narrow screen, justified rows would squeeze images down to
      stamp size, so each one gets its own full-width row instead. Their
      real aspect ratios (set inline) still apply, so nothing is cropped. */
