@@ -160,11 +160,9 @@ p {
   align-items: center;
 }
 
-/* Sized to sit at roughly the same visual weight as the old text
-   wordmark did. Adjust --logo-height if your actual logo reads too
-   big or small once it's in. */
+/* Adjust --logo-height to make the logo bigger or smaller. */
 .site-nav__logo {
-  --logo-height: 1.75rem;
+  --logo-height: 2.25rem;
   height: var(--logo-height);
   width: auto;
 }
@@ -310,26 +308,47 @@ main {
 }
 
 /* -- Project detail page -- */
-.project-header {
-  padding: var(--space-5) 0 var(--space-3);
-  border-bottom: 1px solid var(--color-line);
-}
 
-.project-header__category {
-  font-family: var(--font-display);
-  color: var(--color-ink);
-  margin: 0 0 var(--space-1);
+/* Title and category on the left, description on the right, no dividing
+   line. Uses the same side inset as the gallery below so their left edges
+   line up. Text is deliberately small and tight, like the About page. */
+.project-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4) var(--page-inset);
+  font-size: 1.0625rem;
+  line-height: 1.25;
 }
 
 .project-header h1 {
-  font-size: var(--step-4);
-  max-width: 20ch;
+  font-family: var(--font-body);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
 }
 
-.project-description {
-  padding: var(--space-4) 0;
-  max-width: var(--measure);
-  font-size: var(--step-1);
+.project-header__category {
+  margin: 0.2em 0 0;
+}
+
+.project-header__description {
+  padding-top: 0.15rem; /* lines the first line up with the title */
+}
+
+.project-header__description > :last-child {
+  margin-bottom: 0;
+}
+
+/* Line breaks typed into the Description box in /admin are kept. */
+.project-header__text {
+  white-space: pre-line;
+}
+
+.project-footer {
+  padding: 0 var(--page-inset);
 }
 
 .back-link {
@@ -583,7 +602,9 @@ main {
     transform: none;
   }
 
-  .project-header h1 {
-    font-size: var(--step-3);
+  /* Title and description stack on a phone. */
+  .project-header {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-2);
   }
 }

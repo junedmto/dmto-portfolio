@@ -5,9 +5,10 @@ layout: layouts/base.njk
   layouts/project.njk
   --------------------
   Every file in src/projects/*.md is rendered through this template, so
-  every project page automatically has the same shape: category, title,
-  description, gallery. This is the one place to change if you ever want
-  to adjust what a project page looks like — it updates all of them.
+  every project page automatically has the same shape: a header with the
+  title and category on the left and the description on the right, then
+  the gallery. This is the one place to change if you ever want to adjust
+  what a project page looks like — it updates all of them.
 
   "content" below is the Markdown body of the project file, in case you
   ever want to write extra copy under the description. "gallery" is the
@@ -15,22 +16,24 @@ layout: layouts/base.njk
 #}
 
 <article>
-  {# Title and description sit in the centered text column... #}
   {% set displayCategory = category_other if category_other else category %}
-  <div class="wrap">
-    <header class="project-header">
-      {% if displayCategory %}<p class="project-header__category">{{ displayCategory }}</p>{% endif %}
-      <h1>{{ title }}</h1>
-    </header>
 
-    <div class="project-description">
-      <p>{{ description }}</p>
+  {# Two columns across the full page width: title with the category
+     underneath on the left, the description on the right. #}
+  <header class="project-header">
+    <div class="project-header__title">
+      <h1>{{ title }}</h1>
+      {% if displayCategory %}<p class="project-header__category">{{ displayCategory }}</p>{% endif %}
+    </div>
+
+    <div class="project-header__description">
+      {% if description %}<p class="project-header__text">{{ description }}</p>{% endif %}
       {{ content | safe }}
     </div>
-  </div>
+  </header>
 
-  {# ...but the gallery sits outside it, so it spans the full page width
-     with only its own side inset, exactly like the homepage grid. #}
+  {# The gallery spans the full page width with only its own side inset,
+     exactly like the homepage grid. #}
   {% if gallery and gallery.length %}
   <div class="justified-gallery">
     {% for item in gallery %}
@@ -44,7 +47,7 @@ layout: layouts/base.njk
   </div>
   {% endif %}
 
-  <div class="wrap">
+  <div class="project-footer">
     <a class="back-link" href="{{ '/' | url }}">← Back to work</a>
   </div>
 </article>
