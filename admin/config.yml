@@ -111,7 +111,8 @@ collections:
         fields:
           - { label: Title, name: title, widget: string }
           - { label: SEO description, name: description, widget: string }
-          - { label: Note, name: body, widget: markdown }
+          - { label: Scrolling greetings, name: marquee, widget: string }
+          - { label: Intro text (first paragraph is shown bold), name: body, widget: markdown }
           - { label: Email, name: email, widget: string }
           - { label: Phone, name: phone, widget: string, required: false }
           - { label: Instagram URL, name: instagram, widget: string, required: false }
