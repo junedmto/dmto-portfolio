@@ -11,8 +11,8 @@ gallery:
   - /assets/img/uploads/fireRoom.png
   - /assets/img/uploads/pondR.png
   - /assets/img/uploads/topDay.jpeg
-  - /assets/img/uploads/front2.png
   - /assets/img/uploads/masterF2.png
   - /assets/img/uploads/kitchen3.png
+  - /assets/img/uploads/front2.png
 date: 2026-09-20
 ---
