@@ -1,5 +1,5 @@
 ---
-order: 6
+order: 4
 title: Ember Rave Geneva
 category: Other
 category_other: Motion Graphics, Poster Design
