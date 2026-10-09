@@ -108,22 +108,13 @@ module.exports = function (eleventyConfig) {
   // isVideo: true if a gallery entry points at a video file.
   eleventyConfig.addFilter("isVideo", (entry) => isVideoPath(entryPath(entry)));
 
-  // galleryRows: turns a project's gallery into rows ready to display.
-  //
-  // "layout" is the optional "Photos per row" text from the CMS, e.g.
-  // "3, 2, 4" = first row has 3 items, second row 2, third row 4. Any
-  // items left over after the layout runs out are laid out automatically
-  // (as many per row as fit nicely). With no layout at all, the whole
-  // gallery is automatic, exactly as before.
-  //
-  // Each returned row is { manual: true|false, items: [{ src, isVideo }] }.
-  eleventyConfig.addFilter("galleryRows", (gallery, layout) => {
-    if (!gallery || !gallery.length) return [];
-    const items = gallery.map((entry) => {
-      const src = entryPath(entry);
-      return { src, isVideo: isVideoPath(src) };
-    });
-
+  // splitRows: cuts any list into rows using a "Photos per row" style
+  // text such as "3, 2, 4" (3 items in the first row, 2 in the second,
+  // 4 in the third). Items left over after the layout runs out go into
+  // one final automatic row. With no layout, everything is automatic.
+  // Each row is { manual: true|false, items: [...] }.
+  const splitRows = (items, layout) => {
+    if (!items || !items.length) return [];
     const counts = String(layout || "")
       .split(/[^0-9]+/)
       .map(Number)
@@ -140,6 +131,39 @@ module.exports = function (eleventyConfig) {
       rows.push({ manual: false, items: items.slice(cursor) });
     }
     return rows;
+  };
+  eleventyConfig.addFilter("splitRows", splitRows);
+
+  // galleryRows: a project's gallery (photos and videos) as rows, using
+  // that project's own "Photos per row" setting.
+  // Each item is { src, isVideo }.
+  eleventyConfig.addFilter("galleryRows", (gallery, layout) => {
+    const items = (gallery || []).map((entry) => {
+      const src = entryPath(entry);
+      return { src, isVideo: isVideoPath(src) };
+    });
+    return splitRows(items, layout);
+  });
+
+  // homeTiles: the list of tiles shown on the homepage, one per visible
+  // project. A tile's picture is the project's separate "Homepage image"
+  // (cover) if one was uploaded, otherwise the first item of its gallery.
+  // Projects with neither are left out.
+  eleventyConfig.addFilter("homeTiles", (projects) => {
+    return (projects || [])
+      .map((project) => {
+        const data = project.data;
+        const first = data.gallery && data.gallery.length ? entryPath(data.gallery[0]) : null;
+        const cover = data.cover ? entryPath(data.cover) : first;
+        return {
+          url: project.url,
+          title: data.title,
+          category: data.category_other ? data.category_other : data.category,
+          cover,
+          isVideo: isVideoPath(cover),
+        };
+      })
+      .filter((tile) => tile.cover);
   });
 
   // "projects" is the collection of every project page. Order comes from

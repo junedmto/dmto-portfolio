@@ -22,29 +22,33 @@ description: Creative design across graphic design, 3D, motion, and interactive 
   files).
 #}
 
-{% if collections.projects.length %}
-<div class="justified-gallery">
-  {% for project in collections.projects %}
-  {% set gallery = project.data.gallery %}
-  {% set first = gallery[0] if gallery and gallery.length else none %}
-  {% set cover = (first.image if first.image else first) if first else none %}
-  {% set coverIsVideo = first | isVideo %}
-  {% set displayCategory = project.data.category_other if project.data.category_other else project.data.category %}
-  {% if cover %}
-  {% set ratio = cover | aspectRatio %}
-  <a class="justified-gallery__item" href="{{ project.url | url }}"
-     style="flex-grow: {{ ratio }}; flex-basis: calc({{ ratio }} * 24rem); aspect-ratio: {{ ratio }};">
-    {% if coverIsVideo %}
-    <video src="{{ cover | url }}" muted loop playsinline autoplay preload="metadata" aria-label="{{ project.data.title }}"></video>
-    {% else %}
-    <img src="{{ cover | url }}" alt="{{ project.data.title }}" loading="lazy">
-    {% endif %}
-    <div class="justified-gallery__caption">
-      <p class="justified-gallery__title">{{ project.data.title }}</p>
-      {% if displayCategory %}<p class="justified-gallery__meta">{{ displayCategory }}</p>{% endif %}
-    </div>
-  </a>
-  {% endif %}
+{# homeTiles (see .eleventy.js) gives one tile per visible project, and
+   splitRows cuts them into rows using the "Photos per row" setting from
+   Pages > Homepage in the CMS. Tiles left over flow automatically. #}
+{% set tiles = collections.projects | homeTiles %}
+{% set rows = tiles | splitRows(home.row_layout) %}
+{% if rows.length %}
+<div class="gallery-stack">
+  {% for row in rows %}
+  <div class="justified-gallery{% if row.manual %} justified-gallery--manual{% endif %}">
+    {% for tile in row.items %}
+    {% set ratio = tile.cover | aspectRatio %}
+    {# flex-grow is the ratio x 1000: grow factors that add up to less
+       than 1 would leave a row short of the full width. #}
+    {% set sizing = ("flex: " + (ratio * 1000) + " 1 0; aspect-ratio: " + ratio + ";") if row.manual else ("flex-grow: " + (ratio * 1000) + "; flex-basis: calc(" + ratio + " * 24rem); aspect-ratio: " + ratio + ";") %}
+    <a class="justified-gallery__item" href="{{ tile.url | url }}" style="{{ sizing }}">
+      {% if tile.isVideo %}
+      <video src="{{ tile.cover | url }}" muted loop playsinline autoplay preload="metadata" aria-label="{{ tile.title }}"></video>
+      {% else %}
+      <img src="{{ tile.cover | url }}" alt="{{ tile.title }}" loading="lazy">
+      {% endif %}
+      <div class="justified-gallery__caption">
+        <p class="justified-gallery__title">{{ tile.title }}</p>
+        {% if tile.category %}<p class="justified-gallery__meta">{{ tile.category }}</p>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
   {% endfor %}
 </div>
 {% else %}

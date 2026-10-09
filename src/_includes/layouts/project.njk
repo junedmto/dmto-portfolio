@@ -45,9 +45,11 @@ layout: layouts/base.njk
     <div class="justified-gallery{% if row.manual %} justified-gallery--manual{% endif %}">
       {% for media in row.items %}
       {% set ratio = media.src | aspectRatio %}
-      {# Manual rows share the width in proportion to each ratio; automatic
+      {# flex-grow is the ratio x 1000: grow factors that add up to less
+         than 1 (e.g. one portrait photo alone) would leave the row short
+         of the full width. Manual rows share the width in proportion to each ratio; automatic
          rows use the wrapping basis so they break where they fit. #}
-      {% set sizing = ("flex: " + ratio + " 1 0; aspect-ratio: " + ratio + ";") if row.manual else ("flex-grow: " + ratio + "; flex-basis: calc(" + ratio + " * 20rem); aspect-ratio: " + ratio + ";") %}
+      {% set sizing = ("flex: " + (ratio * 1000) + " 1 0; aspect-ratio: " + ratio + ";") if row.manual else ("flex-grow: " + (ratio * 1000) + "; flex-basis: calc(" + ratio + " * 20rem); aspect-ratio: " + ratio + ";") %}
       {% if media.isVideo %}
       <figure class="justified-gallery__item justified-gallery__item--video" style="{{ sizing }}">
         <video src="{{ media.src | url }}" muted loop playsinline autoplay preload="metadata" data-video aria-label="{{ title }} — video {{ loop.index }}"></video>

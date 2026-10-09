@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const current = parseFloat(tile.style.aspectRatio);
       if (Math.abs(ratio - current) > 0.02) {
         tile.style.aspectRatio = ratio;
-        if (tile.style.flexGrow) tile.style.flexGrow = ratio;
+        if (tile.style.flexGrow) tile.style.flexGrow = ratio * 1000;
       }
     });
     tile.addEventListener("click", () => {
