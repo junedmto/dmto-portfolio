@@ -1,5 +1,5 @@
 ---
-order: 7
+order: 6
 title: Aurora Villa
 category: ArchViz
 category_other: ''
