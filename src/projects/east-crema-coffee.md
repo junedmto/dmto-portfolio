@@ -1,5 +1,5 @@
 ---
-order: 8
+order: 7
 title: East Crema Coffee
 category: Other
 category_other: Various Projects
