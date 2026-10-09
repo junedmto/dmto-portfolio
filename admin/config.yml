@@ -31,7 +31,7 @@ collections:
     create: true
     delete: true
     slug: "{{slug}}"
-    summary: "{{title}} — {{category}}"
+    summary: "{{title}} — {{category}} {{draft | ternary('· HIDDEN', '')}}"
     sortable_fields: [title]
     reorder: true
     key: order
