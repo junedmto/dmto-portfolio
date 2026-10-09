@@ -11,6 +11,5 @@ gallery:
   - /assets/img/uploads/LQ8.jpg
   - /assets/img/uploads/LQ7.jpg
   - /assets/img/uploads/LQ6.jpg
-  - /assets/img/uploads/LQ4.jpg
 date: 2026-09-18
 ---

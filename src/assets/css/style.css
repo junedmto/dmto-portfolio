@@ -162,7 +162,7 @@ p {
 
 /* Adjust --logo-height to make the logo bigger or smaller. */
 .site-nav__logo {
-  --logo-height: 2.25rem;
+  --logo-height: 2.5rem;
   height: var(--logo-height);
   width: auto;
 }
