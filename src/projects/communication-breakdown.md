@@ -1,5 +1,5 @@
 ---
-order: 3
+order: 1
 title: Communication Breakdown
 category: Editorial Design
 category_other: ''

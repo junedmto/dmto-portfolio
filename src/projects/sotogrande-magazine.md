@@ -1,5 +1,5 @@
 ---
-order: 4
+order: 3
 title: Sotogrande Magazine
 category: Editorial Design
 category_other: ''
