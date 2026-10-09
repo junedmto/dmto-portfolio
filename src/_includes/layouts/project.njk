@@ -33,16 +33,32 @@ layout: layouts/base.njk
   </header>
 
   {# The gallery spans the full page width with only its own side inset,
-     exactly like the homepage grid. #}
-  {% if gallery and gallery.length %}
-  <div class="justified-gallery">
-    {% for item in gallery %}
-    {% set src = item.image if item.image else item %}
-    {% set ratio = src | aspectRatio %}
-    <figure class="justified-gallery__item justified-gallery__item--zoom" data-lightbox-trigger
-            style="flex-grow: {{ ratio }}; flex-basis: calc({{ ratio }} * 20rem); aspect-ratio: {{ ratio }};">
-      <img src="{{ src | url }}" alt="{{ title }} — image {{ loop.index }}" loading="lazy">
-    </figure>
+     exactly like the homepage grid. galleryRows (see .eleventy.js) splits
+     it into rows: the ones set in "Photos per row" in the CMS come first
+     (each fills the full width), and anything left over flows
+     automatically. Each item is a photo or, if the file is a video, a
+     looping muted video. #}
+  {% set rows = gallery | galleryRows(row_layout) %}
+  {% if rows.length %}
+  <div class="gallery-stack">
+    {% for row in rows %}
+    <div class="justified-gallery{% if row.manual %} justified-gallery--manual{% endif %}">
+      {% for media in row.items %}
+      {% set ratio = media.src | aspectRatio %}
+      {# Manual rows share the width in proportion to each ratio; automatic
+         rows use the wrapping basis so they break where they fit. #}
+      {% set sizing = ("flex: " + ratio + " 1 0; aspect-ratio: " + ratio + ";") if row.manual else ("flex-grow: " + ratio + "; flex-basis: calc(" + ratio + " * 20rem); aspect-ratio: " + ratio + ";") %}
+      {% if media.isVideo %}
+      <figure class="justified-gallery__item justified-gallery__item--video" style="{{ sizing }}">
+        <video src="{{ media.src | url }}" muted loop playsinline autoplay preload="metadata" data-video aria-label="{{ title }} — video {{ loop.index }}"></video>
+      </figure>
+      {% else %}
+      <figure class="justified-gallery__item justified-gallery__item--zoom" data-lightbox-trigger style="{{ sizing }}">
+        <img src="{{ media.src | url }}" alt="{{ title }} — image {{ loop.index }}" loading="lazy">
+      </figure>
+      {% endif %}
+      {% endfor %}
+    </div>
     {% endfor %}
   </div>
   {% endif %}

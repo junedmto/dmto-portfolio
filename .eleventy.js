@@ -8,6 +8,25 @@
 const fs = require("fs");
 const path = require("path");
 const { imageSize } = require("image-size");
+const { execFileSync } = require("child_process");
+
+// ffprobe (bundled via the "ffprobe-static" package) reads a video's
+// dimensions at build time, the same way image-size does for photos.
+let ffprobePath = null;
+try {
+  ffprobePath = require("ffprobe-static").path;
+} catch (error) {
+  ffprobePath = "ffprobe"; // fall back to one installed on the machine
+}
+
+// File types treated as video in a gallery; everything else is an image.
+const VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov", ".m4v"];
+const isVideoPath = (p) =>
+  typeof p === "string" && VIDEO_EXTENSIONS.includes(path.extname(p).toLowerCase());
+
+// A gallery entry can be a plain path string (what the CMS writes) or an
+// {image: path} object (older hand-written files). This returns the path.
+const entryPath = (entry) => (entry && entry.image ? entry.image : entry);
 
 module.exports = function (eleventyConfig) {
   // Copy these folders/files straight into the output as-is (no processing).
@@ -53,16 +72,74 @@ module.exports = function (eleventyConfig) {
 
     let ratio = FALLBACK;
     try {
-      const { width, height } = imageSize(fs.readFileSync(diskPath));
-      if (width && height) ratio = width / height;
+      if (isVideoPath(imagePath)) {
+        // Video: ask ffprobe for the size, and swap width/height if the
+        // clip is stored rotated (typical of phone footage).
+        const out = execFileSync(
+          ffprobePath,
+          ["-v", "error", "-select_streams", "v:0", "-print_format", "json",
+           "-show_streams",
+           diskPath],
+          { encoding: "utf8" }
+        );
+        const stream = JSON.parse(out).streams[0];
+        let { width, height } = stream;
+        const rotation = Math.abs(
+          Number((stream.side_data_list && stream.side_data_list[0] && stream.side_data_list[0].rotation) ||
+                 (stream.tags && stream.tags.rotate) || 0)
+        );
+        if (rotation === 90 || rotation === 270) [width, height] = [height, width];
+        if (width && height) ratio = width / height;
+      } else {
+        const { width, height } = imageSize(fs.readFileSync(diskPath));
+        if (width && height) ratio = width / height;
+      }
     } catch (error) {
-      // Image missing or unreadable (e.g. a broken path in a project
-      // file) — fall back rather than failing the whole build.
+      // File missing or unreadable (e.g. a broken path in a project
+      // file) — fall back rather than failing the whole build. For
+      // videos, the page also corrects itself in the browser (main.js).
       console.warn(`[aspectRatio] could not measure ${imagePath}`);
     }
 
     imageRatioCache.set(imagePath, ratio);
     return ratio;
+  });
+
+  // isVideo: true if a gallery entry points at a video file.
+  eleventyConfig.addFilter("isVideo", (entry) => isVideoPath(entryPath(entry)));
+
+  // galleryRows: turns a project's gallery into rows ready to display.
+  //
+  // "layout" is the optional "Photos per row" text from the CMS, e.g.
+  // "3, 2, 4" = first row has 3 items, second row 2, third row 4. Any
+  // items left over after the layout runs out are laid out automatically
+  // (as many per row as fit nicely). With no layout at all, the whole
+  // gallery is automatic, exactly as before.
+  //
+  // Each returned row is { manual: true|false, items: [{ src, isVideo }] }.
+  eleventyConfig.addFilter("galleryRows", (gallery, layout) => {
+    if (!gallery || !gallery.length) return [];
+    const items = gallery.map((entry) => {
+      const src = entryPath(entry);
+      return { src, isVideo: isVideoPath(src) };
+    });
+
+    const counts = String(layout || "")
+      .split(/[^0-9]+/)
+      .map(Number)
+      .filter((n) => n > 0);
+
+    const rows = [];
+    let cursor = 0;
+    for (const count of counts) {
+      if (cursor >= items.length) break;
+      rows.push({ manual: true, items: items.slice(cursor, cursor + count) });
+      cursor += count;
+    }
+    if (cursor < items.length) {
+      rows.push({ manual: false, items: items.slice(cursor) });
+    }
+    return rows;
   });
 
   // "projects" is the collection of every project page. Order comes from
@@ -73,7 +150,11 @@ module.exports = function (eleventyConfig) {
   // field you set yourself), and sorts after every manually-ordered
   // project.
   eleventyConfig.addCollection("projects", (collectionApi) => {
-    return collectionApi.getFilteredByGlob("src/projects/*.md").sort((a, b) => {
+    return collectionApi
+      .getFilteredByGlob("src/projects/*.md")
+      // Projects marked "Hidden (draft)" in the CMS stay out of the site.
+      .filter((item) => !item.data.draft)
+      .sort((a, b) => {
       const orderA = a.data.order;
       const orderB = b.data.order;
       if (orderA != null && orderB != null) return orderA - orderB;

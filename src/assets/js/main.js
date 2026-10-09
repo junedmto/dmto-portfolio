@@ -1,10 +1,32 @@
 // main.js
-// The only interactive behaviour on the site, in two small pieces:
+// The only interactive behaviour on the site, in a few small pieces:
 //   1. Clicking a gallery image on a project page opens it full-screen;
 //      clicking again (or Escape) closes it.
 //   2. On the Contact page, keeps the scrolling greeting moving at a
 //      steady speed whatever the length of the text.
 // No build step, no dependencies — this file is loaded as-is.
+
+// -- 3. Gallery videos -----------------------------------------------------
+// Videos autoplay silently and loop. Clicking one pauses or resumes it.
+// Once a video's real size is known, the tile's shape is corrected if the
+// build-time guess was off, so nothing is ever cropped.
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("video[data-video]").forEach((video) => {
+    const tile = video.parentElement;
+    video.addEventListener("loadedmetadata", () => {
+      if (!video.videoWidth || !video.videoHeight) return;
+      const ratio = video.videoWidth / video.videoHeight;
+      const current = parseFloat(tile.style.aspectRatio);
+      if (Math.abs(ratio - current) > 0.02) {
+        tile.style.aspectRatio = ratio;
+        if (tile.style.flexGrow) tile.style.flexGrow = ratio;
+      }
+    });
+    tile.addEventListener("click", () => {
+      video.paused ? video.play() : video.pause();
+    });
+  });
+});
 
 // -- 2. Scrolling greeting speed ------------------------------------------
 // The scrolling itself is a CSS animation (see .marquee in style.css). CSS

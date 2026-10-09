@@ -255,13 +255,44 @@ main {
   /* flex-grow, flex-basis and aspect-ratio are set inline per item. */
 }
 
-.justified-gallery__item img {
+.justified-gallery__item img,
+.justified-gallery__item video {
   width: 100%;
   height: 100%;
   display: block;
   /* The item's aspect-ratio matches the image exactly, so this scales
      the image to fill without actually cropping anything. */
   object-fit: cover;
+}
+
+/* Project pages stack one or more gallery rows (see galleryRows in
+   .eleventy.js). The stack owns the page inset and bottom space, so rows
+   inside it need none of their own, just the same gap between them. */
+.gallery-stack {
+  --gallery-gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gallery-gap);
+  padding: 0 var(--page-inset) var(--space-5);
+}
+
+.gallery-stack > .justified-gallery {
+  padding: 0;
+}
+
+/* Rows whose photo count was chosen in the CMS never wrap: everything in
+   the row shares one height and fills the full width. */
+.justified-gallery--manual {
+  flex-wrap: nowrap;
+}
+
+.justified-gallery--manual .justified-gallery__item {
+  min-width: 0;
+}
+
+/* Videos play inline; a click pauses or resumes them. */
+.justified-gallery__item--video {
+  cursor: pointer;
 }
 
 /* Captions: hidden until hover/focus, so the grid reads as pure imagery
@@ -591,6 +622,10 @@ main {
   /* On a narrow screen, justified rows would squeeze images down to
      stamp size, so each one gets its own full-width row instead. Their
      real aspect ratios (set inline) still apply, so nothing is cropped. */
+  .justified-gallery--manual {
+    flex-wrap: wrap;
+  }
+
   .justified-gallery__item {
     flex-basis: 100% !important;
     flex-grow: 1 !important;
