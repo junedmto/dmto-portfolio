@@ -29,8 +29,10 @@ gallery:
   - /assets/img/uploads/Aniversario ECC16.jpg
   - /assets/img/uploads/Aniversario ECC17.jpg
   - /assets/img/uploads/Aniversario ECC19.jpg
+  - /assets/img/uploads/Rapido-1.mp4
+  - /assets/img/uploads/Comp 5_1-1.mp4
   - /assets/img/uploads/Mockup Lateral B copy.png
   - /assets/img/uploads/Mockup Frontal copy.png
   - /assets/img/uploads/Mockup Lateral copy.png
-row_layout: 2,2,3,2,2,2,2,1,2
+row_layout: 2,2,3,2,2,2,2,2,1,2
 ---
