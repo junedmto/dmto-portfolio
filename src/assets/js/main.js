@@ -26,6 +26,29 @@ document.addEventListener("DOMContentLoaded", () => {
       video.paused ? video.play() : video.pause();
     });
   });
+
+  // Sound buttons: videos always start muted (browsers block autoplay
+  // with sound), and a click on the button switches sound on or off.
+  // Only one video plays with sound at a time.
+  const buttons = document.querySelectorAll("[data-sound-toggle]");
+
+  function setSound(button, on) {
+    const video = button.parentElement.querySelector("video");
+    video.muted = !on;
+    button.classList.toggle("is-on", on);
+    button.setAttribute("aria-pressed", String(on));
+    button.setAttribute("aria-label", on ? "Turn sound off" : "Turn sound on");
+    if (on && video.paused) video.play();
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation(); // don't also pause the video
+      const turningOn = !button.classList.contains("is-on");
+      buttons.forEach((other) => setSound(other, false));
+      setSound(button, turningOn);
+    });
+  });
 });
 
 // -- 2. Scrolling greeting speed ------------------------------------------

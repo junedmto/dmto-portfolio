@@ -162,7 +162,7 @@ p {
 
 /* Adjust --logo-height to make the logo bigger or smaller. */
 .site-nav__logo {
-  --logo-height: 2.5rem;
+  --logo-height: 2.25rem;
   height: var(--logo-height);
   width: auto;
 }
@@ -293,6 +293,45 @@ main {
 /* Videos play inline; a click pauses or resumes them. */
 .justified-gallery__item--video {
   cursor: pointer;
+}
+
+/* Sound on/off button in the corner of videos that have an audio track. */
+.video-sound {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(18, 18, 18, 0.6);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.video-sound:hover,
+.video-sound:focus-visible {
+  background: rgba(18, 18, 18, 0.85);
+}
+
+.video-sound svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
+}
+
+/* Show the "muted" icon by default, the "sound on" icon once switched on. */
+.video-sound__on,
+.video-sound.is-on .video-sound__off {
+  display: none;
+}
+
+.video-sound.is-on .video-sound__on {
+  display: block;
 }
 
 /* Captions: hidden until hover/focus, so the grid reads as pure imagery

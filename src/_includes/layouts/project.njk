@@ -53,6 +53,14 @@ layout: layouts/base.njk
       {% if media.isVideo %}
       <figure class="justified-gallery__item justified-gallery__item--video" style="{{ sizing }}">
         <video src="{{ media.src | url }}" muted loop playsinline autoplay preload="metadata" data-video aria-label="{{ title }} — video {{ loop.index }}"></video>
+        {# Videos start silent (browsers don't allow autoplay with sound).
+           If the file has an audio track, this button turns sound on/off. #}
+        {% if media.hasAudio %}
+        <button class="video-sound" type="button" data-sound-toggle aria-pressed="false" aria-label="Turn sound on">
+          <svg class="video-sound__off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="video-sound__on" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        {% endif %}
       </figure>
       {% else %}
       <figure class="justified-gallery__item justified-gallery__item--zoom" data-lightbox-trigger style="{{ sizing }}">

@@ -105,6 +105,28 @@ module.exports = function (eleventyConfig) {
     return ratio;
   });
 
+  // hasAudio: true if a video file contains an audio track. Used to show
+  // the sound button only on videos that actually have sound.
+  const audioCache = new Map();
+  const videoHasAudio = (src) => {
+    if (!isVideoPath(src)) return false;
+    if (audioCache.has(src)) return audioCache.get(src);
+    let result = false;
+    try {
+      const out = execFileSync(
+        ffprobePath,
+        ["-v", "error", "-select_streams", "a", "-show_entries", "stream=codec_type",
+         "-of", "csv=p=0", path.join(__dirname, "src", src.replace(/^\//, ""))],
+        { encoding: "utf8" }
+      );
+      result = out.trim().length > 0;
+    } catch (error) {
+      result = false;
+    }
+    audioCache.set(src, result);
+    return result;
+  };
+
   // isVideo: true if a gallery entry points at a video file.
   eleventyConfig.addFilter("isVideo", (entry) => isVideoPath(entryPath(entry)));
 
@@ -136,11 +158,11 @@ module.exports = function (eleventyConfig) {
 
   // galleryRows: a project's gallery (photos and videos) as rows, using
   // that project's own "Photos per row" setting.
-  // Each item is { src, isVideo }.
+  // Each item is { src, isVideo, hasAudio }.
   eleventyConfig.addFilter("galleryRows", (gallery, layout) => {
     const items = (gallery || []).map((entry) => {
       const src = entryPath(entry);
-      return { src, isVideo: isVideoPath(src) };
+      return { src, isVideo: isVideoPath(src), hasAudio: videoHasAudio(src) };
     });
     return splitRows(items, layout);
   });
