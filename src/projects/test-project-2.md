@@ -5,6 +5,7 @@ category: Artificial Intelligence
 category_other: ''
 draft: false
 description: Artificial Intelligence Generation Project
+cover: /assets/img/uploads/LQ1.jpg
 gallery:
   - /assets/img/uploads/LQ2.jpg
   - /assets/img/uploads/LQ1.jpg
