@@ -1,5 +1,5 @@
 ---
-order: 6
+order: 8
 title: AI Photoshoot
 category: Artificial Intelligence
 category_other: ''

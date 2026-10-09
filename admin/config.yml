@@ -59,6 +59,10 @@ collections:
       # Photos AND videos (mp4, webm, mov). Because this is a plain "file"
       # widget with multiple: true, the CMS saves a simple list of paths
       # and you can drag to reorder them.
+      - label: Homepage image (optional, otherwise the first gallery item is used)
+        name: cover
+        widget: file
+        required: false
       - { label: Gallery (photos and videos), name: gallery, widget: file, multiple: true }
       - { label: "Photos per row (optional, e.g. 3, 2, 4)", name: row_layout, widget: string, required: false, hint: "Row 1 gets 3 items, row 2 gets 2, row 3 gets 4. Anything left over arranges itself. Leave empty for fully automatic." }
       - { label: Extra notes (optional), name: body, widget: markdown, required: false }
@@ -69,6 +73,16 @@ collections:
     editor:
       preview: false
     files:
+      - name: home
+        label: Homepage
+        file: src/_data/home.json
+        format: json
+        fields:
+          - label: Photos per row (optional, e.g. 2, 1, 3)
+            name: row_layout
+            widget: string
+            required: false
+            hint: Row 1 gets 2 projects, row 2 gets 1, row 3 gets 3. Anything left over arranges itself. Leave empty for fully automatic.
       - name: about
         label: About
         file: src/about.md
