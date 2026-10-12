@@ -1,0 +1,256 @@
+/* look.css
+   --------
+   Styles for the look-around About page and its photo-shoot helper. Only
+   loaded by those two pages (they ask for it with "extraCss"). */
+
+/* -- The look-around stage ------------------------------------------------
+   Fills the window under the fixed header. The height uses the header's
+   real height, which lookaround.js writes into --nav-height. */
+.look {
+  position: relative;
+  height: calc(100svh - var(--nav-height, 76px));
+  min-height: 28rem;
+  overflow: hidden;
+  background: var(--color-accent-soft);
+  /* Vertical swipes still scroll the page on a phone; sideways drags
+     are handed to the page so the head can follow a finger. */
+  touch-action: pan-y;
+}
+
+.look__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* -- Floating words -------------------------------------------------------
+   Each word is placed by the script (left / top in %), then nudged, scaled
+   and sharpened as the pointer gets near. White text with the "difference"
+   blend mode reads as dark on a light photo and light on a dark one. */
+.look__words {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.look__word {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  mix-blend-mode: difference;
+  opacity: 0.22;
+  will-change: transform, opacity, filter;
+}
+
+.look__word--small  { font-size: clamp(0.95rem, 1.3vw, 1.4rem); }
+.look__word--medium { font-size: clamp(1.3rem, 2.4vw, 2.6rem); }
+.look__word--large  { font-size: clamp(1.9rem, 4vw, 4.6rem); }
+
+/* Shown only while the stand-in frames are in use. */
+.look__demo-note {
+  position: absolute;
+  left: var(--page-inset);
+  bottom: var(--page-inset);
+  margin: 0;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-image);
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.8rem;
+  color: var(--color-ink);
+}
+
+/* Small debug read-out, shown with ?debug=1 on the page address. */
+.look__debug {
+  position: absolute;
+  right: var(--page-inset);
+  bottom: var(--page-inset);
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-image);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font: 12px/1.3 ui-monospace, Menlo, monospace;
+}
+
+/* -- Photo-shoot helper (/look-shoot/) ------------------------------------
+   A full-window overlay: a grid of dots to look at, one lit at a time. */
+.shoot {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.shoot__intro,
+.shoot__done {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-3);
+  text-align: center;
+  background: var(--color-paper);
+}
+
+.shoot__intro[hidden],
+.shoot__done[hidden] {
+  display: none;
+}
+
+.shoot__intro h1,
+.shoot__done h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+}
+
+.shoot__intro ol {
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
+  max-width: 34rem;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.shoot__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  justify-content: center;
+}
+
+.shoot__button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.7rem 1.3rem;
+  border: 1px solid var(--color-ink);
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: #fff;
+  cursor: pointer;
+}
+
+.shoot__button--ghost {
+  background: transparent;
+  color: var(--color-ink);
+}
+
+/* The camera preview: big while you frame yourself, then tucked at the
+   top so it never sits on top of a dot. It is mirrored, like a mirror. */
+.shoot__video {
+  position: absolute;
+  top: 0.6rem;
+  left: 50%;
+  height: min(9vh, 90px);
+  transform: translateX(-50%) scaleX(-1);
+  border-radius: var(--radius-image);
+  background: var(--color-accent-soft);
+  z-index: 2;
+}
+
+.shoot__intro .shoot__video-big {
+  width: min(22rem, 80vw);
+  border-radius: var(--radius-image);
+  transform: scaleX(-1);
+  background: var(--color-accent-soft);
+}
+
+.shoot__grid {
+  position: absolute;
+  inset: 0;
+}
+
+.shoot__dot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: #cfd2d8;
+}
+
+.shoot__dot.is-done {
+  background: #8d929c;
+}
+
+.shoot__dot.is-active {
+  background: var(--color-ink);
+  box-shadow: 0 0 0 0 rgba(18, 18, 18, 0.5);
+  animation: shoot-pulse var(--hold, 1400ms) linear forwards;
+}
+
+@keyframes shoot-pulse {
+  from { transform: scale(3.2); }
+  to   { transform: scale(1); }
+}
+
+.shoot__hud {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  gap: var(--space-3);
+  font-size: var(--step-0);
+  white-space: nowrap;
+}
+
+.shoot__flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shoot__flash.is-on {
+  animation: shoot-flash 200ms ease-out;
+}
+
+@keyframes shoot-flash {
+  from { opacity: 0.85; }
+  to   { opacity: 0; }
+}
+
+.shoot__preview {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  height: auto;
+  min-height: 0;
+}
+
+.shoot__preview[hidden] {
+  display: none;
+}
+
+.shoot__close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 6;
+}
+
+/* Reduced motion: no pulsing dots, no flash. */
+@media (prefers-reduced-motion: reduce) {
+  .shoot__dot.is-active { animation: none; transform: scale(2); }
+  .shoot__flash.is-on { animation: none; }
+}

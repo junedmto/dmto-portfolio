@@ -670,6 +670,10 @@ main {
   }
 
   /* Smaller logo and menu so both fit on one line on a phone. */
+  .site-nav__brand {
+    font-size: var(--step-1);
+  }
+
   .site-nav__logo {
     --logo-height: 1.75rem;
   }

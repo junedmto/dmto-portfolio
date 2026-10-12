@@ -1,0 +1,43 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/lookaround.njk
+  ------------------------
+  The "look-around" About page: a full-screen portrait whose head turns to
+  follow the pointer, with words floating around it.
+
+  How it fits together:
+    - The portrait is a 7 x 5 grid of photos (see src/_data/lookFrames.js).
+      The list of photo addresses is written into the hidden block below,
+      and assets/js/lookaround.js reads it, loads the photos, and blends
+      the four nearest ones to match where the pointer is.
+    - The floating words come from "words" in src/about-new.md, editable
+      in /admin. Each can have a size (small / medium / large) and, if you
+      want, a fixed position as a percentage from the left (x) and top (y).
+      Words without a position are spread around the portrait for you.
+#}
+
+<section class="look" data-look-stage data-cols="{{ lookFrames.cols }}" data-rows="{{ lookFrames.rows }}">
+  <h1 class="visually-hidden">{{ title }}</h1>
+
+  <canvas class="look__canvas" aria-hidden="true"></canvas>
+
+  <ul class="look__words">
+    {% for word in words %}
+    <li class="look__word look__word--{{ word.size or 'medium' }}" data-word
+        {% if word.x is defined and word.y is defined and word.x !== null and word.y !== null and word.x !== '' and word.y !== '' %}data-x="{{ word.x }}" data-y="{{ word.y }}"{% endif %}>{{ word.text }}</li>
+    {% endfor %}
+  </ul>
+
+  {# The photo list the script reads (never shown). #}
+  <div hidden>
+    {% for frame in lookFrames.frames %}
+    <span data-frame data-c="{{ frame.c }}" data-r="{{ frame.r }}" data-src="{{ frame.src | url }}"></span>
+    {% endfor %}
+  </div>
+
+  {% if lookFrames.isDemo %}
+  <p class="look__demo-note">Stand-in frames. Add your own photos to src/assets/img/look/ to replace them.</p>
+  {% endif %}
+</section>

@@ -18,6 +18,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title }}{% if title != site.name %} — {{ site.name }}{% endif %}</title>
   <meta name="description" content="{{ description or site.description }}">
+  {# Pages that set "noindex: true" in their data (the unfinished look-around
+     About page and its photo-shoot helper) ask search engines to skip them. #}
+  {% if noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
 
   <!-- Social share preview tags (what shows up when a link is pasted into
        iMessage, Instagram, LinkedIn, etc). Each project page overrides
@@ -37,8 +40,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@500;600;700;800&family=Source+Serif+4:wght@700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | url }}">
+  {# Extra stylesheets a page asks for with "extraCss: [...]". #}
+  {% for css in extraCss %}<link rel="stylesheet" href="{{ css | url }}">{% endfor %}
 </head>
-<body>
+<body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
 
   <header class="site-nav">
     <div class="site-nav__row">
@@ -60,13 +65,17 @@
     {{ content | safe }}
   </main>
 
+  {% if not hideFooter %}
   <footer class="site-footer">
     <div class="wrap">
       <span>{{ site.name }} · {{ currentYear }}</span>
       <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>
     </div>
   </footer>
+  {% endif %}
 
   <script src="{{ '/assets/js/main.js' | url }}"></script>
+  {# Extra scripts a page asks for with "extraJs: [...]". #}
+  {% for js in extraJs %}<script src="{{ js | url }}"></script>{% endfor %}
 </body>
 </html>

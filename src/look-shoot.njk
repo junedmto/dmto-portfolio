@@ -1,0 +1,67 @@
+---
+layout: layouts/base.njk
+title: Photo shoot helper
+permalink: /look-shoot/
+noindex: true
+hideFooter: true
+bodyClass: page-shoot
+eleventyExcludeFromCollections: true
+extraCss:
+  - /assets/css/look.css
+extraJs:
+  - /assets/js/lookaround.js
+  - /assets/js/lookshoot.js
+---
+{#
+  look-shoot.njk
+  ----------------
+  A helper for taking the 35 photos for the look-around About page with a
+  webcam. A dot lights up in each of 7 x 5 positions on the screen; you
+  look at it, and a photo is taken. At the end you can preview the effect
+  right here and download all the photos as one zip, already named the way
+  the About page expects (look-0-0.jpg ... look-6-4.jpg).
+
+  Everything happens in your browser: the photos are never uploaded
+  anywhere. Behaviour is in assets/js/lookshoot.js.
+#}
+
+<div class="shoot" data-shoot data-cols="7" data-rows="5">
+
+  <div class="shoot__intro" data-intro>
+    <h1>Photo shoot helper</h1>
+    <video class="shoot__video-big" data-video-big muted playsinline hidden></video>
+    <ol>
+      <li>Sit about an arm's length from the screen, with even light on your face and the camera at eye level.</li>
+      <li>Turn on the camera and check you are centred.</li>
+      <li>A dot lights up and shrinks. Turn your head (not only your eyes) so your nose points at it. The photo is taken when it is smallest.</li>
+      <li>Keep your shoulders still. It takes about a minute. Space pauses, Backspace redoes the last dot, Esc stops.</li>
+    </ol>
+    <p data-message></p>
+    <div class="shoot__buttons">
+      <button class="shoot__button" type="button" data-camera>Turn on camera</button>
+      <button class="shoot__button" type="button" data-start hidden>Start the photos</button>
+    </div>
+    <p>Your photos stay in your browser. Nothing is uploaded.</p>
+  </div>
+
+  <div class="shoot__grid" data-grid aria-hidden="true"></div>
+  <video class="shoot__video" data-video muted playsinline></video>
+  <div class="shoot__hud"><span data-status></span><span data-progress></span></div>
+  <div class="shoot__flash" data-flash></div>
+
+  <div class="shoot__done" data-done hidden>
+    <h2>All photos taken</h2>
+    <p>Preview how it moves, then download the photos. Unzip them and put all of them in <code>src/assets/img/look/</code> in your project.</p>
+    <div class="shoot__buttons">
+      <button class="shoot__button" type="button" data-preview>Preview the effect</button>
+      <button class="shoot__button" type="button" data-download>Download photos (zip)</button>
+      <button class="shoot__button shoot__button--ghost" type="button" data-retake>Start over</button>
+    </div>
+  </div>
+
+  <section class="look shoot__preview" data-look-stage data-manual data-cols="7" data-rows="5" hidden>
+    <canvas class="look__canvas" aria-hidden="true"></canvas>
+    <button class="shoot__button shoot__button--ghost shoot__close" type="button" data-close-preview>Close preview</button>
+  </section>
+
+</div>
