@@ -16,5 +16,17 @@ gallery:
   - /assets/img/uploads/garage.png
   - /assets/img/uploads/sun palms.png
   - /assets/img/uploads/birds 1.png
-row_layout: '1,2,1,2,1'
+  - /assets/img/uploads/draft10.jpg
+  - /assets/img/uploads/draft13.jpg
+  - /assets/img/uploads/draft14.jpg
+  - /assets/img/uploads/draft17.jpg
+  - /assets/img/uploads/draft18.jpg
+  - /assets/img/uploads/draft19.jpg
+  - /assets/img/uploads/draft20.jpg
+  - /assets/img/uploads/draft21.jpg
+  - /assets/img/uploads/draft22.jpg
+  - /assets/img/uploads/draft4.jpg
+  - /assets/img/uploads/draft8.jpg
+  - /assets/img/uploads/draft9.jpg
+row_layout: '1,2,1,2,1,3,3,3,3'
 ---
