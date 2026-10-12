@@ -10,7 +10,6 @@ description: |-
 cover: ''
 gallery:
   - /assets/img/uploads/home s.mov
-  - blob:https://junedmto.github.io/a783bbb8-c37a-43ed-92d8-a307c426b25d
-  - blob:https://junedmto.github.io/6da5af83-3816-47d7-82f1-2ba257a76bde
+  - /assets/img/uploads/crew s-1.mov
 row_layout: ''
 ---
