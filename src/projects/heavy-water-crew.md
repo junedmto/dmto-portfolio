@@ -11,5 +11,6 @@ cover: ''
 gallery:
   - /assets/img/uploads/home s.mov
   - /assets/img/uploads/crew s-1.mov
+  - /assets/img/uploads/alemao s-1.mov
 row_layout: ''
 ---
