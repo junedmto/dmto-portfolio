@@ -47,7 +47,8 @@ jobs:
         # paths correctly. ONCE YOUR CUSTOM DOMAIN IS CONNECTED (see the
         # README), a custom domain serves the site at its own root, so
         # delete the --pathprefix flag below and use: run: npm run build
-        run: npx eleventy --pathprefix=/dmto-portfolio/
+        # run: npx eleventy --pathprefix=/dmto-portfolio/
+        run: npm run build
 
       - name: Upload build output
         uses: actions/upload-pages-artifact@v3
