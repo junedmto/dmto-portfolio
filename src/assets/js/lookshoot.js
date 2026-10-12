@@ -80,14 +80,40 @@
     video.srcObject = stream;
     bigVideo.hidden = false;
     await Promise.all([bigVideo.play(), video.play()]);
+    keepPlaying(video);
     cameraButton.hidden = true;
     startButton.hidden = false;
   });
 
+  // Browsers sometimes pause a camera video on their own (for example when
+  // another video showing the same camera is hidden). A paused video keeps
+  // showing one frozen picture, which would make every photo identical, so
+  // restart it whenever that happens.
+  function keepPlaying(element) {
+    element.addEventListener("pause", () => {
+      if (stream && !stopped) element.play().catch(() => {});
+    });
+  }
+
   // -- Taking a photo ------------------------------------------------------------
   const photos = new Map(); // "look-6-0.jpg" -> Blob
 
-  function capture() {
+  // Waits until the camera has delivered a new frame, so a photo is never a
+  // stale picture from earlier.
+  function freshFrame() {
+    return new Promise((resolve) => {
+      const timer = setTimeout(resolve, 400);
+      if ("requestVideoFrameCallback" in video) {
+        video.requestVideoFrameCallback(() => { clearTimeout(timer); resolve(); });
+      } else {
+        setTimeout(() => { clearTimeout(timer); resolve(); }, 80);
+      }
+    });
+  }
+
+  async function capture() {
+    if (video.paused) await video.play().catch(() => {});
+    await freshFrame();
     const scale = Math.min(1, 1600 / video.videoWidth);
     const canvas = document.createElement("canvas");
     canvas.width = Math.round(video.videoWidth * scale);
@@ -120,7 +146,10 @@
   }
 
   async function shoot() {
+    // Let go of the big preview, so the small one is the only camera view.
+    bigVideo.srcObject = null;
     intro.hidden = true;
+    if (video.paused) await video.play().catch(() => {});
     root.classList.add("is-shooting");
 
     // Short run-up: look at the middle dot while it counts down.
