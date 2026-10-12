@@ -16,7 +16,7 @@ extraJs:
   look-shoot.njk
   ----------------
   A helper for taking the 35 photos for the look-around About page with a
-  webcam. A dot lights up in each of 7 x 5 positions on the screen; you
+  webcam. A dot lights up in each of a grid of positions on the screen; you
   look at it, and a photo is taken. At the end you can preview the effect
   right here and download all the photos as one zip, already named the way
   the About page expects (look-0-0.jpg ... look-6-4.jpg).
@@ -25,7 +25,7 @@ extraJs:
   anywhere. Behaviour is in assets/js/lookshoot.js.
 #}
 
-<div class="shoot" data-shoot data-cols="7" data-rows="5">
+<div class="shoot" data-shoot>
 
   <div class="shoot__intro" data-intro>
     <h1>Photo shoot helper</h1>
@@ -36,6 +36,12 @@ extraJs:
       <li>A dot lights up and shrinks. Turn your head (not only your eyes) so your nose points at it. The photo is taken when it is smallest.</li>
       <li>Keep your shoulders still. It takes about a minute. Space pauses, Backspace redoes the last dot, Esc stops.</li>
     </ol>
+    <fieldset class="shoot__sizes" data-sizes>
+      <legend>How many photos?</legend>
+      <label><input type="radio" name="size" value="7x5" data-hold="1600" checked> Quick: 35 photos, about 1 minute</label>
+      <label><input type="radio" name="size" value="13x7" data-hold="1100"> Smooth: 91 photos, about 2 minutes</label>
+      <label><input type="radio" name="size" value="17x9" data-hold="1000"> Extra smooth: 153 photos, about 3 minutes</label>
+    </fieldset>
     <p data-message></p>
     <div class="shoot__buttons">
       <button class="shoot__button" type="button" data-camera>Turn on camera</button>
@@ -45,7 +51,7 @@ extraJs:
   </div>
 
   <div class="shoot__grid" data-grid aria-hidden="true"></div>
-  <video class="shoot__video" data-video muted playsinline></video>
+  <video class="shoot__video" data-cam muted playsinline></video>
   <div class="shoot__hud"><span data-status></span><span data-progress></span></div>
   <div class="shoot__flash" data-flash></div>
 
@@ -59,7 +65,7 @@ extraJs:
     </div>
   </div>
 
-  <section class="look shoot__preview" data-look-stage data-manual data-cols="7" data-rows="5" hidden>
+  <section class="look shoot__preview" data-look-stage data-manual hidden>
     <canvas class="look__canvas" aria-hidden="true"></canvas>
     <button class="shoot__button shoot__button--ghost shoot__close" type="button" data-close-preview>Close preview</button>
   </section>

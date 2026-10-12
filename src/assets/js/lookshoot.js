@@ -1,6 +1,6 @@
 // lookshoot.js
 // --------------
-// Powers /look-shoot/, the helper for taking the 7 x 5 portrait photos with
+// Powers /look-shoot/, the helper for taking the grid of portrait photos with
 // a webcam. It lights up one dot at a time, takes a photo as you look at
 // it, then offers a preview (using the same code as the About page) and a
 // zip of all the photos to download.
@@ -17,17 +17,19 @@
   const root = document.querySelector("[data-shoot]");
   if (!root) return;
 
-  const COLS = Number(root.dataset.cols);
-  const ROWS = Number(root.dataset.rows);
+  // The grid size and the time per dot come from the option picked on the
+  // intro screen (more photos = smoother, but a longer shoot).
+  let COLS = 7;
+  let ROWS = 5;
   const params = new URLSearchParams(location.search);
-  const HOLD = params.get("fast") === "1" ? 150 : 1600; // ms each dot pulses before its photo
-  root.style.setProperty("--hold", HOLD + "ms");
+  const FAST = params.get("fast") === "1";
+  let HOLD = 1600; // ms each dot pulses before its photo
 
   const $ = (selector) => root.querySelector(selector);
   const intro = $("[data-intro]");
   const message = $("[data-message]");
   const bigVideo = $("[data-video-big]");
-  const video = $("[data-video]");
+  const video = $("[data-cam]");
   const grid = $("[data-grid]");
   const status = $("[data-status]");
   const progress = $("[data-progress]");
@@ -40,25 +42,38 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // -- The grid of dots ------------------------------------------------------
-  const dots = [];
-  for (let r = 0; r < ROWS; r++) {
-    dots.push([]);
-    for (let c = 0; c < COLS; c++) {
-      const dot = document.createElement("span");
-      dot.className = "shoot__dot";
-      dot.style.left = 7 + c * (86 / (COLS - 1)) + "%";
-      dot.style.top = 17 + r * (73 / (ROWS - 1)) + "%";
-      grid.appendChild(dot);
-      dots[r].push(dot);
-    }
-  }
+  let dots = [];
+  let order = [];
 
-  // Order: row by row, snaking left-right then right-left, so the head
-  // never has to jump across the whole screen between photos.
-  const order = [];
-  for (let r = 0; r < ROWS; r++) {
-    for (let i = 0; i < COLS; i++) {
-      order.push([r % 2 === 0 ? i : COLS - 1 - i, r]);
+  function buildGrid() {
+    const choice = root.querySelector('input[name="size"]:checked');
+    const [cols, rows] = choice.value.split("x").map(Number);
+    COLS = cols;
+    ROWS = rows;
+    HOLD = FAST ? 150 : Number(choice.dataset.hold);
+    root.style.setProperty("--hold", HOLD + "ms");
+
+    grid.innerHTML = "";
+    dots = [];
+    for (let r = 0; r < ROWS; r++) {
+      dots.push([]);
+      for (let c = 0; c < COLS; c++) {
+        const dot = document.createElement("span");
+        dot.className = "shoot__dot";
+        dot.style.left = 7 + c * (86 / (COLS - 1)) + "%";
+        dot.style.top = 17 + r * (73 / (ROWS - 1)) + "%";
+        grid.appendChild(dot);
+        dots[r].push(dot);
+      }
+    }
+
+    // Order: row by row, snaking left-right then right-left, so the head
+    // never has to jump across the whole screen between photos.
+    order = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let i = 0; i < COLS; i++) {
+        order.push([r % 2 === 0 ? i : COLS - 1 - i, r]);
+      }
     }
   }
 
@@ -146,6 +161,7 @@
   }
 
   async function shoot() {
+    buildGrid();
     // Let go of the big preview, so the small one is the only camera view.
     bigVideo.srcObject = null;
     intro.hidden = true;

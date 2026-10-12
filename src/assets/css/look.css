@@ -128,6 +128,28 @@
   line-height: 1.5;
 }
 
+.shoot__sizes {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-image);
+  text-align: left;
+}
+
+.shoot__sizes legend {
+  padding: 0 0.4rem;
+  font-weight: 600;
+}
+
+.shoot__sizes label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  cursor: pointer;
+}
+
 .shoot__buttons {
   display: flex;
   flex-wrap: wrap;

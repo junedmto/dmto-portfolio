@@ -12,6 +12,8 @@
 //
 // Adding ?debug=1 to the page address shows which photos are in use;
 // ?flipx=1 / ?flipy=1 mirror the direction if your photos turned out reversed.
+// ?mode=nearest shows the single closest photo with a quick fade, instead of
+// blending four (best with a dense grid of photos).
 
 (function () {
   "use strict";
@@ -22,7 +24,9 @@
   const WORD_EASE = 12;     // how quickly words react to the pointer
   const IDLE_MS = 2500;     // with no pointer around for this long, the head wanders by itself
   const FOCUS_Y = 0.4;      // which part of the photo stays visible when it has to be cropped to fit (0 = top, 1 = bottom)
-  const SMOOTH_BLEND = true; // ease the blend between photos so each one is "clean" for longer (less ghosting)
+  const MODE = "blend";     // "blend" mixes the four nearest photos by position; "nearest" shows the single closest photo and quickly fades when it changes (try it with ?mode=nearest). Nearest looks best with a dense grid.
+  const FADE_MS = 110;      // nearest mode: how long the fade between two photos lasts
+  const SMOOTH_BLEND = true; // blend mode: ease the mix so each photo is "clean" for longer (less ghosting)
   const WORD_RADIUS = 0.28; // how close the pointer must get to wake a word (share of the window's shorter side)
 
   const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
@@ -39,6 +43,7 @@
     const params = new URLSearchParams(location.search);
     const flipX = params.get("flipx") === "1";
     const flipY = params.get("flipy") === "1";
+    const mode = params.get("mode") || MODE;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // -- Loading the photos -------------------------------------------------
@@ -245,6 +250,47 @@
       dirty = false;
     }
 
+    // Nearest mode: show the closest photo only. When the closest photo
+    // changes, fade to the new one over a very short time, so a ghost is only
+    // on screen for a moment instead of whenever the head is between photos.
+    let node = null;        // grid spot currently chosen
+    let shownImg = null;    // photo fully visible
+    let incomingImg = null; // photo fading in
+    let fadeStart = 0;
+
+    function drawNearest(now) {
+      const gx = state.u * (cols - 1);
+      const gy = state.v * (rows - 1);
+      // Hysteresis: only move to a new spot once clearly past the halfway
+      // line, so the picture doesn't flicker when the pointer rests between two.
+      if (!node || Math.abs(gx - node.c) > 0.62 || Math.abs(gy - node.r) > 0.62 || dirty) {
+        const c = clamp(Math.round(gx), 0, cols - 1);
+        const r = clamp(Math.round(gy), 0, rows - 1);
+        const img = frameFor(c, r);
+        node = { c, r };
+        if (img && img !== (incomingImg || shownImg)) {
+          if (!shownImg) {
+            shownImg = img;
+          } else {
+            if (incomingImg) shownImg = incomingImg; // a fade was running: take it as done
+            incomingImg = img;
+            fadeStart = now;
+          }
+        }
+      }
+      if (!shownImg) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawCover(shownImg);
+      if (incomingImg) {
+        const a = smoothstep((now - fadeStart) / FADE_MS);
+        ctx.globalAlpha = a;
+        drawCover(incomingImg);
+        ctx.globalAlpha = 1;
+        if (a >= 1) { shownImg = incomingImg; incomingImg = null; }
+      }
+      dirty = false;
+    }
+
     // -- Debug read-out -----------------------------------------------------------
     let debugEl = null;
     if (params.get("debug") === "1") {
@@ -298,7 +344,12 @@
       state.wx += (pointerX - state.wx) * kw;
       state.wy += (pointerY - state.wy) * kw;
 
-      if (dirty || Math.abs(state.u - drawnU) > 0.0002 || Math.abs(state.v - drawnV) > 0.0002) {
+      if (mode === "nearest") {
+        if (loaded.size && (dirty || incomingImg || Math.abs(state.u - drawnU) > 0.0002 || Math.abs(state.v - drawnV) > 0.0002)) {
+          drawNearest(now);
+          drawnU = state.u; drawnV = state.v;
+        }
+      } else if (dirty || Math.abs(state.u - drawnU) > 0.0002 || Math.abs(state.v - drawnV) > 0.0002) {
         if (loaded.size) draw();
       }
 
@@ -329,7 +380,7 @@
         debugEl.textContent =
           "photos " + loaded.size + "/" + options.frames.length +
           "  look " + (state.u * (cols - 1)).toFixed(2) + ", " + (state.v * (rows - 1)).toFixed(2) +
-          (wandering ? "  (wandering)" : "");
+          "  mode " + mode + (wandering ? "  (wandering)" : "");
       }
     }
 
