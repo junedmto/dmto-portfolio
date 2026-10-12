@@ -30,7 +30,7 @@
 
   <link rel="icon" href="{{ '/favicon.svg' | url }}" type="image/svg+xml">
 
-  <!-- Poppins carries the "dmto." wordmark and headings, Inter carries
+  <!-- Poppins carries the text wordmark and headings, Inter carries
        everything meant to be read (nav, body copy, UI text). -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,18 +41,16 @@
 <body>
 
   <header class="site-nav">
-    <div class="wrap site-nav__row">
-      <nav class="site-nav__side site-nav__side--left">
-        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
-      </nav>
+    <div class="site-nav__row">
       <a class="site-nav__brand" href="{{ '/' | url }}">
         {% if hasLogo %}
         <img src="{{ site.logo | url }}" alt="{{ site.name }}" class="site-nav__logo">
         {% else %}
-        {{ site.name }}.
+        {{ site.name }}
         {% endif %}
       </a>
-      <nav class="site-nav__side site-nav__side--right">
+      <nav class="site-nav__links">
+        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
         <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>Contact</a>
       </nav>
     </div>
@@ -64,7 +62,7 @@
 
   <footer class="site-footer">
     <div class="wrap">
-      <span>{{ site.name }}. {{ currentYear }}</span>
+      <span>{{ site.name }} · {{ currentYear }}</span>
       <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>
     </div>
   </footer>

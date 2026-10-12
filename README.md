@@ -1,4 +1,4 @@
-# dmto portfolio
+# Department of Making portfolio
 
 A static site (built with [Eleventy](https://www.11ty.dev/)) with a built-in
 admin panel ([Sveltia CMS](https://github.com/sveltia/sveltia-cms)) at

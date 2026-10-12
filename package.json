@@ -2,7 +2,7 @@
   "name": "dmto-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "DMTO portfolio site — static site built with Eleventy, edited through Sveltia CMS.",
+  "description": "Department of Making portfolio site — static site built with Eleventy, edited through Sveltia CMS.",
   "scripts": {
     "start": "eleventy --serve",
     "build": "eleventy"
