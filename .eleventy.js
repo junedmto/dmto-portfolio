@@ -51,6 +51,18 @@ module.exports = function (eleventyConfig) {
     return fs.existsSync(diskPath);
   });
 
+  // Makes {{ navImages.about }} and {{ navImages.contact }} available in any
+  // template. Each is true only if a real file exists at the path set in
+  // src/_data/site.json ("nav_about" / "nav_contact"). The header then shows
+  // your drawn "About" / "Contact" images, and falls back to plain text for
+  // any that haven't been added yet.
+  eleventyConfig.addGlobalData("navImages", () => {
+    const site = require("./src/_data/site.json");
+    const exists = (file) =>
+      Boolean(file) && fs.existsSync(path.join(__dirname, "src", file.replace(/^\//, "")));
+    return { about: exists(site.nav_about), contact: exists(site.nav_contact) };
+  });
+
   // aspectRatio: given an image path as stored by the CMS (e.g.
   // "/assets/img/uploads/photo.jpg"), reads the actual file on disk and
   // returns its width divided by its height.

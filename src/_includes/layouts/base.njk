@@ -55,8 +55,14 @@
         {% endif %}
       </a>
       <nav class="site-nav__links">
-        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
-        <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>Contact</a>
+        {# Each menu item is an image if its file exists (see "nav_about" and
+           "nav_contact" in src/_data/site.json), otherwise plain text. #}
+        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>
+          {% if navImages.about %}<img src="{{ site.nav_about | url }}" alt="About" class="site-nav__link-img">{% else %}About{% endif %}
+        </a>
+        <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>
+          {% if navImages.contact %}<img src="{{ site.nav_contact | url }}" alt="Contact" class="site-nav__link-img">{% else %}Contact{% endif %}
+        </a>
       </nav>
     </div>
   </header>

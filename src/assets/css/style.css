@@ -191,6 +191,25 @@ p {
   font-weight: 700;
 }
 
+/* Menu items drawn as images. Adjust --link-height to make them bigger or
+   smaller. The current page gets an underline, since an image can't go bold. */
+.site-nav__link-img {
+  --link-height: 1.6rem;
+  display: block;
+  height: var(--link-height);
+  width: auto;
+  transition: opacity 0.2s ease;
+}
+
+.site-nav__links a:hover .site-nav__link-img {
+  opacity: 0.6;
+}
+
+.site-nav__links a[aria-current="page"]:has(.site-nav__link-img) {
+  border-bottom: 2px solid var(--color-ink);
+  padding-bottom: 0.2rem;
+}
+
 main {
   min-height: 60vh;
 }
@@ -684,6 +703,10 @@ main {
 
   .site-nav__links a {
     font-size: var(--step-0);
+  }
+
+  .site-nav__link-img {
+    --link-height: 1.2rem;
   }
 
   /* On a narrow screen, justified rows would squeeze images down to
