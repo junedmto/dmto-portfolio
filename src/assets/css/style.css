@@ -144,7 +144,13 @@ p {
   position: sticky;
   top: 0;
   z-index: 5; /* above the page, below the full-screen image viewer */
-  background: var(--color-paper);
+  /* Transparent header. Everything in it is drawn white and blended with
+     "difference", so it shows the inverse of whatever is behind it: black on
+     the white page, light over dark photos, and so on. */
+  background: transparent;
+  mix-blend-mode: difference;
+  color: #fff;
+  pointer-events: none; /* clicks pass through the empty parts */
   /* One height shared by the logo and the menu images. Change it here. */
   --header-img-height: 2.75rem;
   /* Header height: increase the padding for a taller header. */
@@ -165,15 +171,17 @@ p {
   font-size: var(--step-3);
   letter-spacing: -0.01em;
   text-decoration: none;
-  color: var(--color-ink);
+  color: #fff;
   display: flex;
   align-items: center;
+  pointer-events: auto;
 }
 
 /* Adjust --logo-height to make the logo bigger or smaller. */
 .site-nav__logo {
   height: var(--header-img-height);
   width: auto;
+  filter: brightness(0) invert(1); /* any logo colour becomes white */
 }
 
 .site-nav__links {
@@ -186,7 +194,8 @@ p {
   text-decoration: none;
   font-size: var(--step-1);
   font-weight: 500;
-  color: var(--color-ink);
+  color: #fff;
+  pointer-events: auto;
 }
 
 .site-nav__links a[aria-current="page"] {
@@ -199,6 +208,7 @@ p {
   display: block;
   height: var(--header-img-height);
   width: auto;
+  filter: brightness(0) invert(1); /* any colour becomes white */
   transition: opacity 0.2s ease;
 }
 
@@ -207,7 +217,7 @@ p {
 }
 
 .site-nav__links a[aria-current="page"]:has(.site-nav__link-img) {
-  border-bottom: 2px solid var(--color-ink);
+  border-bottom: 2px solid #fff;
   padding-bottom: 0.2rem;
 }
 
