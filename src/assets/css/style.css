@@ -162,7 +162,9 @@ p {
   justify-content: space-between;
   align-items: center;
   gap: var(--space-3);
-  padding: 0 var(--page-inset);
+  /* Side margin: the header sits further in than the galleries. Increase
+     the extra amount (2rem) to push it further in. */
+  padding: 0 calc(var(--page-inset) + 2rem);
 }
 
 .site-nav__brand {
@@ -175,6 +177,11 @@ p {
   display: flex;
   align-items: center;
   pointer-events: auto;
+  transition: transform 0.2s ease;
+}
+
+.site-nav__brand:hover {
+  transform: scale(1.06);
 }
 
 /* Adjust --logo-height to make the logo bigger or smaller. */
@@ -196,6 +203,11 @@ p {
   font-weight: 500;
   color: #fff;
   pointer-events: auto;
+  transition: transform 0.2s ease;
+}
+
+.site-nav__links a:hover {
+  transform: scale(1.1);
 }
 
 .site-nav__links a[aria-current="page"] {
@@ -210,10 +222,6 @@ p {
   width: auto;
   filter: brightness(0) invert(1); /* any colour becomes white */
   transition: opacity 0.2s ease;
-}
-
-.site-nav__links a:hover .site-nav__link-img {
-  opacity: 0.6;
 }
 
 .site-nav__links a[aria-current="page"]:has(.site-nav__link-img) {
