@@ -145,7 +145,10 @@ p {
   top: 0;
   z-index: 5; /* above the page, below the full-screen image viewer */
   background: var(--color-paper);
-  padding: var(--space-2) 0;
+  /* One height shared by the logo and the menu images. Change it here. */
+  --header-img-height: 2.75rem;
+  /* Header height: increase the padding for a taller header. */
+  padding: var(--space-3) 0;
 }
 
 .site-nav__row {
@@ -169,8 +172,7 @@ p {
 
 /* Adjust --logo-height to make the logo bigger or smaller. */
 .site-nav__logo {
-  --logo-height: 2.75rem;
-  height: var(--logo-height);
+  height: var(--header-img-height);
   width: auto;
 }
 
@@ -194,9 +196,8 @@ p {
 /* Menu items drawn as images. Adjust --link-height to make them bigger or
    smaller. The current page gets an underline, since an image can't go bold. */
 .site-nav__link-img {
-  --link-height: 1.6rem;
   display: block;
-  height: var(--link-height);
+  height: var(--header-img-height);
   width: auto;
   transition: opacity 0.2s ease;
 }
@@ -693,8 +694,9 @@ main {
     font-size: var(--step-1);
   }
 
-  .site-nav__logo {
-    --logo-height: 1.75rem;
+  .site-nav {
+    --header-img-height: 1.75rem;
+    padding: var(--space-3) 0;
   }
 
   .site-nav__links {
@@ -703,10 +705,6 @@ main {
 
   .site-nav__links a {
     font-size: var(--step-0);
-  }
-
-  .site-nav__link-img {
-    --link-height: 1.2rem;
   }
 
   /* On a narrow screen, justified rows would squeeze images down to
