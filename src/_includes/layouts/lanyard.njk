@@ -13,7 +13,10 @@ layout: layouts/base.njk
     - The card itself: assets/js/lanyard.bundle.js reads the data-* settings
       on the [data-lanyard] element below. Change them here to restyle it.
         data-front        photo on the front of the card
-        data-back         image on the back (click or throw the card to flip it)
+        data-back         image on the back (click or throw the card to flip it).
+                          Upload your own as src/assets/img/lanyard/card-back.svg
+        data-back-color   colour behind the back image (white by default)
+        data-back-fit     "contain" (whole image shown) or "cover" (fills the card)
         data-strap        image printed along the strap
         data-card-color   card colour behind the photo
         data-fit          "cover" (fills the card) or "contain" (whole photo)
@@ -33,12 +36,25 @@ layout: layouts/base.njk
     <div class="lany__bio">
       {{ aboutPage.html | safe }}
     </div>
+
+    {% if data.education and data.education.length %}
+    <div class="lany__block">
+      <h2>Education</h2>
+      <ul class="lany__list">
+        {% for item in data.education %}
+        <li>{{ item.school }} | {{ item.degree }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
   </section>
 
   <div class="lany__stage"
        data-lanyard
        {% if data.photo %}data-front="{{ data.photo | url }}"{% endif %}
-       data-back="{{ '/assets/img/lanyard/card-back.png' | url }}"
+       data-back="{{ lanyardBack | url }}"
+       data-back-color="#ffffff"
+       data-back-fit="contain"
        data-strap="{{ '/assets/img/lanyard/strap.png' | url }}"
        data-card-color="#ffffff"
        data-fit="cover"
@@ -48,12 +64,12 @@ layout: layouts/base.njk
        aria-label="A hanging name card. Drag it to swing it."></div>
 
   <section class="lany__text lany__text--right">
-    {% if data.education and data.education.length %}
+    {% if data.skills and data.skills.length %}
     <div class="lany__block">
-      <h2>Education</h2>
-      <ul class="lany__list">
-        {% for item in data.education %}
-        <li>{{ item.school }} | {{ item.degree }}</li>
+      <h2>Skills</h2>
+      <ul class="lany__list lany__list--tight">
+        {% for skill in data.skills %}
+        <li>{{ skill.skill if skill.skill else skill }}</li>
         {% endfor %}
       </ul>
     </div>
@@ -68,17 +84,6 @@ layout: layouts/base.njk
           {{ item.title }}
           {% if item.url %}<a class="lany__link" href="{{ item.url }}" target="_blank" rel="noopener">{{ item.url }}</a>{% endif %}
         </li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
-
-    {% if data.skills and data.skills.length %}
-    <div class="lany__block">
-      <h2>Skills</h2>
-      <ul class="lany__list lany__list--tight">
-        {% for skill in data.skills %}
-        <li>{{ skill.skill if skill.skill else skill }}</li>
         {% endfor %}
       </ul>
     </div>

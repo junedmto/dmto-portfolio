@@ -706,6 +706,8 @@ const stepSimulation = (sim, dt, physics, time) => {
 const Lanyard = ({
   frontImage,
   backImage,
+  backFit, // added: how the back image fits (defaults to imageFit)
+  backColor, // added: colour behind the back image (defaults to cardColor)
   imageFit = 'cover',
   cardColor = '#ffffff',
   orientation = 'portrait',
@@ -734,6 +736,8 @@ const Lanyard = ({
   settingsRef.current = {
     frontImage,
     backImage,
+    backFit: backFit === 'contain' ? 'contain' : backFit === 'cover' ? 'cover' : undefined,
+    backColor,
     imageFit: imageFit === 'contain' ? 'contain' : 'cover',
     cardColor,
     orientation: orientation === 'landscape' ? 'landscape' : 'portrait',
@@ -898,7 +902,8 @@ const Lanyard = ({
         backTexture.dispose();
       }
       paintFace(frontCanvas, images.front, color, s.imageFit);
-      paintFace(backCanvas, images.back || images.front, color, s.imageFit);
+      const backRgb = parseColor(s.backColor || s.cardColor, [1, 1, 1]);
+      paintFace(backCanvas, images.back || images.front, backRgb, s.backFit || s.imageFit);
       frontTexture.needsUpdate = true;
       backTexture.needsUpdate = true;
       start();
@@ -983,7 +988,7 @@ const Lanyard = ({
           repaintStrap();
         });
       }
-      const faceKey = `${layoutKey}|${s.cardColor}|${s.imageFit}`;
+      const faceKey = `${layoutKey}|${s.cardColor}|${s.imageFit}|${s.backColor}|${s.backFit}`;
       if (faceKey !== applied.faceKey) paintFaces();
       if (s.strapColor !== applied.strapColor) repaintStrap();
 

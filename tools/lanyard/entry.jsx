@@ -12,12 +12,52 @@ import Lanyard from "./Lanyard.jsx";
 const num = (v, fallback) => (v === undefined || v === "" || isNaN(Number(v)) ? fallback : Number(v));
 const bool = (v, fallback) => (v === undefined ? fallback : v !== "false");
 
-document.querySelectorAll("[data-lanyard]").forEach((el) => {
+// An SVG that only has a viewBox (no width/height) has no size of its own, so
+// the browser can't tell how to fit it onto the card. This adds a size to it
+// before it is used, and makes it big enough to stay sharp.
+const sizedSvg = async (url) => {
+  try {
+    const text = await (await fetch(url)).text();
+    const doc = new DOMParser().parseFromString(text, "image/svg+xml");
+    const svg = doc.documentElement;
+    if (svg.nodeName.toLowerCase() !== "svg") return url;
+    let w = parseFloat(svg.getAttribute("width"));
+    let h = parseFloat(svg.getAttribute("height"));
+    const vb = (svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(Number);
+    if (vb.length === 4 && vb[2] > 0 && vb[3] > 0) {
+      if (!svg.getAttribute("viewBox")) svg.setAttribute("viewBox", vb.join(" "));
+      if (!(w > 0 && h > 0)) {
+        w = vb[2];
+        h = vb[3];
+      }
+    } else if (w > 0 && h > 0) {
+      svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    } else {
+      w = 1024;
+      h = 1440;
+      svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    }
+    const scale = 2048 / w;
+    svg.setAttribute("width", String(Math.round(w * scale)));
+    svg.setAttribute("height", String(Math.round(h * scale)));
+    const xml = new XMLSerializer().serializeToString(svg);
+    return URL.createObjectURL(new Blob([xml], { type: "image/svg+xml" }));
+  } catch (error) {
+    return url;
+  }
+};
+
+document.querySelectorAll("[data-lanyard]").forEach(async (el) => {
   const d = el.dataset;
+  const prepare = async (url) => (url && /\.svg(\?|$)/i.test(url) ? sizedSvg(url) : url);
+  const back = await prepare(d.back);
+  const front = await prepare(d.front);
   render(
     <Lanyard
-      frontImage={d.front || undefined}
-      backImage={d.back || undefined}
+      frontImage={front || undefined}
+      backImage={back || undefined}
+      backFit={d.backFit || undefined}
+      backColor={d.backColor || undefined}
       strapImage={d.strap || undefined}
       imageFit={d.fit || "cover"}
       cardColor={d.cardColor || "#ffffff"}
