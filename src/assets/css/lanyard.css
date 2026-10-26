@@ -16,16 +16,40 @@
   line-height: 1.2;
 }
 
+.lany {
+  position: relative;
+}
+
+/* The card's layer covers the whole window edge to edge, so the card can
+   swing anywhere without being cut off. The text sits on top of it. */
 .lany__stage {
-  align-self: stretch;
-  min-height: 34rem;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   /* Lets the page scroll with a finger on the empty parts; the card itself
      is grabbed by the script. */
   touch-action: pan-y;
 }
 
 .lany__text {
+  position: relative;
+  z-index: 1;
   min-width: 0;
+  /* Clicks on the text fall through to the card layer, so the card can be
+     grabbed from anywhere. Links still work. */
+  pointer-events: none;
+}
+
+.lany__text a {
+  pointer-events: auto;
+}
+
+.lany__text--left {
+  grid-column: 1;
+}
+
+.lany__text--right {
+  grid-column: 3;
 }
 
 .lany__bio p {
@@ -76,9 +100,19 @@
     min-height: 0;
   }
 
+  /* On a phone the card sits above the text instead of behind it. */
   .lany__stage {
+    position: relative;
+    inset: auto;
     order: -1;
-    min-height: 0;
     height: 75svh;
+    margin: 0 calc(-1 * var(--page-inset));
+  }
+
+  .lany__text,
+  .lany__text--left,
+  .lany__text--right {
+    grid-column: 1;
+    pointer-events: auto;
   }
 }

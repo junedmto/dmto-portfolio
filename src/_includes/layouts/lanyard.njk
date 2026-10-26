@@ -23,8 +23,7 @@ layout: layouts/base.njk
         data-gravity, data-damping, data-elasticity, data-breeze
                           how heavy, swingy and windy it feels (0 to 1)
 #}
-{% set about = collections.aboutPage[0] %}
-{% set data = about.data %}
+{% set data = aboutPage.data %}
 
 <h1 class="visually-hidden">{{ title }}</h1>
 
@@ -32,7 +31,7 @@ layout: layouts/base.njk
 
   <section class="lany__text lany__text--left">
     <div class="lany__bio">
-      {{ about.templateContent | safe }}
+      {{ aboutPage.html | safe }}
     </div>
   </section>
 
