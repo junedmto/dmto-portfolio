@@ -24,9 +24,9 @@
   position: relative;
   z-index: 1;
   width: min(36vw, 38rem);
-  /* Starts partway down so the first words are still faint, and leaves room
-     at the end so the last lines can scroll up. */
-  padding: 38svh 0 45svh;
+  /* Starts right under the header, and leaves room at the end
+     so the last lines can scroll up. */
+  padding: 1.5rem 0 45svh;
   /* Clicks on the text fall through to the card layer, so the card can be
      grabbed from anywhere. Links still work. */
   pointer-events: none;

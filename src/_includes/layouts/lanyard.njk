@@ -29,6 +29,7 @@ layout: layouts/base.njk
         data-card-color   card colour behind the photo
         data-fit          "cover" (fills the card) or "contain" (whole photo)
         data-finish       glossy | matte | holographic | metallic
+        data-anchor       where it hangs across the window: 0 = far left, 0.5 = middle, 1 = far right
         data-size         card size (0.6 is the default)
         data-strap-length how far the card hangs (0 to 1)
         data-gravity, data-damping, data-elasticity, data-breeze
@@ -55,8 +56,9 @@ layout: layouts/base.njk
        data-card-color="#ffffff"
        data-fit="cover"
        data-finish="glossy"
+       data-anchor="0.58"
        data-size="0.55"
-       data-strap-length="0.5"
+       data-strap-length="0.25"
        aria-label="A hanging name card. Drag it to swing it."></div>
 
   <section class="lany__text">

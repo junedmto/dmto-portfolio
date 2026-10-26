@@ -36,6 +36,7 @@ document.querySelectorAll("[data-lanyard]").forEach((el) => {
       orientation={d.orientation || "portrait"}
       finish={d.finish || "glossy"}
       metal={d.metal || "silver"}
+      anchor={d.anchor && !isNaN(Number(d.anchor)) ? Number(d.anchor) : d.anchor || "center"}
       size={num(d.size, 0.6)}
       strapLength={num(d.strapLength, 0.5)}
       strapWidth={num(d.strapWidth, 0.65)}
