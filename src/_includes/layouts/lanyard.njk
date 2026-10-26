@@ -1,0 +1,89 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/lanyard.njk
+  -------------------
+  The lanyard About page: a hanging card you can drag and throw, with the
+  bio on one side and the details on the other.
+
+  Where things come from:
+    - Text and photo: the real About page (src/about.md), edited from
+      /admin -> Pages -> About. Nothing is duplicated.
+    - The card itself: assets/js/lanyard.bundle.js reads the data-* settings
+      on the [data-lanyard] element below. Change them here to restyle it.
+        data-front        photo on the front of the card
+        data-back         image on the back (click or throw the card to flip it)
+        data-strap        image printed along the strap
+        data-card-color   card colour behind the photo
+        data-fit          "cover" (fills the card) or "contain" (whole photo)
+        data-finish       glossy | matte | holographic | metallic
+        data-size         card size (0.6 is the default)
+        data-strap-length how far the card hangs (0 to 1)
+        data-gravity, data-damping, data-elasticity, data-breeze
+                          how heavy, swingy and windy it feels (0 to 1)
+#}
+{% set about = collections.aboutPage[0] %}
+{% set data = about.data %}
+
+<h1 class="visually-hidden">{{ title }}</h1>
+
+<div class="lany">
+
+  <section class="lany__text lany__text--left">
+    <div class="lany__bio">
+      {{ about.templateContent | safe }}
+    </div>
+  </section>
+
+  <div class="lany__stage"
+       data-lanyard
+       {% if data.photo %}data-front="{{ data.photo | url }}"{% endif %}
+       data-back="{{ '/assets/img/lanyard/card-back.png' | url }}"
+       data-strap="{{ '/assets/img/lanyard/strap.png' | url }}"
+       data-card-color="#ffffff"
+       data-fit="cover"
+       data-finish="glossy"
+       data-size="0.55"
+       data-strap-length="0.5"
+       aria-label="A hanging name card. Drag it to swing it."></div>
+
+  <section class="lany__text lany__text--right">
+    {% if data.education and data.education.length %}
+    <div class="lany__block">
+      <h2>Education</h2>
+      <ul class="lany__list">
+        {% for item in data.education %}
+        <li>{{ item.school }} | {{ item.degree }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if data.publications and data.publications.length %}
+    <div class="lany__block">
+      <h2>Publications</h2>
+      <ul class="lany__list">
+        {% for item in data.publications %}
+        <li>
+          {{ item.title }}
+          {% if item.url %}<a class="lany__link" href="{{ item.url }}" target="_blank" rel="noopener">{{ item.url }}</a>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if data.skills and data.skills.length %}
+    <div class="lany__block">
+      <h2>Skills</h2>
+      <ul class="lany__list lany__list--tight">
+        {% for skill in data.skills %}
+        <li>{{ skill.skill if skill.skill else skill }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </section>
+
+</div>

@@ -2,13 +2,17 @@
   "name": "dmto-portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Department of Making portfolio site — static site built with Eleventy, edited through Sveltia CMS.",
+  "description": "Department of Making portfolio site \u2014 static site built with Eleventy, edited through Sveltia CMS.",
   "scripts": {
     "start": "eleventy --serve",
-    "build": "eleventy"
+    "build": "eleventy",
+    "build:lanyard": "esbuild tools/lanyard/entry.jsx --bundle --minify --format=iife --jsx=automatic --jsx-import-source=preact --alias:react=preact/compat --alias:react-dom=preact/compat --outfile=src/assets/js/lanyard.bundle.js"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.6"
+    "@11ty/eleventy": "^3.1.6",
+    "esbuild": "^0.28.2",
+    "preact": "^11.0.2",
+    "three": "^0.186.1"
   },
   "dependencies": {
     "ffprobe-static": "^3.1.0",
