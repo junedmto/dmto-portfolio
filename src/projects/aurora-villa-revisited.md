@@ -25,6 +25,6 @@ gallery:
   - /assets/img/uploads/Spa2.png
   - /assets/img/uploads/TerraceL.png
   - /assets/img/uploads/TV Room Enhance.png
-row_layout: '1,2,3,2,3,2,2,2'
+row_layout: '1,2,3,2,3,2,3'
 date: 2026-09-20
 ---
