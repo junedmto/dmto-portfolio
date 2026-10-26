@@ -1,29 +1,17 @@
-/* The lanyard About page (layouts/lanyard.njk). Three columns: bio, the
-   hanging card, then the details. On a phone the card comes first and the
-   text follows underneath. */
-
-.lany {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr);
-  column-gap: var(--space-3);
-  align-items: center;
-  /* The strap hangs from the very top of the window: the page is pulled up
-     under the (see-through) header, which is about 5.75rem tall. */
-  margin-top: -5.75rem;
-  min-height: 100svh;
-  padding: 0 calc(var(--page-inset) + 2rem) var(--space-5);
-  font-size: 1.0625rem;
-  line-height: 1.2;
-}
+/* The lanyard About page (layouts/lanyard.njk).
+   Desktop: the card is a fixed layer behind the page. The bio scrolls up on
+   the left, revealing word by word, while the skills wheel stays put on the
+   right and turns as you scroll. Phone: everything stacks. */
 
 .lany {
   position: relative;
+  padding: 0 calc(var(--page-inset) + 2rem);
 }
 
 /* The card's layer covers the whole window edge to edge, so the card can
-   swing anywhere without being cut off. The text sits on top of it. */
+   swing anywhere without being cut off. */
 .lany__stage {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
   /* Lets the page scroll with a finger on the empty parts; the card itself
@@ -31,10 +19,14 @@
   touch-action: pan-y;
 }
 
+/* ---- Left: bio, then Education and Publications ---- */
 .lany__text {
   position: relative;
   z-index: 1;
-  min-width: 0;
+  width: min(36vw, 38rem);
+  /* Starts partway down so the first words are still faint, and leaves room
+     at the end so the last lines can scroll up. */
+  padding: 38svh 0 45svh;
   /* Clicks on the text fall through to the card layer, so the card can be
      grabbed from anywhere. Links still work. */
   pointer-events: none;
@@ -44,24 +36,39 @@
   pointer-events: auto;
 }
 
-.lany__text--left {
-  grid-column: 1;
-}
-
-.lany__text--right {
-  grid-column: 3;
+.lany__bio {
+  font-size: clamp(1.4rem, 2.2vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
 }
 
 .lany__bio p {
-  margin: 0 0 1.2em;
+  margin: 0 0 1em;
 }
 
-.lany__bio p:first-child {
-  font-weight: 600;
+/* Each word is wrapped by the script so it can fade in on its own. */
+.rv-word {
+  display: inline-block;
+  will-change: opacity, filter;
 }
 
-.lany__block + .lany__block {
-  margin-top: 2.4em;
+.lany__block {
+  margin-top: 4.5rem;
+  font-size: 1.0625rem;
+  line-height: 1.2;
+}
+
+/* Blocks slide up and fade in when they reach the window. */
+.lany-js .lany__block {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.lany-js .lany__block.is-in {
+  opacity: 1;
+  transform: none;
 }
 
 .lany h2 {
@@ -91,28 +98,83 @@
   overflow-wrap: anywhere;
 }
 
+/* ---- Right: skills ---- */
+.lany__skills {
+  position: relative;
+  z-index: 1;
+  font-size: 1.0625rem;
+  line-height: 1.2;
+}
+
+/* The wheel is its own fixed column down the right side. */
+.lany__wheel {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .lany--wheel .lany__skills-title,
+  .lany--wheel .lany__skills-list {
+    /* Hidden from view but still read by screen readers. */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .lany--wheel .lany__wheel {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    /* Lines the names up with the page margin on the right. */
+    right: calc(var(--page-inset) + 2rem - 40px);
+    width: 24rem;
+    z-index: 1;
+  }
+
+  .lany__wheel .option-wheel {
+    cursor: default;
+    touch-action: auto;
+    font-family: var(--font-display);
+  }
+
+  .lany__wheel .option-wheel__item {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}
+
 @media (max-width: 900px) {
   .lany {
-    grid-template-columns: 1fr;
-    row-gap: var(--space-4);
     padding: 0 var(--page-inset) var(--space-5);
     margin-top: -3.75rem; /* the header is shorter on a phone */
-    min-height: 0;
   }
 
   /* On a phone the card sits above the text instead of behind it. */
   .lany__stage {
     position: relative;
     inset: auto;
-    order: -1;
     height: 75svh;
     margin: 0 calc(-1 * var(--page-inset));
   }
 
-  .lany__text,
-  .lany__text--left,
-  .lany__text--right {
-    grid-column: 1;
+  .lany__text {
+    width: auto;
+    padding: var(--space-4) 0 0;
     pointer-events: auto;
+  }
+
+  .lany__bio {
+    font-size: 1.5rem;
+  }
+
+  .lany__skills {
+    margin-top: 4.5rem;
+  }
+
+  .lany-js .lany__block {
+    /* Fine on a phone too, but keep the spacing tighter. */
+    margin-top: 3rem;
   }
 }

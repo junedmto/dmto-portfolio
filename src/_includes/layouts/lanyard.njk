@@ -4,19 +4,27 @@ layout: layouts/base.njk
 {#
   layouts/lanyard.njk
   -------------------
-  The lanyard About page: a hanging card you can drag and throw, with the
-  bio on one side and the details on the other.
+  The lanyard About page.
+
+    - A hanging card you can drag and throw sits behind everything, covering
+      the whole window so it is never cut off.
+    - Left: the bio, which reveals itself word by word as you scroll, with
+      Education and Publications fading in underneath it.
+    - Right: your skills as a wheel that turns as you scroll the page. On a
+      phone it is a plain list instead.
 
   Where things come from:
     - Text and photo: the real About page (src/about.md), edited from
       /admin -> Pages -> About. Nothing is duplicated.
-    - The card itself: assets/js/lanyard.bundle.js reads the data-* settings
-      on the [data-lanyard] element below. Change them here to restyle it.
+    - The card, wheel and scroll effects: assets/js/lanyard.bundle.js reads
+      the data-* settings below. Change them here to restyle.
+
+  Card settings (data-lanyard):
         data-front        photo on the front of the card
         data-back         image on the back (click or throw the card to flip it).
-                          Upload your own as src/assets/img/lanyard/card-back.svg
-        data-back-color   colour behind the back image (white by default)
-        data-back-fit     "contain" (whole image shown) or "cover" (fills the card)
+                          To use your own, replace src/assets/img/lanyard/card-back.png
+                          with a picture in the card's proportions (about 1024 x 1440)
+        data-back-fit     "cover" (fills the card) or "contain" (whole image shown)
         data-strap        image printed along the strap
         data-card-color   card colour behind the photo
         data-fit          "cover" (fills the card) or "contain" (whole photo)
@@ -25,6 +33,11 @@ layout: layouts/base.njk
         data-strap-length how far the card hangs (0 to 1)
         data-gravity, data-damping, data-elasticity, data-breeze
                           how heavy, swingy and windy it feels (0 to 1)
+
+  Wheel settings (data-wheel):
+        data-font-size    text size in rem          data-inset  distance from the edge, px
+        data-curve        how far the curve bends   data-fade   how quickly names fade out
+        data-blur         how blurry far names get  data-active-color / data-text-color
 #}
 {% set data = aboutPage.data %}
 
@@ -32,8 +45,22 @@ layout: layouts/base.njk
 
 <div class="lany">
 
-  <section class="lany__text lany__text--left">
-    <div class="lany__bio">
+  {# The card: a fixed layer over the whole window, behind the text. #}
+  <div class="lany__stage"
+       data-lanyard
+       {% if data.photo %}data-front="{{ data.photo | url }}"{% endif %}
+       data-back="{{ '/assets/img/lanyard/card-back.png' | url }}"
+       data-back-fit="cover"
+       data-strap="{{ '/assets/img/lanyard/strap.png' | url }}"
+       data-card-color="#ffffff"
+       data-fit="cover"
+       data-finish="glossy"
+       data-size="0.55"
+       data-strap-length="0.5"
+       aria-label="A hanging name card. Drag it to swing it."></div>
+
+  <section class="lany__text">
+    <div class="lany__bio" data-reveal>
       {{ aboutPage.html | safe }}
     </div>
 
@@ -43,33 +70,6 @@ layout: layouts/base.njk
       <ul class="lany__list">
         {% for item in data.education %}
         <li>{{ item.school }} | {{ item.degree }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
-  </section>
-
-  <div class="lany__stage"
-       data-lanyard
-       {% if data.photo %}data-front="{{ data.photo | url }}"{% endif %}
-       data-back="{{ lanyardBack | url }}"
-       data-back-color="#ffffff"
-       data-back-fit="contain"
-       data-strap="{{ '/assets/img/lanyard/strap.png' | url }}"
-       data-card-color="#ffffff"
-       data-fit="cover"
-       data-finish="glossy"
-       data-size="0.55"
-       data-strap-length="0.5"
-       aria-label="A hanging name card. Drag it to swing it."></div>
-
-  <section class="lany__text lany__text--right">
-    {% if data.skills and data.skills.length %}
-    <div class="lany__block">
-      <h2>Skills</h2>
-      <ul class="lany__list lany__list--tight">
-        {% for skill in data.skills %}
-        <li>{{ skill.skill if skill.skill else skill }}</li>
         {% endfor %}
       </ul>
     </div>
@@ -89,5 +89,22 @@ layout: layouts/base.njk
     </div>
     {% endif %}
   </section>
+
+  {% if data.skills and data.skills.length %}
+  <aside class="lany__skills">
+    <h2 class="lany__skills-title">Skills</h2>
+    {# The plain list: shown on phones and read by screen readers. On a wide
+       screen the wheel below takes its place and turns as you scroll. #}
+    <ul class="lany__list lany__list--tight lany__skills-list">
+      {% for skill in data.skills %}
+      <li>{{ skill.skill if skill.skill else skill }}</li>
+      {% endfor %}
+    </ul>
+    <div class="lany__wheel" data-wheel
+         data-side="right" data-font-size="2" data-inset="40"
+         data-curve="0.5" data-fade="0.28" data-blur="2.25"
+         data-loop="true" data-active-color="#000000" data-text-color="#515151"></div>
+  </aside>
+  {% endif %}
 
 </div>
