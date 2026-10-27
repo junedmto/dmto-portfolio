@@ -1,0 +1,45 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/playground.njk
+  ----------------------
+  The playground Contact page. Letters and your contact details fall into
+  the window as objects you can grab, throw and pile up. Click the email,
+  phone or Instagram pill to use it; click an empty spot to add a shape.
+
+  Where things come from:
+    - Email, phone, Instagram and the intro text: the real Contact page
+      (src/contact.md), edited from /admin -> Pages -> Contact.
+    - The physics: assets/js/playground.bundle.js (source in tools/playground).
+
+  Settings (on the [data-playground] element):
+        data-words   the words that drop in as letter tiles, separated by spaces
+
+  The plain links list below is what screen readers, keyboard users and
+  visitors without JavaScript get, so the page always works without the toy.
+#}
+{% set c = contactPage.data %}
+{% set handle = c.instagram | replace('https://www.instagram.com/', '') | replace('/', '') %}
+
+<h1 class="visually-hidden">{{ title }}</h1>
+
+<div class="cp" data-playground
+     data-email="{{ c.email }}"
+     data-phone="{{ c.phone }}"
+     data-instagram="{{ c.instagram }}"
+     data-handle="{% if handle %}@{{ handle }}{% endif %}"
+     data-words="HELLO HOLA OLÁ CIAO HALLO BONJOUR">
+  <canvas class="cp__canvas" aria-hidden="true"></canvas>
+
+  <div class="cp__intro">{{ contactPage.html | safe }}</div>
+
+  <p class="cp__hint" data-hint>Drag things around. Click an empty spot for more.</p>
+  <p class="cp__toast" data-toast role="status" aria-live="polite"></p>
+
+  <ul class="cp__links">
+    {% if c.email %}<li><a href="mailto:{{ c.email }}">{{ c.email }}</a></li>{% endif %}
+    {% if c.phone %}<li><a href="tel:{{ c.phone | replace(' ', '') }}">{{ c.phone }}</a></li>{% endif %}
+    {% if c.instagram %}<li><a href="{{ c.instagram }}" target="_blank" rel="noopener">Instagram{% if handle %} @{{ handle }}{% endif %}</a></li>{% endif %}
+  </ul>
+</div>

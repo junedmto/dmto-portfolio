@@ -6,11 +6,13 @@
   "scripts": {
     "start": "eleventy --serve",
     "build": "eleventy",
-    "build:lanyard": "esbuild tools/lanyard/entry.jsx --bundle --minify --format=iife --jsx=automatic --jsx-import-source=preact --alias:react=preact/compat --alias:react-dom=preact/compat --outfile=src/assets/js/lanyard.bundle.js"
+    "build:lanyard": "esbuild tools/lanyard/entry.jsx --bundle --minify --format=iife --jsx=automatic --jsx-import-source=preact --alias:react=preact/compat --alias:react-dom=preact/compat --outfile=src/assets/js/lanyard.bundle.js",
+    "build:playground": "esbuild tools/playground/entry.js --bundle --minify --format=iife --outfile=src/assets/js/playground.bundle.js"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.6",
     "esbuild": "^0.28.2",
+    "matter-js": "^0.20.0",
     "preact": "^11.0.2",
     "three": "^0.186.1"
   },
