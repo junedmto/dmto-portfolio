@@ -1,3 +1,14 @@
+/* Your pixel typeface, used for the letters and contact pills. To use it
+   elsewhere on the site, put  font-family: "DMTO Pixel";  on any text. */
+@font-face {
+  font-family: "DMTO Pixel";
+  src: url("../fonts/DMTOPixel.woff2") format("woff2"),
+       url("../fonts/DMTOPixel.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* The playground Contact page (layouts/playground.njk). The physics canvas
    fills the whole window, under the see-through header. */
 

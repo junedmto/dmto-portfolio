@@ -60,7 +60,7 @@ function start() {
     // but never so big that the longest pill is wider than the window.
     unit = Math.max(38, Math.min(150, 0.086 * Math.sqrt(W * H)));
     const longest = Math.max(1, ...pills.map((p) => p.label.length));
-    unit = Math.min(unit, (W * 0.92) / (longest * 0.42 * 0.62 + 1.1));
+    unit = Math.min(unit, (W * 0.92) / (longest * 0.6 * 0.75 + 1.1));
     edge = unit * 0.11;
     mouse.pixelRatio = dpr;
     buildWalls();
@@ -85,7 +85,10 @@ function start() {
   Composite.add(world, drag);
 
   /* ---- Making things ---- */
-  const fontFamily = '"Poppins", "Inter", system-ui, sans-serif';
+  // Your own pixel typeface (src/assets/fonts/DMTOPixel.woff2). It is all capitals
+  // and has no bold, so it is always drawn at normal weight.
+  const fontFamily = '"DMTO Pixel", "Poppins", system-ui, sans-serif';
+  const CAP = 0.7; // capital height as a fraction of the font size
   const body = (b, plugin) => {
     b.plugin = plugin;
     return b;
@@ -103,12 +106,12 @@ function start() {
     );
 
   const measure = (text, size) => {
-    ctx.font = `700 ${size}px ${fontFamily}`;
-    return ctx.measureText(text).width;
+    ctx.font = `400 ${size}px ${fontFamily}`;
+    return ctx.measureText(text.toUpperCase()).width;
   };
 
   const pill = (label, x, y, action) => {
-    const size = unit * 0.42;
+    const size = unit * 0.75;
     const w = measure(label, size) + unit * 1.1;
     const h = unit;
     return body(
@@ -237,20 +240,24 @@ function start() {
     if (p.kind === "tile") {
       box(p.w, p.h, p.edge, p.inverted ? INK : PAPER, INK);
       ctx.fillStyle = p.inverted ? PAPER : INK;
-      ctx.font = `700 ${p.w * 0.56}px ${fontFamily}`;
+      // Letters with an accent are drawn smaller so the accent stays inside the box.
+      const size = p.w * (p.letter.charCodeAt(0) > 127 ? 0.62 : 0.88);
+      ctx.font = `400 ${size}px ${fontFamily}`;
       ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(p.letter, 0, p.h * 0.04);
+      ctx.textBaseline = "alphabetic";
+      // The baseline sits half a capital below the middle; the font keeps one
+      // pixel of space after each letter, so nudge back by half of it.
+      ctx.fillText(p.letter, -size * 0.05, (size * CAP) / 2);
     } else if (p.kind === "pill") {
       const grow = 1 + p.hover * 0.04;
       ctx.scale(grow, grow);
       const on = p.hover > 0.5;
       box(p.w, p.h, p.edge, on ? INK : PAPER, INK);
       ctx.fillStyle = on ? PAPER : INK;
-      ctx.font = `700 ${p.size}px ${fontFamily}`;
+      ctx.font = `400 ${p.size}px ${fontFamily}`;
       ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(p.label, 0, p.h * 0.03);
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText(p.label.toUpperCase(), -p.size * 0.05, (p.size * CAP) / 2);
     } else {
       // A loose shape: outline the physics body itself.
       ctx.rotate(-b.angle);
@@ -306,7 +313,7 @@ function start() {
 
   /* ---- Go ---- */
   window.addEventListener("resize", resize);
-  const ready = document.fonts && document.fonts.load ? Promise.race([document.fonts.load(`700 40px Poppins`), new Promise((r) => setTimeout(r, 1500))]) : Promise.resolve();
+  const ready = document.fonts && document.fonts.load ? Promise.race([document.fonts.load(`400 40px "DMTO Pixel"`), new Promise((r) => setTimeout(r, 1500))]) : Promise.resolve();
   ready.finally(() => {
     resize();
     dropIn();
