@@ -29,11 +29,13 @@ function start() {
   let H = 0;
   let dpr = 1;
   let unit = 56; // size of one letter tile, in pixels
+  let edge = 6; // thickness of the box outlines, in pixels
 
-  const engine = Engine.create({ gravity: { x: 0, y: 1.15 } });
+  const engine = Engine.create({ gravity: { x: 0, y: 1.15 }, positionIterations: 8, velocityIterations: 6 });
   const world = engine.world;
 
   /* ---- Walls: floor and two sides, open at the top so things can fall in ---- */
+  const pills = [];
   let walls = [];
   const buildWalls = () => {
     Composite.remove(world, walls);
@@ -54,7 +56,12 @@ function start() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
-    unit = Math.max(36, Math.min(84, Math.min(W, H) * 0.09));
+    // Sized so everything together fills roughly the bottom half of the window,
+    // but never so big that the longest pill is wider than the window.
+    unit = Math.max(38, Math.min(150, 0.086 * Math.sqrt(W * H)));
+    const longest = Math.max(1, ...pills.map((p) => p.label.length));
+    unit = Math.min(unit, (W * 0.92) / (longest * 0.42 * 0.62 + 1.1));
+    edge = unit * 0.11;
     mouse.pixelRatio = dpr;
     buildWalls();
     // Anything now outside the window is moved back in.
@@ -73,7 +80,7 @@ function start() {
   canvas.removeEventListener("DOMMouseScroll", mouse.mousewheel);
   const drag = MouseConstraint.create(engine, {
     mouse,
-    constraint: { stiffness: 0.18, damping: 0.12, render: { visible: false } },
+    constraint: { stiffness: 0.25, damping: 0.14, render: { visible: false } },
   });
   Composite.add(world, drag);
 
@@ -87,13 +94,12 @@ function start() {
   const tile = (letter, x, y, inverted) =>
     body(
       Bodies.rectangle(x, y, unit, unit, {
-        chamfer: { radius: unit * 0.18 },
-        restitution: 0.35,
+        restitution: 0.3,
         friction: 0.5,
         frictionAir: 0.012,
         angle: (Math.random() - 0.5) * 1.2,
       }),
-      { kind: "tile", letter, inverted, w: unit, h: unit, r: unit * 0.18 }
+      { kind: "tile", letter, inverted, w: unit, h: unit, edge }
     );
 
   const measure = (text, size) => {
@@ -104,29 +110,28 @@ function start() {
   const pill = (label, x, y, action) => {
     const size = unit * 0.42;
     const w = measure(label, size) + unit * 1.1;
-    const h = unit * 0.95;
+    const h = unit;
     return body(
       Bodies.rectangle(x, y, w, h, {
-        chamfer: { radius: h / 2 },
-        restitution: 0.3,
+        restitution: 0.25,
         friction: 0.5,
         frictionAir: 0.01,
         angle: (Math.random() - 0.5) * 0.5,
       }),
-      { kind: "pill", label, size, w, h, r: h / 2, action, hover: 0 }
+      { kind: "pill", label, size, w, h, edge, action, hover: 0 }
     );
   };
 
   const shapeKinds = ["circle", "triangle", "square", "bar"];
   const shape = (x, y) => {
     const kind = shapeKinds[Math.floor(Math.random() * shapeKinds.length)];
-    const s = unit * (0.45 + Math.random() * 0.45);
-    const opts = { restitution: 0.45, friction: 0.4, frictionAir: 0.01, angle: Math.random() * 3 };
+    const s = unit * (0.5 + Math.random() * 0.5);
+    const opts = { restitution: 0.35, friction: 0.45, frictionAir: 0.01, angle: Math.random() * 3 };
     let b;
     if (kind === "circle") b = Bodies.circle(x, y, s * 0.7, opts);
     else if (kind === "triangle") b = Bodies.polygon(x, y, 3, s * 0.85, opts);
-    else if (kind === "bar") b = Bodies.rectangle(x, y, s * 2.1, s * 0.6, { ...opts, chamfer: { radius: s * 0.2 } });
-    else b = Bodies.rectangle(x, y, s * 1.3, s * 1.3, { ...opts, chamfer: { radius: s * 0.15 } });
+    else if (kind === "bar") b = Bodies.rectangle(x, y, s * 2.1, s * 0.6, opts);
+    else b = Bodies.rectangle(x, y, s * 1.3, s * 1.3, opts);
     return body(b, { kind: "shape", filled: Math.random() > 0.35 });
   };
 
@@ -157,7 +162,6 @@ function start() {
     else toast(text);
   };
 
-  const pills = [];
   if (d.email) pills.push({ label: d.email, action: () => { copy(d.email, "Email copied"); window.location.href = `mailto:${d.email}`; } });
   if (d.phone) pills.push({ label: d.phone, action: () => { if (touch) window.location.href = `tel:${d.phone.replace(/[^+\d]/g, "")}`; else copy(d.phone, "Number copied"); } });
   if (d.instagram) pills.push({ label: d.handle || "Instagram", action: () => window.open(d.instagram, "_blank", "noopener") });
@@ -216,47 +220,33 @@ function start() {
   });
 
   /* ---- Drawing ---- */
-  const roundRect = (x, y, w, h, r) => {
-    r = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
-  };
-
   const drawBody = (b) => {
     const p = b.plugin;
     if (!p) return;
     ctx.save();
     ctx.translate(b.position.x, b.position.y);
     ctx.rotate(b.angle);
+    // A square box with a thick outline, like the logo. The outline is drawn
+    // inside the physics box so objects touch exactly where they look like they do.
+    const box = (w, h, e, fill, line) => {
+      ctx.fillStyle = line;
+      ctx.fillRect(-w / 2, -h / 2, w, h);
+      ctx.fillStyle = fill;
+      ctx.fillRect(-w / 2 + e, -h / 2 + e, w - e * 2, h - e * 2);
+    };
     if (p.kind === "tile") {
-      roundRect(-p.w / 2, -p.h / 2, p.w, p.h, p.r);
+      box(p.w, p.h, p.edge, p.inverted ? INK : PAPER, INK);
       ctx.fillStyle = p.inverted ? PAPER : INK;
-      ctx.fill();
-      if (p.inverted) {
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = INK;
-        ctx.stroke();
-      }
-      ctx.fillStyle = p.inverted ? INK : PAPER;
-      ctx.font = `700 ${p.w * 0.58}px ${fontFamily}`;
+      ctx.font = `700 ${p.w * 0.56}px ${fontFamily}`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(p.letter, 0, p.h * 0.04);
     } else if (p.kind === "pill") {
-      const grow = 1 + p.hover * 0.05;
+      const grow = 1 + p.hover * 0.04;
       ctx.scale(grow, grow);
-      roundRect(-p.w / 2, -p.h / 2, p.w, p.h, p.r);
-      ctx.fillStyle = p.hover > 0.5 ? INK : PAPER;
-      ctx.fill();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = INK;
-      ctx.stroke();
-      ctx.fillStyle = p.hover > 0.5 ? PAPER : INK;
+      const on = p.hover > 0.5;
+      box(p.w, p.h, p.edge, on ? INK : PAPER, INK);
+      ctx.fillStyle = on ? PAPER : INK;
       ctx.font = `700 ${p.size}px ${fontFamily}`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -270,12 +260,12 @@ function start() {
         ctx.beginPath();
         part.vertices.forEach((v, i) => (i ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)));
         ctx.closePath();
-        ctx.lineJoin = "round";
+        ctx.lineJoin = "miter";
         if (p.filled) {
           ctx.fillStyle = INK;
           ctx.fill();
         }
-        ctx.lineWidth = 3;
+        ctx.lineWidth = edge;
         ctx.strokeStyle = INK;
         ctx.stroke();
       });
