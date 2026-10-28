@@ -14,7 +14,6 @@ module.exports = {
   noindex: true,
   eleventyExcludeFromCollections: true,
   bodyClass: "page-homevideo",
-  hideFooter: true,
   extraCss: ["/assets/css/homevideo.css"],
   extraJs: ["/assets/js/homevideo.js"],
 };

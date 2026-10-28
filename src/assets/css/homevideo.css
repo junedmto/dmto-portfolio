@@ -1,15 +1,27 @@
 /* The video homepage (layouts/homevideo.njk). The video box fills the window
    with the same side margin as the galleries, and the same rounded corners.
-   It sits behind the see-through header, which inverts over it. */
+   The header stays free above it, and the project gallery follows below. */
 
 .page-homevideo {
-  overflow: hidden; /* a single screen, no scrolling */
+  /* Height of the header (its padding plus the logo height), so the video
+     can fill exactly the rest of the screen. Keep in step with style.css. */
+  --hv-header: calc(var(--space-3) * 2 + 2.75rem);
+  /* Space between the video and the gallery under it. */
+  --hv-gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .page-homevideo {
+    --hv-header: calc(var(--space-3) * 2 + 1.75rem);
+  }
 }
 
 .hv {
-  position: fixed;
-  inset: var(--page-inset);
-  z-index: 0;
+  position: relative;
+  height: calc(100vh - var(--hv-header) - var(--page-inset));
+  height: calc(100svh - var(--hv-header) - var(--page-inset));
+  min-height: 16rem;
+  margin: 0 var(--page-inset) var(--hv-gap);
   overflow: hidden;
   border-radius: var(--radius-image);
   background: #000;

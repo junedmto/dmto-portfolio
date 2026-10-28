@@ -4,6 +4,17 @@
 // button sends YouTube a "mute" / "unmute" message through the embed's
 // JavaScript interface, which is switched on by enablejsapi=1 in the address.
 (function () {
+  // Size the video to fill exactly the screen below the header, whatever the
+  // header's real height is on this device.
+  var header = document.querySelector(".site-nav");
+  function fit() {
+    if (!header) return;
+    document.body.style.setProperty("--hv-header", header.offsetHeight + "px");
+  }
+  fit();
+  window.addEventListener("resize", fit);
+  window.addEventListener("load", fit);
+
   var frame = document.querySelector("[data-hv-frame]");
   var button = document.querySelector("[data-hv-sound]");
   if (!frame || !button) return;

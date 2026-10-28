@@ -5,8 +5,9 @@ layout: layouts/base.njk
   layouts/homevideo.njk
   ---------------------
   The video homepage: one large YouTube video that plays quietly on a loop,
-  filling the window inside the same margins as the galleries, with a button
-  to turn the sound on.
+  filling the window below the header, inside the same margins as the
+  galleries, with a button to turn the sound on. The project gallery (same
+  as the normal homepage) sits under it; scroll down to see it.
 
   The video is the "youtube" line in src/home-temp.md (a normal YouTube link
   is fine). Edit it from /admin once the entry has been added there.
@@ -40,4 +41,37 @@ layout: layouts/base.njk
 <section class="hv hv--empty">
   <p>Add a YouTube link to the <code>youtube:</code> line in <code>src/home-temp.md</code> to see your video here.</p>
 </section>
+{% endif %}
+
+{# The project gallery, the same as the normal homepage, under the video. #}
+{% set tiles = collections.projects | homeTiles %}
+{% set rows = tiles | splitRows(home.row_layout) %}
+{% if rows.length %}
+<div class="gallery-stack">
+  {% for row in rows %}
+  <div class="justified-gallery{% if row.manual %} justified-gallery--manual{% endif %}">
+    {% for tile in row.items %}
+    {% set ratio = tile.cover | aspectRatio %}
+    {# flex-grow is the ratio x 1000: grow factors that add up to less
+       than 1 would leave a row short of the full width. #}
+    {% set sizing = ("flex: " + (ratio * 1000) + " 1 0; aspect-ratio: " + ratio + ";") if row.manual else ("flex-grow: " + (ratio * 1000) + "; flex-basis: calc(" + ratio + " * 24rem); aspect-ratio: " + ratio + ";") %}
+    <a class="justified-gallery__item" href="{{ tile.url | url }}" style="{{ sizing }}">
+      {% if tile.isVideo %}
+      <video src="{{ tile.cover | url }}" muted loop playsinline autoplay preload="metadata" aria-label="{{ tile.title }}"></video>
+      {% else %}
+      <img src="{{ tile.cover | url }}" alt="{{ tile.title }}" loading="lazy">
+      {% endif %}
+      <div class="justified-gallery__caption">
+        <p class="justified-gallery__title">{{ tile.title }}</p>
+        {% if tile.category %}<p class="justified-gallery__meta">{{ tile.category }}</p>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="wrap">
+  <p class="work-empty">Projects added from /admin will appear here.</p>
+</div>
 {% endif %}
