@@ -1,0 +1,68 @@
+/* The video homepage (layouts/homevideo.njk). The video box fills the window
+   with the same side margin as the galleries, and the same rounded corners.
+   It sits behind the see-through header, which inverts over it. */
+
+.page-homevideo {
+  overflow: hidden; /* a single screen, no scrolling */
+}
+
+.hv {
+  position: fixed;
+  inset: var(--page-inset);
+  z-index: 0;
+  overflow: hidden;
+  border-radius: var(--radius-image);
+  background: #000;
+  /* Lets the picture be sized from the box, whatever shape the window is. */
+  container-type: size;
+}
+
+/* The video is 16:9. "cover" scales it up until it fills the box, cropping
+   whatever sticks out, exactly like a background photo. */
+.hv__frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100cqw, 100cqh * 16 / 9);
+  height: max(100cqh, 100cqw * 9 / 16);
+  transform: translate(-50%, -50%);
+  border: 0;
+}
+
+.hv[data-fit="contain"] .hv__frame {
+  width: min(100cqw, 100cqh * 16 / 9);
+  height: min(100cqh, 100cqw * 9 / 16);
+}
+
+.hv__shield {
+  position: absolute;
+  inset: 0;
+}
+
+/* The sound button reuses the gallery video button, just a little larger. */
+.hv__sound {
+  right: 1rem;
+  bottom: 1rem;
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.hv__sound[hidden] {
+  display: none;
+}
+
+.hv--empty {
+  display: grid;
+  place-items: center;
+  background: #f2f2f2;
+  color: var(--color-ink-soft);
+  text-align: center;
+  padding: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .hv__sound {
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+}

@@ -1,0 +1,43 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/homevideo.njk
+  ---------------------
+  The video homepage: one large YouTube video that plays quietly on a loop,
+  filling the window inside the same margins as the galleries, with a button
+  to turn the sound on.
+
+  The video is the "youtube" line in src/home-temp.md (a normal YouTube link
+  is fine). Edit it from /admin once the entry has been added there.
+
+  Settings on the .hv element:
+        data-fit   "cover" (fills the box, cropping the edges as needed)
+                   or "contain" (shows the whole picture, with bars if needed)
+#}
+{% set videoId = youtube | youtubeId %}
+
+<h1 class="visually-hidden">{{ site.name }}</h1>
+
+{% if videoId %}
+<section class="hv" data-fit="cover" data-video-id="{{ videoId }}">
+  <iframe class="hv__frame" data-hv-frame
+          src="https://www.youtube-nocookie.com/embed/{{ videoId }}?autoplay=1&mute=1&loop=1&playlist={{ videoId }}&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1"
+          title="{{ site.name }} — video"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
+  {# A clear layer over the video: it stops YouTube's hover title bar and
+     buttons from appearing, so the picture stays clean. #}
+  <div class="hv__shield"></div>
+
+  <button class="video-sound hv__sound" type="button" data-hv-sound aria-pressed="false" aria-label="Turn sound on" hidden>
+    <svg class="video-sound__off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg class="video-sound__on" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</section>
+{% else %}
+<section class="hv hv--empty">
+  <p>Add a YouTube link to the <code>youtube:</code> line in <code>src/home-temp.md</code> to see your video here.</p>
+</section>
+{% endif %}
