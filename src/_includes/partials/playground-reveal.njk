@@ -1,0 +1,36 @@
+{#
+  partials/playground-reveal.njk
+  ------------------------------
+  The physics playground at the bottom of every page. It sits fixed behind
+  the page; when you scroll to the end, the page lifts away and uncovers it.
+  Email, phone and Instagram come from the Contact page (src/contact.md).
+  The physics: assets/js/playground.bundle.js (source in tools/playground).
+
+  Settings (on the [data-playground] element):
+        data-words   the words that drop in as letter tiles, separated by spaces
+
+  The plain links list is for screen readers, keyboard users and visitors
+  without JavaScript.
+#}
+{% set c = contactPage.data %}
+{% set handle = c.instagram | replace('https://www.instagram.com/', '') | replace('/', '') %}
+
+<div class="cp cp--reveal" data-playground data-mode="reveal"
+     data-email="{{ c.email }}"
+     data-phone="{{ c.phone }}"
+     data-instagram="{{ c.instagram }}"
+     data-handle="{% if handle %}@{{ handle }}{% endif %}"
+     data-words="HELLO HOLA OLÁ CIAO HALLO BONJOUR">
+  <canvas class="cp__canvas" aria-hidden="true"></canvas>
+
+  <div class="cp__intro">{{ contactPage.html | safe }}</div>
+
+  <p class="cp__hint" data-hint>Drag things around. Click an empty spot for more.</p>
+  <p class="cp__toast" data-toast role="status" aria-live="polite"></p>
+
+  <ul class="cp__links">
+    {% if c.email %}<li><a href="mailto:{{ c.email }}">{{ c.email }}</a></li>{% endif %}
+    {% if c.phone %}<li><a href="tel:{{ c.phone | replace(' ', '') }}">{{ c.phone }}</a></li>{% endif %}
+    {% if c.instagram %}<li><a href="{{ c.instagram }}" target="_blank" rel="noopener">Instagram{% if handle %} @{{ handle }}{% endif %}</a></li>{% endif %}
+  </ul>
+</div>

@@ -14,6 +14,7 @@ module.exports = {
   layout: "layouts/playground.njk",
   permalink: "/contact-temp/",
   noindex: true,
+  noReveal: true, // no playground at the bottom of this page
   eleventyExcludeFromCollections: true,
   bodyClass: "page-playground",
   hideFooter: true,

@@ -24,6 +24,10 @@ function start() {
   const PAPER = "#ffffff";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const touch = window.matchMedia("(pointer: coarse)").matches;
+  // "reveal" mode: the playground sits behind the page at the bottom of every
+  // page and only runs while it is being uncovered.
+  const reveal = d.mode === "reveal";
+  const spacer = reveal ? document.querySelector("[data-reveal-spacer]") : null;
 
   let W = 0;
   let H = 0;
@@ -170,6 +174,13 @@ function start() {
   if (d.instagram) pills.push({ label: d.handle || "Instagram", action: () => window.open(d.instagram, "_blank", "noopener") });
 
   /* ---- The opening drop ---- */
+  // Where things start falling. On the Contact page that is above the window;
+  // under a page it is the edge of the page, so things tumble out from under it.
+  const spawnY = () => {
+    if (!reveal || !spacer) return 0;
+    const top = spacer.getBoundingClientRect().top - stage.getBoundingClientRect().top;
+    return Math.min(Math.max(top, 0), H * 0.6);
+  };
   const dropIn = () => {
     const words = (d.words || "HELLO HOLA OLÁ CIAO HALLO BONJOUR").split(/\s+/);
     let delay = 0;
@@ -177,7 +188,7 @@ function start() {
     words.forEach((word, wi) => {
       [...word].forEach((letter) => {
         setTimeout(() => {
-          const b = tile(letter, unit + Math.random() * (W - unit * 2), -unit - Math.random() * unit * 2, wi % 2 === 1);
+          const b = tile(letter, unit + Math.random() * (W - unit * 2), spawnY() - unit - Math.random() * unit * 2, wi % 2 === 1);
           Composite.add(world, b);
         }, delay);
         delay += step;
@@ -185,7 +196,7 @@ function start() {
     });
     pills.forEach((p, i) => {
       setTimeout(() => {
-        const b = pill(p.label, W * (0.25 + 0.25 * i) + (Math.random() - 0.5) * unit, -unit * 2, p.action);
+        const b = pill(p.label, W * (0.25 + 0.25 * i) + (Math.random() - 0.5) * unit, spawnY() - unit * 2, p.action);
         Composite.add(world, b);
       }, delay + i * 350 + 400);
     });
@@ -281,7 +292,9 @@ function start() {
   };
 
   let last = performance.now();
+  let looping = false;
   const frame = (now) => {
+    if (!looping) return;
     const dt = Math.min(now - last, 33);
     last = now;
     Engine.update(engine, dt);
@@ -309,15 +322,96 @@ function start() {
   /* ---- Hint ---- */
   const hintEl = document.querySelector("[data-hint]");
   const hideHint = () => hintEl && hintEl.classList.add("is-off");
-  setTimeout(hideHint, 9000);
+  if (!reveal) setTimeout(hideHint, 9000);
+
+  const startLoop = () => {
+    if (looping) return;
+    looping = true;
+    last = performance.now();
+    requestAnimationFrame(frame);
+  };
+
+  /* ---- Under a page: only run while uncovered, and drop on arrival ---- */
+  let dropped = false;
+  const watch = () => {
+    const onChange = (entries) => {
+      const e = entries[entries.length - 1];
+      if (!e.isIntersecting) {
+        looping = false; // nothing to see: stop the physics until it is back
+        return;
+      }
+      startLoop();
+      if (!dropped && e.intersectionRatio >= 0.3) {
+        dropped = true;
+        dropIn();
+        setTimeout(hideHint, 9000);
+      }
+    };
+    new IntersectionObserver(onChange, { threshold: [0, 0.3] }).observe(spacer);
+
+    // Keep a drag going when the pointer leaves the playground over the page.
+    window.addEventListener("mousemove", (e) => {
+      if (drag.body && e.target !== canvas) mouse.mousemove(e);
+    });
+    window.addEventListener("mouseup", (e) => {
+      if (drag.body && e.target !== canvas) mouse.mouseup(e);
+    });
+
+    // Touch: a swipe that starts on an object moves it; any other swipe
+    // scrolls the page as usual. A quick tap on empty space adds a shape.
+    let ignoring = false;
+    let tap = null;
+    const local = (t) => {
+      const r = canvas.getBoundingClientRect();
+      return { x: t.clientX - r.left, y: t.clientY - r.top };
+    };
+    canvas.addEventListener(
+      "touchstart",
+      (e) => {
+        const p = local(e.touches[0]);
+        if (Query.point(dynamic(), p).length) {
+          ignoring = false;
+          e.preventDefault(); // stops the page scrolling for this swipe
+        } else {
+          ignoring = true;
+          tap = { x: p.x, y: p.y, t: performance.now() };
+          e.stopImmediatePropagation();
+        }
+      },
+      { capture: true, passive: false }
+    );
+    ["touchmove", "touchend", "touchcancel"].forEach((type) =>
+      canvas.addEventListener(
+        type,
+        (e) => {
+          if (!ignoring) return;
+          e.stopImmediatePropagation();
+          if (type === "touchend") {
+            const p = local(e.changedTouches[0]);
+            if (tap && Math.hypot(p.x - tap.x, p.y - tap.y) < 10 && performance.now() - tap.t < 450) addExtra(p.x, p.y);
+            ignoring = false;
+            tap = null;
+          }
+          if (type === "touchcancel") {
+            ignoring = false;
+            tap = null;
+          }
+        },
+        { capture: true, passive: false }
+      )
+    );
+  };
 
   /* ---- Go ---- */
   window.addEventListener("resize", resize);
   const ready = document.fonts && document.fonts.load ? Promise.race([document.fonts.load(`400 40px "DMTO Pixel"`), new Promise((r) => setTimeout(r, 1500))]) : Promise.resolve();
   ready.finally(() => {
     resize();
-    dropIn();
-    last = performance.now();
-    requestAnimationFrame(frame);
+    if (reveal && spacer && "IntersectionObserver" in window) {
+      watch();
+    } else {
+      dropIn();
+      startLoop();
+    }
   });
 }

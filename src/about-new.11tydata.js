@@ -13,6 +13,7 @@ module.exports = {
   layout: "layouts/lookaround.njk",
   permalink: "/about-new/",
   noindex: true,
+  noReveal: true, // no playground at the bottom of this page
   eleventyExcludeFromCollections: true,
   bodyClass: "page-look",
   extraCss: ["/assets/css/look.css"],

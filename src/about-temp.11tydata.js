@@ -13,6 +13,7 @@ module.exports = {
   layout: "layouts/lanyard.njk",
   permalink: "/about-temp/",
   noindex: true,
+  noReveal: true, // no playground at the bottom of this page
   eleventyExcludeFromCollections: true,
   bodyClass: "page-lanyard",
   hideFooter: true,

@@ -135,3 +135,38 @@
     font-size: 0.9375rem;
   }
 }
+
+
+/* ---- The playground at the bottom of every page ---------------------------
+   The playground is fixed to the bottom of the window, behind the page. The
+   page sits on a white sheet; the empty space after it (.reveal-space) lets
+   you scroll on and uncover the playground. Change --pg-h to make the
+   playground area shorter (for example 70vh). */
+
+:root {
+  --pg-h: 100vh;
+  --pg-h: 100svh;
+}
+
+.page-shell--over {
+  position: relative;
+  z-index: 1;
+  background: var(--color-paper, #fff);
+}
+
+.reveal-space {
+  height: var(--pg-h);
+  pointer-events: none; /* clicks fall through to the playground below */
+}
+
+.cp.cp--reveal {
+  inset: auto 0 0 0;
+  height: var(--pg-h);
+  z-index: 0;
+}
+
+/* On touch screens the page must still scroll when you swipe over empty
+   space; the script stops scrolling only when a swipe starts on an object. */
+.cp--reveal .cp__canvas {
+  touch-action: pan-y;
+}

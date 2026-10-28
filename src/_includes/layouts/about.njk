@@ -3,7 +3,7 @@ layout: layouts/base.njk
 ---
 {#
   layouts/about.njk
-  Renders src/about.md as four columns across the full page width:
+  Starts with the video (if a YouTube link is set), then renders src/about.md as four columns across the full page width:
 
     1. Bio       - "content" below, the Markdown body of about.md. The
                    first paragraph is shown bolder (see style.css).
@@ -20,6 +20,9 @@ layout: layouts/base.njk
 #}
 
 <h1 class="visually-hidden">{{ title }}</h1>
+
+{# The video on top: the "youtube" line in about.md. Leave it empty to hide it. #}
+{% include "partials/hero-video.njk" %}
 
 <div class="about">
 

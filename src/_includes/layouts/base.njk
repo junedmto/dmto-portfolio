@@ -42,6 +42,8 @@
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | url }}">
   {# Extra stylesheets a page asks for with "extraCss: [...]". #}
   {% for css in extraCss %}<link rel="stylesheet" href="{{ css | url }}">{% endfor %}
+  {# The playground at the bottom of every page (see below). #}
+  {% if not noReveal %}<link rel="stylesheet" href="{{ '/assets/css/playground.css' | url }}">{% endif %}
 </head>
 <body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
 
@@ -67,6 +69,11 @@
     </div>
   </header>
 
+  {# The page itself sits on a white sheet (page-shell--over). Under it, fixed
+     to the bottom of the window, is the playground; the empty space at the end
+     (reveal-space) lets you keep scrolling to uncover it. Pages that set
+     "noReveal: true" in their data skip all of this. #}
+  <div class="page-shell{% if not noReveal %} page-shell--over{% endif %}">
   <main>
     {{ content | safe }}
   </main>
@@ -79,9 +86,16 @@
     </div>
   </footer>
   {% endif %}
+  </div>
+
+  {% if not noReveal %}
+  <div class="reveal-space" data-reveal-spacer aria-hidden="true"></div>
+  {% include "partials/playground-reveal.njk" %}
+  {% endif %}
 
   <script src="{{ '/assets/js/main.js' | url }}"></script>
   {# Extra scripts a page asks for with "extraJs: [...]". #}
   {% for js in extraJs %}<script src="{{ js | url }}"></script>{% endfor %}
+  {% if not noReveal %}<script src="{{ '/assets/js/playground.bundle.js' | url }}"></script>{% endif %}
 </body>
 </html>
