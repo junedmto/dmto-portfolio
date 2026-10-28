@@ -140,6 +140,15 @@ module.exports = function (eleventyConfig) {
   };
 
   // isVideo: true if a gallery entry points at a video file.
+  // Pulls the video ID out of a YouTube link (watch, youtu.be, embed, shorts
+  // or live links all work), or accepts a bare 11-character ID.
+  eleventyConfig.addFilter("youtubeId", (value) => {
+    const text = String(value || "").trim();
+    if (/^[\w-]{11}$/.test(text)) return text;
+    const match = text.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);
+    return match ? match[1] : "";
+  });
+
   eleventyConfig.addFilter("isVideo", (entry) => isVideoPath(entryPath(entry)));
 
   // splitRows: cuts any list into rows using a "Photos per row" style
