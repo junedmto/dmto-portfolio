@@ -152,6 +152,9 @@
   position: relative;
   z-index: 1;
   background: var(--color-paper, #fff);
+  /* A soft shadow along the bottom edge of the page, where it lifts away from
+     the playground. Make the numbers bigger or the 0.xx darker for more. */
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 14px 28px -10px rgba(0, 0, 0, 0.22);
 }
 
 .reveal-space {
@@ -169,4 +172,28 @@
    space; the script stops scrolling only when a swipe starts on an object. */
 .cp--reveal .cp__canvas {
   touch-action: pan-y;
+  /* leaves room under the playground for the footer */
+  height: calc(100% - var(--footer-h));
+}
+
+:root {
+  --footer-h: 3.75rem;
+}
+
+.cp__footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--footer-h);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  background: var(--color-paper, #fff);
+}
+
+.cp__footer .wrap {
+  flex: 1;
+  align-items: center;
 }

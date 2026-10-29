@@ -78,7 +78,7 @@
     {{ content | safe }}
   </main>
 
-  {% if not hideFooter %}
+  {% if not hideFooter and noReveal %}
   <footer class="site-footer">
     <div class="wrap">
       <span>{{ site.name }} · {{ currentYear }}</span>

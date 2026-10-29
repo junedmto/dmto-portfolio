@@ -54,7 +54,7 @@ function start() {
   };
 
   const resize = () => {
-    const r = stage.getBoundingClientRect();
+    const r = canvas.getBoundingClientRect();
     W = Math.max(1, Math.round(r.width));
     H = Math.max(1, Math.round(r.height));
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -82,6 +82,9 @@ function start() {
   // Let the page keep its normal wheel behaviour.
   canvas.removeEventListener("mousewheel", mouse.mousewheel);
   canvas.removeEventListener("DOMMouseScroll", mouse.mousewheel);
+  // Without this one, the mouse wheel is swallowed over the playground and the
+  // page can't be scrolled back up.
+  canvas.removeEventListener("wheel", mouse.mousewheel);
   const drag = MouseConstraint.create(engine, {
     mouse,
     constraint: { stiffness: 0.25, damping: 0.14, render: { visible: false } },
@@ -178,7 +181,7 @@ function start() {
   // under a page it is the edge of the page, so things tumble out from under it.
   const spawnY = () => {
     if (!reveal || !spacer) return 0;
-    const top = spacer.getBoundingClientRect().top - stage.getBoundingClientRect().top;
+    const top = spacer.getBoundingClientRect().top - canvas.getBoundingClientRect().top;
     return Math.min(Math.max(top, 0), H * 0.6);
   };
   const dropIn = () => {
