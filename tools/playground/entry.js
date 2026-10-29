@@ -62,7 +62,8 @@ function start() {
     canvas.height = Math.round(H * dpr);
     // Sized so everything together fills roughly the bottom half of the window,
     // but never so big that the longest pill is wider than the window.
-    unit = Math.max(38, Math.min(150, 0.086 * Math.sqrt(W * H)));
+    // (Under a page the size follows the window, not the shorter playground.)
+    unit = Math.max(38, Math.min(150, 0.086 * Math.sqrt(W * (reveal ? Math.max(H, window.innerHeight) : H))));
     const longest = Math.max(1, ...pills.map((p) => p.label.length));
     unit = Math.min(unit, (W * 0.92) / (longest * 0.6 * 0.75 + 1.1));
     edge = unit * 0.11;

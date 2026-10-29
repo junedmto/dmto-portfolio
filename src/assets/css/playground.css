@@ -140,12 +140,13 @@
 /* ---- The playground at the bottom of every page ---------------------------
    The playground is fixed to the bottom of the window, behind the page. The
    page sits on a white sheet; the empty space after it (.reveal-space) lets
-   you scroll on and uncover the playground. Change --pg-h to make the
-   playground area shorter (for example 70vh). */
+   you scroll on and uncover the playground. --pg-h is how tall the
+   playground is; the rest of the window stays showing the end of the page.
+   Use a bigger number (up to 100) for a taller playground. */
 
 :root {
-  --pg-h: 100vh;
-  --pg-h: 100svh;
+  --pg-h: 75vh;
+  --pg-h: 75svh;
 }
 
 .page-shell--over {
