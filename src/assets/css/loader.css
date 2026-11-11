@@ -44,8 +44,9 @@ html.is-loading .loader {
    dark grey one right behind it. Change --loader-lift for a faster or slower
    lift, and the two colours below to restyle them. */
 .loader {
-  --loader-lift: 1.05s;  /* the curtain lifting off the page */
-  --loader-cover: 0.8s;  /* the curtain rising over the page, when you click a link */
+  --loader-lift: 1.3s;   /* the curtain lifting off the page (first visit) */
+  --loader-cover: 0.4s;  /* the curtain rising over the page, when you click a link */
+  --loader-lift-fast: 0.5s; /* the curtain lifting on the next page */
   --loader-ease: cubic-bezier(0.77, 0, 0.18, 1);
 }
 
@@ -57,7 +58,7 @@ html.is-loading .loader {
 }
 
 .loader__layer--back {
-  background: #2b2b2b;
+  background: #6e5980; /* the second colour */
 }
 
 .loader__layer--front {
@@ -66,7 +67,7 @@ html.is-loading .loader {
 
 /* Moving to another page: the curtain starts hidden below the screen... */
 html.is-covering .loader:not(.is-in) .loader__layer {
-  clip-path: inset(100% 0 0 0 round 50vw 50vw 0 0);
+  clip-path: inset(100% 0 0 0 round 0); /* square corners */
   transition: none;
 }
 
@@ -77,7 +78,7 @@ html.is-covering .loader.is-in .loader__layer {
 }
 
 html.is-covering .loader.is-in .loader__layer--front {
-  transition-delay: 0.14s;
+  transition-delay: 0.07s;
 }
 
 /* The logo and the counter belong to the first-visit screen only. */
@@ -93,6 +94,16 @@ html.is-transition .loader__center {
 
 .loader.is-leaving .loader__layer--back {
   transition-delay: 0.14s;
+}
+
+/* On the next page after a click: a quicker lift, with square corners. */
+html.is-transition .loader.is-leaving .loader__layer {
+  clip-path: inset(0 0 100% 0 round 0);
+  transition-duration: var(--loader-lift-fast);
+}
+
+html.is-transition .loader.is-leaving .loader__layer--back {
+  transition-delay: 0.07s;
 }
 
 /* The logo, wiped in from the bottom up, with a small counter under it. */
@@ -119,7 +130,7 @@ html.is-transition .loader__center {
   max-width: 80vw;
   filter: brightness(0) invert(1); /* any logo colour becomes white */
   clip-path: inset(100% 0 0 0); /* hidden; wiped in from the bottom up */
-  animation: loader-wipe 0.8s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+  animation: loader-wipe 1s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards;
 }
 
 .loader__logo--text {

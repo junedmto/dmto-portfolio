@@ -12,11 +12,14 @@
 //   MAX_WAIT    the longest it will wait for the page to finish loading
 //   COVER_TIME  how long the curtain takes to rise over the page when you click
 //               a link (a little longer than --loader-cover in loader.css)
+//   LIFT_TIME   how long to keep the curtain in place while it lifts (a little
+//               longer than --loader-lift / --loader-lift-fast in loader.css)
 (function () {
-  var DURATION = 1100;
+  var DURATION = 1400;
   var MAX_WAIT = 2500;
-  var LIFT_TIME = 1400; // a little longer than the lift in loader.css
-  var COVER_TIME = 1000; // curtain rise (0.8s) plus its 0.14s delay, and a hair more
+  var LIFT_TIME = 1700; // a little longer than the lift in loader.css (first visit)
+  var LIFT_TIME_FAST = 800; // the same, for the lift after clicking a link
+  var COVER_TIME = 560; // curtain rise (0.4s) plus its 0.07s delay, and a hair more
 
   var root = document.documentElement;
   var loader = document.querySelector("[data-loader]");
@@ -98,15 +101,15 @@
     leaving = true;
     show(1);
     loader.classList.add("is-leaving");
-    setTimeout(done, LIFT_TIME);
+    setTimeout(done, transition ? LIFT_TIME_FAST : LIFT_TIME);
   }
 
   // Arriving from another page: lift as soon as the page is ready.
   if (transition) {
-    if (document.readyState === "complete") setTimeout(leave, 120);
+    if (document.readyState === "complete") setTimeout(leave, 60);
     else {
       window.addEventListener("load", function () {
-        setTimeout(leave, 120);
+        setTimeout(leave, 60);
       }, { once: true });
       setTimeout(leave, 1500);
     }
