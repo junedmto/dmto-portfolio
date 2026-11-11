@@ -33,6 +33,22 @@
 
   <link rel="icon" href="{{ '/favicon.svg' | url }}" type="image/svg+xml">
 
+  {# The loading screen: this tiny script decides, before anything is drawn,
+     whether it plays. Set ONLY_FIRST_VISIT to false to play it on every page
+     instead of once per visit. #}
+  <script>
+    (function () {
+      var ONLY_FIRST_VISIT = true;
+      var r = document.documentElement;
+      try { if (ONLY_FIRST_VISIT && sessionStorage.getItem("dmto-loaded")) return; } catch (e) {}
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      r.classList.add("is-loading");
+      setTimeout(function () { r.classList.remove("is-loading"); }, 8000); // safety net
+    })();
+  </script>
+  <link rel="preload" href="{{ '/assets/fonts/DMTOPixel.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ '/assets/css/loader.css' | url }}">
+
   <!-- Poppins carries the text wordmark and headings, Inter carries
        everything meant to be read (nav, body copy, UI text). -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,6 +62,22 @@
   {% if not noReveal %}<link rel="stylesheet" href="{{ '/assets/css/playground.css' | url }}">{% endif %}
 </head>
 <body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
+
+  {# The loading screen (see assets/css/loader.css and assets/js/loader.js). #}
+  <div class="loader" data-loader aria-hidden="true">
+    <div class="loader__layer loader__layer--back"></div>
+    <div class="loader__layer loader__layer--front">
+      <div class="loader__center">
+        {% if hasLogo %}
+        <img class="loader__logo" src="{{ site.logo | url }}" alt="">
+        {% else %}
+        <span class="loader__logo loader__logo--text">{{ site.name }}</span>
+        {% endif %}
+        <div class="loader__bar"><span data-loader-bar></span></div>
+      </div>
+      <span class="loader__count" data-loader-count>000</span>
+    </div>
+  </div>
 
   <header class="site-nav">
     <div class="site-nav__row">
@@ -93,6 +125,7 @@
   {% include "partials/playground-reveal.njk" %}
   {% endif %}
 
+  <script src="{{ '/assets/js/loader.js' | url }}"></script>
   <script src="{{ '/assets/js/main.js' | url }}"></script>
   {# Extra scripts a page asks for with "extraJs: [...]". #}
   {% for js in extraJs %}<script src="{{ js | url }}"></script>{% endfor %}

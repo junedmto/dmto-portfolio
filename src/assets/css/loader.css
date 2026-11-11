@@ -1,0 +1,146 @@
+/* The loading screen (see the "loader" in layouts/base.njk and assets/js/loader.js).
+   Black screen, white logo, a quick count to 100, then the screen lifts away
+   like a curtain to show the page. It only plays on the first page of a visit. */
+
+@font-face {
+  font-family: "DMTO Pixel";
+  src: url("../fonts/DMTOPixel.woff2") format("woff2"),
+       url("../fonts/DMTOPixel.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+/* Hidden unless the little script in the page head decided to play it. */
+.loader {
+  display: none;
+}
+
+html.is-loading {
+  overflow: hidden; /* no scrolling while the screen is up */
+}
+
+html.is-loading .loader {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  cursor: progress;
+}
+
+.loader.is-leaving {
+  pointer-events: none;
+}
+
+/* Two layers, so the curtain lifts in two steps: the black one first, then a
+   dark grey one right behind it. Change --loader-lift for a faster or slower
+   lift, and the two colours below to restyle them. */
+.loader {
+  --loader-lift: 1.05s;
+  --loader-ease: cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+.loader__layer {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 0 0 0 round 0);
+  transition: clip-path var(--loader-lift) var(--loader-ease);
+}
+
+.loader__layer--back {
+  background: #2b2b2b;
+}
+
+.loader__layer--front {
+  background: #000;
+}
+
+/* Lifting: the bottom edge rises to the top and curves as it goes. */
+.loader.is-leaving .loader__layer {
+  clip-path: inset(0 0 100% 0 round 0 0 50vw 50vw);
+}
+
+.loader.is-leaving .loader__layer--back {
+  transition-delay: 0.14s;
+}
+
+/* The logo, wiped in from the left, with a thin progress line under it. */
+.loader__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  transition: transform 0.7s var(--loader-ease), opacity 0.5s ease;
+}
+
+.loader.is-leaving .loader__center {
+  transform: translateY(-3rem);
+  opacity: 0;
+}
+
+.loader__logo {
+  display: block;
+  height: clamp(2.75rem, 7vw, 5rem);
+  width: auto;
+  max-width: 80vw;
+  filter: brightness(0) invert(1); /* any logo colour becomes white */
+  clip-path: inset(0 100% 0 0);
+  animation: loader-wipe 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+}
+
+.loader__logo--text {
+  font-family: var(--font-display, "Poppins", sans-serif);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 5vw, 3.25rem);
+  line-height: 1;
+  color: #fff;
+  filter: none;
+  white-space: nowrap;
+}
+
+@keyframes loader-wipe {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.loader__bar {
+  width: min(15rem, 55vw);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.22);
+  overflow: hidden;
+}
+
+.loader__bar span {
+  display: block;
+  height: 100%;
+  background: #fff;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+/* The counter, in your pixel typeface, bottom left. */
+.loader__count {
+  position: absolute;
+  left: calc(var(--page-inset, 0.875rem) + 2rem);
+  bottom: calc(var(--page-inset, 0.875rem) + 1rem);
+  font-family: "DMTO Pixel", ui-monospace, monospace;
+  font-size: clamp(3rem, 9vw, 7rem);
+  line-height: 0.8;
+  color: #fff;
+  letter-spacing: 0.02em;
+  transition: opacity 0.4s ease;
+}
+
+.loader.is-leaving .loader__count {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    display: none !important;
+  }
+}
