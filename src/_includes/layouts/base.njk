@@ -33,16 +33,24 @@
 
   <link rel="icon" href="{{ '/favicon.svg' | url }}" type="image/svg+xml">
 
-  {# The loading screen: this tiny script decides, before anything is drawn,
-     whether it plays. Set ONLY_FIRST_VISIT to false to play it on every page
-     instead of once per visit. #}
+  {# The loading screen and page transitions: this tiny script decides, before
+     anything is drawn, what plays. Arriving from a click on another page of
+     the site: the curtain lifts (no logo). First page of a visit: the full
+     loading screen. Set ONLY_FIRST_VISIT to false to play the full loading
+     screen on every page load instead of once per visit. #}
   <script>
     (function () {
       var ONLY_FIRST_VISIT = true;
       var r = document.documentElement;
-      try { if (ONLY_FIRST_VISIT && sessionStorage.getItem("dmto-loaded")) return; } catch (e) {}
+      var nav = false;
+      try { nav = sessionStorage.getItem("dmto-nav"); sessionStorage.removeItem("dmto-nav"); } catch (e) {}
       if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      r.classList.add("is-loading");
+      if (nav) {
+        r.classList.add("is-loading", "is-transition");
+      } else {
+        try { if (ONLY_FIRST_VISIT && sessionStorage.getItem("dmto-loaded")) return; } catch (e) {}
+        r.classList.add("is-loading");
+      }
       setTimeout(function () { r.classList.remove("is-loading"); }, 8000); // safety net
     })();
   </script>
@@ -73,9 +81,8 @@
         {% else %}
         <span class="loader__logo loader__logo--text">{{ site.name }}</span>
         {% endif %}
-        <div class="loader__bar"><span data-loader-bar></span></div>
+        <span class="loader__count" data-loader-count>000</span>
       </div>
-      <span class="loader__count" data-loader-count>000</span>
     </div>
   </div>
 

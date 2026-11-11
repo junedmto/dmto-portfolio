@@ -1,22 +1,79 @@
 // loader.js
-// Runs the loading screen (markup: the [data-loader] block in layouts/base.njk,
-// styles: assets/css/loader.css). The little script in the page head decides
-// whether it plays at all (first page of a visit only); this file does the
-// counting and the lift.
+// Runs the loading screen and the page transitions (markup: the [data-loader]
+// block in layouts/base.njk, styles: assets/css/loader.css).
 //
-//   DURATION  how long the "loading" lasts, in milliseconds
-//   MAX_WAIT  the longest it will wait for the page to finish loading, after
-//             the count reaches 100
+// 1. First page of a visit: the little script in the page head turns the
+//    loading screen on; this file does the counting and the lift.
+// 2. Moving between pages: a click on a link to another page of the site
+//    makes the black and grey curtain rise over the page, then goes to the
+//    link. The new page starts covered and lifts the curtain away.
+//
+//   DURATION    how long the "loading" count lasts, in milliseconds
+//   MAX_WAIT    the longest it will wait for the page to finish loading
+//   COVER_TIME  how long the curtain takes to rise over the page when you click
+//               a link (a little longer than --loader-cover in loader.css)
 (function () {
   var DURATION = 1100;
   var MAX_WAIT = 2500;
   var LIFT_TIME = 1400; // a little longer than the lift in loader.css
+  var COVER_TIME = 1000; // curtain rise (0.8s) plus its 0.14s delay, and a hair more
 
   var root = document.documentElement;
   var loader = document.querySelector("[data-loader]");
-  if (!loader || !root.classList.contains("is-loading")) return;
+  if (!loader) return;
 
-  var bar = loader.querySelector("[data-loader-bar]");
+  /* ---- Leaving this page: curtain rises, then go to the link ---- */
+
+  function pageLike(url) {
+    var last = url.pathname.split("/").pop();
+    return last === "" || last.indexOf(".") === -1 || /\.html?$/.test(last);
+  }
+
+  document.addEventListener("click", function (e) {
+    if (e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a || (a.target && a.target !== "_self") || a.hasAttribute("download")) return;
+    var url;
+    try {
+      url = new URL(a.href, location.href);
+    } catch (err) {
+      return;
+    }
+    if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return;
+    if (!pageLike(url)) return;
+    if (url.pathname === location.pathname && url.search === location.search) return; // same page / #anchor
+    if (reduced()) return;
+
+    e.preventDefault();
+    try {
+      sessionStorage.setItem("dmto-nav", "1");
+    } catch (err) {}
+    root.classList.add("is-covering");
+    void loader.offsetWidth; // let the browser register the hidden start
+    loader.classList.add("is-in");
+    setTimeout(function () {
+      location.href = url.href;
+    }, COVER_TIME);
+  });
+
+  function reduced() {
+    return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  // Back button restoring this page from memory: take the curtain away.
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) {
+      root.classList.remove("is-covering", "is-loading", "is-transition");
+      loader.classList.remove("is-in", "is-leaving");
+    }
+  });
+
+  /* ---- Arriving: first-visit screen, or the curtain lifting ---- */
+
+  if (!root.classList.contains("is-loading")) return;
+
+  var transition = root.classList.contains("is-transition");
   var count = loader.querySelector("[data-loader-count]");
   var started = performance.now();
   var leaving = false;
@@ -26,13 +83,11 @@
   }
 
   function show(progress) {
-    var n = Math.round(progress * 100);
-    if (count) count.textContent = ("00" + n).slice(-3);
-    if (bar) bar.style.transform = "scaleX(" + progress + ")";
+    if (count) count.textContent = ("00" + Math.round(progress * 100)).slice(-3);
   }
 
   function done() {
-    root.classList.remove("is-loading");
+    root.classList.remove("is-loading", "is-transition");
     try {
       sessionStorage.setItem("dmto-loaded", "1");
     } catch (e) {}
@@ -44,6 +99,18 @@
     show(1);
     loader.classList.add("is-leaving");
     setTimeout(done, LIFT_TIME);
+  }
+
+  // Arriving from another page: lift as soon as the page is ready.
+  if (transition) {
+    if (document.readyState === "complete") setTimeout(leave, 120);
+    else {
+      window.addEventListener("load", function () {
+        setTimeout(leave, 120);
+      }, { once: true });
+      setTimeout(leave, 1500);
+    }
+    return;
   }
 
   function tick(now) {
@@ -62,7 +129,7 @@
     }
   }
 
-  // A click or key press skips it.
+  // A click or key press skips the first-visit screen.
   loader.addEventListener("click", leave);
   window.addEventListener("keydown", leave, { once: true });
 

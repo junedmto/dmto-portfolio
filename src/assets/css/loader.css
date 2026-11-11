@@ -1,6 +1,10 @@
-/* The loading screen (see the "loader" in layouts/base.njk and assets/js/loader.js).
-   Black screen, white logo, a quick count to 100, then the screen lifts away
-   like a curtain to show the page. It only plays on the first page of a visit. */
+/* The loading screen and the page transitions (see the "loader" in
+   layouts/base.njk and assets/js/loader.js).
+
+   First page of a visit: black screen, white logo, a small count to 100, then
+   the screen lifts away like a curtain to show the page.
+   Moving between pages: the same black and grey curtain rises over the old
+   page, and lifts away again on the new one (no logo). */
 
 @font-face {
   font-family: "DMTO Pixel";
@@ -20,11 +24,15 @@ html.is-loading {
   overflow: hidden; /* no scrolling while the screen is up */
 }
 
-html.is-loading .loader {
+html.is-loading .loader,
+html.is-covering .loader {
   display: block;
   position: fixed;
   inset: 0;
   z-index: 1000;
+}
+
+html.is-loading .loader {
   cursor: progress;
 }
 
@@ -36,7 +44,8 @@ html.is-loading .loader {
    dark grey one right behind it. Change --loader-lift for a faster or slower
    lift, and the two colours below to restyle them. */
 .loader {
-  --loader-lift: 1.05s;
+  --loader-lift: 1.05s;  /* the curtain lifting off the page */
+  --loader-cover: 0.8s;  /* the curtain rising over the page, when you click a link */
   --loader-ease: cubic-bezier(0.77, 0, 0.18, 1);
 }
 
@@ -55,6 +64,28 @@ html.is-loading .loader {
   background: #000;
 }
 
+/* Moving to another page: the curtain starts hidden below the screen... */
+html.is-covering .loader:not(.is-in) .loader__layer {
+  clip-path: inset(100% 0 0 0 round 50vw 50vw 0 0);
+  transition: none;
+}
+
+/* ...and rises over the page, grey layer first, then black. */
+html.is-covering .loader.is-in .loader__layer {
+  clip-path: inset(0 0 0 0 round 0);
+  transition: clip-path var(--loader-cover) var(--loader-ease);
+}
+
+html.is-covering .loader.is-in .loader__layer--front {
+  transition-delay: 0.14s;
+}
+
+/* The logo and the counter belong to the first-visit screen only. */
+html.is-covering .loader__center,
+html.is-transition .loader__center {
+  display: none;
+}
+
 /* Lifting: the bottom edge rises to the top and curves as it goes. */
 .loader.is-leaving .loader__layer {
   clip-path: inset(0 0 100% 0 round 0 0 50vw 50vw);
@@ -64,7 +95,7 @@ html.is-loading .loader {
   transition-delay: 0.14s;
 }
 
-/* The logo, wiped in from the left, with a thin progress line under it. */
+/* The logo, wiped in from the bottom up, with a small counter under it. */
 .loader__center {
   position: absolute;
   inset: 0;
@@ -72,7 +103,7 @@ html.is-loading .loader {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.75rem;
+  gap: 1.25rem;
   transition: transform 0.7s var(--loader-ease), opacity 0.5s ease;
 }
 
@@ -87,8 +118,8 @@ html.is-loading .loader {
   width: auto;
   max-width: 80vw;
   filter: brightness(0) invert(1); /* any logo colour becomes white */
-  clip-path: inset(0 100% 0 0);
-  animation: loader-wipe 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+  clip-path: inset(100% 0 0 0); /* hidden; wiped in from the bottom up */
+  animation: loader-wipe 0.8s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
 }
 
 .loader__logo--text {
@@ -107,40 +138,20 @@ html.is-loading .loader {
   }
 }
 
-.loader__bar {
-  width: min(15rem, 55vw);
-  height: 2px;
-  background: rgba(255, 255, 255, 0.22);
-  overflow: hidden;
-}
-
-.loader__bar span {
-  display: block;
-  height: 100%;
-  background: #fff;
-  transform-origin: left center;
-  transform: scaleX(0);
-}
-
-/* The counter, in your pixel typeface, bottom left. */
+/* The counter, in your pixel typeface, centred under the logo. */
 .loader__count {
-  position: absolute;
-  left: calc(var(--page-inset, 0.875rem) + 2rem);
-  bottom: calc(var(--page-inset, 0.875rem) + 1rem);
+  min-width: 3ch;
+  text-align: center;
   font-family: "DMTO Pixel", ui-monospace, monospace;
-  font-size: clamp(3rem, 9vw, 7rem);
-  line-height: 0.8;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  line-height: 1;
   color: #fff;
-  letter-spacing: 0.02em;
-  transition: opacity 0.4s ease;
-}
-
-.loader.is-leaving .loader__count {
-  opacity: 0;
+  letter-spacing: 0.08em;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .loader {
+  .loader,
+  html.is-covering .loader {
     display: none !important;
   }
 }
