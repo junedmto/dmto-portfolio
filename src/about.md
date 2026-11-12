@@ -29,6 +29,6 @@ layout: layouts/about.njk
 youtube: https://www.youtube.com/watch?v=KeRm8CExl2E
 ---
 
-Hey! I'm June! A Creative Designer. My degrees are in Graphic Design and Computer Science, but my specialisation is mixing different creative industries to achieve unique results.
+Hey! I'm June! The creative mastermind behind Department of Making. My degrees are in Graphic Design and Computer Science, but my specialisation is mixing different creative industries to achieve unique results.
 
 I manage projects independently or collaboratively across Graphic Design, Motion Graphics, Illustration, 3D Modelling, Animation, Editorial Design, Packaging, ArchViz, Interactive Web Design, Artificial Intelligence, and most recently Residential Architectural Design.
