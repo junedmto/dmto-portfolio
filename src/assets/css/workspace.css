@@ -130,3 +130,148 @@
 .has-workspace.ws-covered .ws--behind {
   visibility: hidden;
 }
+
+
+/* ---- The "i" button and the little window it opens ---- */
+
+.ws-info__btn {
+  position: absolute;
+  right: calc(var(--page-inset, 0.875rem) + 2rem);
+  bottom: 1.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: #fff;
+  border: 3px solid currentColor;
+  border-radius: 0; /* a sharp square, like the logo */
+  cursor: pointer;
+  mix-blend-mode: difference; /* inverts over the picture, like the menu */
+  transition: transform 0.2s ease;
+}
+
+.ws-info__btn:hover {
+  transform: scale(1.1); /* grows a little, like the menu items */
+}
+
+.ws-info__btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.ws-info__btn svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+@media (max-width: 640px) {
+  .ws-info__btn {
+    right: calc(var(--page-inset, 0.875rem) + 1rem);
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+}
+
+.ws-info {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.ws-info.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease;
+}
+
+.ws-info__card {
+  position: relative;
+  width: min(26rem, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 1.5rem;
+  background: var(--color-paper, #fff);
+  color: var(--color-ink, #111);
+  border-radius: var(--radius-image, 14px);
+  transform: translateY(14px) scale(0.98);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ws-info.is-open .ws-info__card {
+  transform: none;
+}
+
+.ws-info__title {
+  margin: 0 2.5rem 0.5rem 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.ws-info__text {
+  margin: 0 0 1.1rem;
+  line-height: 1.5;
+}
+
+.ws-info__photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: calc(var(--radius-image, 14px) - 4px);
+  background: #e7e7e7;
+}
+
+.ws-info__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ws-info__ph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: #8a8a8a;
+}
+
+.ws-info__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: inherit;
+  border: 2px solid currentColor;
+  border-radius: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ws-info__close:hover {
+  transform: scale(1.1);
+}
+
+.ws-info__close svg {
+  width: 1rem;
+  height: 1rem;
+}

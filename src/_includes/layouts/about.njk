@@ -35,10 +35,32 @@ layout: layouts/base.njk
         role="img"
         aria-label="An interactive view of the workspace. Move the mouse left and right, up and down, to look around."></canvas>
 
-<section class="ws-hero" aria-hidden="true">
+<section class="ws-hero">
   <p class="ws__status" data-workspace-status></p>
-  <span class="ws-hero__cue">Scroll</span>
+  <span class="ws-hero__cue" aria-hidden="true">Scroll</span>
+
+  {# The little "i" at the bottom right of the picture. #}
+  <button class="ws-info__btn" type="button" data-info-open aria-haspopup="dialog" aria-label="What is this?">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="10" y="4" width="4" height="4" fill="currentColor"/><rect x="10" y="10" width="4" height="10" fill="currentColor"/></svg>
+  </button>
 </section>
+
+{# What the "i" opens. To change the words, edit them below. For the photo,
+   put a picture called desk.jpg in src/assets/img/ (until it is there, a grey
+   placeholder is shown). #}
+<div class="ws-info" data-info role="dialog" aria-modal="true" aria-labelledby="ws-info-title">
+  <div class="ws-info__card">
+    <button class="ws-info__close" type="button" data-info-close aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>
+    </button>
+    <h2 class="ws-info__title" id="ws-info-title">What is this?</h2>
+    <p class="ws-info__text">This is (a 3D representation of) my real desk in its natural state.</p>
+    <div class="ws-info__photo">
+      <span class="ws-info__ph">Photo of my desk goes here</span>
+      <img src="{{ '/assets/img/desk.jpg' | url }}" alt="My real desk" loading="lazy" onerror="this.remove()">
+    </div>
+  </div>
+</div>
 
 {# The white sheet that slides over the picture. #}
 <div class="ws-sheet">

@@ -203,3 +203,35 @@
   }
   requestAnimationFrame(tick);
 })();
+
+// The "i" window on the About page: opens from the button, closes with the
+// cross, a click outside it, or the Escape key.
+(function () {
+  var overlay = document.querySelector("[data-info]");
+  var openBtn = document.querySelector("[data-info-open]");
+  var closeBtn = document.querySelector("[data-info-close]");
+  if (!overlay || !openBtn || !closeBtn) return;
+  var returnTo = null;
+
+  function open() {
+    returnTo = document.activeElement;
+    overlay.classList.add("is-open");
+    document.documentElement.style.overflow = "hidden"; // the page behind stays put
+    closeBtn.focus();
+  }
+
+  function close() {
+    overlay.classList.remove("is-open");
+    document.documentElement.style.overflow = "";
+    if (returnTo && returnTo.focus) returnTo.focus();
+  }
+
+  openBtn.addEventListener("click", open);
+  closeBtn.addEventListener("click", close);
+  overlay.addEventListener("click", function (e) {
+    if (e.target === overlay) close();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && overlay.classList.contains("is-open")) close();
+  });
+})();
