@@ -97,15 +97,20 @@
   z-index: 1;
   background: var(--color-paper, #fff);
   border-radius: var(--radius-image, 12px) var(--radius-image, 12px) 0 0;
-  box-shadow: 0 -14px 28px -12px rgba(0, 0, 0, 0.28);
+  /* shadow along the top edge, and along the bottom where the playground begins */
+  box-shadow: 0 -14px 28px -12px rgba(0, 0, 0, 0.28), 0 14px 28px -10px rgba(0, 0, 0, 0.22);
   padding-bottom: var(--page-inset, 0.875rem);
 }
 
-/* The page's own white sheet (see playground.css) would hide the picture, so on
-   this page only the .ws-sheet above is white. The playground at the bottom
-   gets its own white background so the picture can't show through it. */
+/* The page's own white sheet (see playground.css) is also the layer that
+   would put the picture on top of the playground at the bottom of the page,
+   so on this page it is not a separate layer: only the .ws-sheet above is
+   white, and the playground sits over the picture. */
 .has-workspace .page-shell--over {
+  position: static;
+  z-index: auto;
   background: transparent;
+  box-shadow: none;
 }
 
 .has-workspace .cp--reveal {
