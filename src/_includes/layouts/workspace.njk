@@ -1,0 +1,27 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/workspace.njk
+  ---------------------
+  The workspace picture, filling the whole window. It is 60 pictures taken as
+  a camera pans across the scene in Blender (assets/img/workspace/0001.webp
+  to 0060.webp); assets/js/workspace.js shows the one that matches where the
+  mouse is, so moving the mouse left and right looks around the room.
+
+  Settings on the canvas:
+        data-frames   how many pictures there are
+        data-path     the folder they are in
+        data-ext      their file type (webp, jpg...)
+        data-invert   "true" to flip the direction
+#}
+<h1 class="visually-hidden">{{ title }}</h1>
+
+<canvas class="ws" data-workspace
+        data-frames="60"
+        data-path="{{ '/assets/img/workspace/' | url }}"
+        data-ext="webp"
+        data-invert="false"
+        role="img"
+        aria-label="An interactive view of the workspace. Move the mouse left and right to look around."></canvas>
+<p class="ws__status" data-workspace-status aria-live="polite"></p>
