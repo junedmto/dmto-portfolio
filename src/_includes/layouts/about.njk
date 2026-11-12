@@ -3,7 +3,11 @@ layout: layouts/base.njk
 ---
 {#
   layouts/about.njk
-  Starts with the video (if a YouTube link is set), then renders src/about.md as four columns across the full page width:
+  The page opens with the interactive workspace picture (60 pictures that
+  follow the mouse, see assets/js/workspace.js), filling the window and fixed
+  in place. As you scroll, a white sheet slides up over it, holding
+  src/about.md as four columns across the full page width, and then the video
+  (if a YouTube link is set in about.md). Columns:
 
     1. Bio       - "content" below, the Markdown body of about.md. The
                    first paragraph is shown bolder (see style.css).
@@ -21,8 +25,23 @@ layout: layouts/base.njk
 
 <h1 class="visually-hidden">{{ title }}</h1>
 
-{# The video on top: the "youtube" line in about.md. Leave it empty to hide it. #}
-{% include "partials/hero-video.njk" %}
+{# The workspace picture: fixed behind everything. The transparent opening
+   below it is what you see first; the sheet then slides over it. #}
+<canvas class="ws ws--behind" data-workspace
+        data-frames="60"
+        data-path="{{ '/assets/img/workspace/' | url }}"
+        data-ext="webp"
+        data-invert="false"
+        role="img"
+        aria-label="An interactive view of the workspace. Move the mouse left and right, up and down, to look around."></canvas>
+
+<section class="ws-hero" aria-hidden="true">
+  <p class="ws__status" data-workspace-status></p>
+  <span class="ws-hero__cue">Scroll</span>
+</section>
+
+{# The white sheet that slides over the picture. #}
+<div class="ws-sheet">
 
 <div class="about">
 
@@ -76,5 +95,11 @@ layout: layouts/base.njk
     <img src="{{ photo | url }}" alt="Portrait of June">
   </div>
   {% endif %}
+
+</div>
+
+{# The video, under the information: the "youtube" line in about.md. Leave it
+   empty to hide it. #}
+{% include "partials/hero-video.njk" %}
 
 </div>

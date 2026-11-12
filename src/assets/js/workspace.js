@@ -156,6 +156,13 @@
     var dt = Math.min(64, now - last);
     last = now;
 
+    // Scrolled past the picture (on the About page): it is covered, so rest.
+    if (window.scrollY > window.innerHeight + 50) {
+      dirty = true;
+      requestAnimationFrame(tick);
+      return;
+    }
+
     if (DRIFT && !interacted) {
       target = 0.5 - 0.5 * Math.cos(now / 2600); // starts at the left, sways across
       targetY = 0.5 + 0.12 * Math.sin(now / 3400);

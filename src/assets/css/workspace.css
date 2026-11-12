@@ -45,3 +45,69 @@
 .ws__status.is-done {
   opacity: 0;
 }
+
+/* ---- On the About page: the picture sits behind, the page slides over it ---- */
+
+.has-workspace .site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.ws--behind {
+  touch-action: pan-y; /* on a phone, a vertical swipe still scrolls the page */
+}
+
+/* The transparent opening where you see the picture. Together with the header
+   it is exactly one screen tall. */
+.ws-hero {
+  position: relative;
+  height: calc(100vh - var(--hv-header, 4rem));
+  height: calc(100svh - var(--hv-header, 4rem));
+  touch-action: pan-y;
+  cursor: ew-resize;
+}
+
+.ws-hero .ws__status {
+  position: absolute;
+  bottom: 1.25rem;
+}
+
+.ws-hero__cue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+/* While the picture is still loading, the "Loading" note takes this spot. */
+.ws-hero:has(.ws__status:not(.is-done):not(:empty)) .ws-hero__cue {
+  display: none;
+}
+
+/* The white sheet that slides over the picture. */
+.ws-sheet {
+  position: relative;
+  z-index: 1;
+  background: var(--color-paper, #fff);
+  border-radius: var(--radius-image, 12px) var(--radius-image, 12px) 0 0;
+  box-shadow: 0 -14px 28px -12px rgba(0, 0, 0, 0.28);
+  padding-bottom: var(--page-inset, 0.875rem);
+}
+
+/* The page's own white sheet (see playground.css) would hide the picture, so on
+   this page only the .ws-sheet above is white. The playground at the bottom
+   gets its own white background so the picture can't show through it. */
+.has-workspace .page-shell--over {
+  background: transparent;
+}
+
+.has-workspace .cp--reveal {
+  background: var(--color-paper, #fff);
+}
