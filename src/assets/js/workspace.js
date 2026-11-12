@@ -9,10 +9,18 @@
 //               the way left" / "all the way right" (0.08 = 8%)
 //   DRIFT       while nobody has moved the mouse yet (or touched the screen),
 //               the view drifts slowly left and right by itself
+//   ZOOM        how much the picture is enlarged, to leave room above and below
+//               that is only shown when the mouse goes up or down (0.1 = 10%;
+//               0 = no up and down movement at all)
+//   SETTLE      how long the mouse must be still, in milliseconds, before the
+//               view settles onto one single picture (so there is never a
+//               see-through mix of two)
 (function () {
   var SMOOTHING = 0.07;
   var EDGE = 0.08;
   var DRIFT = true;
+  var ZOOM = 0.1;
+  var SETTLE = 90;
 
   var canvas = document.querySelector("[data-workspace]");
   if (!canvas) return;
@@ -85,28 +93,35 @@
   /* ---- Input ---- */
   var target = 0; // where the view is heading, 0 (far left) to 1 (far right)
   var current = 0; // where it is now
+  var targetY = 0.5; // 0 = looking up, 1 = looking down
+  var currentY = 0.5;
   var interacted = false;
+  var lastInput = 0;
 
-  function setFromX(x) {
-    var t = x / window.innerWidth;
-    t = (t - EDGE) / (1 - EDGE * 2);
-    t = Math.max(0, Math.min(1, t));
-    target = invert ? 1 - t : t;
-    interacted = true;
+  function clamp01(v) {
+    return Math.max(0, Math.min(1, v));
   }
-  window.addEventListener("pointermove", function (e) {
-    setFromX(e.clientX);
-  });
-  window.addEventListener("pointerdown", function (e) {
-    setFromX(e.clientX);
-  });
+
+  function setFromPointer(e) {
+    var t = clamp01((e.clientX / window.innerWidth - EDGE) / (1 - EDGE * 2));
+    target = invert ? 1 - t : t;
+    targetY = clamp01((e.clientY / window.innerHeight - EDGE) / (1 - EDGE * 2));
+    interacted = true;
+    lastInput = performance.now();
+    settled = false;
+  }
+  var settled = true;
+  window.addEventListener("pointermove", setFromPointer);
+  window.addEventListener("pointerdown", setFromPointer);
 
   /* ---- Drawing ---- */
   function drawCover(img) {
-    var scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    // Cover the window, enlarged a little (ZOOM) so there is spare picture
+    // above and below; the mouse height decides which part is shown.
+    var scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight) * (1 + ZOOM);
     var dw = img.naturalWidth * scale;
     var dh = img.naturalHeight * scale;
-    ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    ctx.drawImage(img, (cw - dw) / 2, (ch - dh) * currentY, dw, dh);
   }
 
   function draw(pos) {
@@ -122,7 +137,15 @@
     if (!fb) fb = fa;
     drawCover(fa);
     if (fb !== fa && b !== a) {
-      ctx.globalAlpha = Math.max(0, Math.min(1, (f - a) / (b - a)));
+      // Blend the two neighbouring pictures while moving; once it is nearly
+      // on one picture, show just that one.
+      var mix = clamp01((f - a) / (b - a));
+      if (mix < 0.04) return;
+      if (mix > 0.96) {
+        drawCover(fb);
+        return;
+      }
+      ctx.globalAlpha = mix;
       drawCover(fb);
       ctx.globalAlpha = 1;
     }
@@ -135,12 +158,25 @@
 
     if (DRIFT && !interacted) {
       target = 0.5 - 0.5 * Math.cos(now / 2600); // starts at the left, sways across
+      targetY = 0.5 + 0.12 * Math.sin(now / 3400);
+    }
+
+    // When the mouse has been still for a moment, aim for the nearest single
+    // picture so the view never rests between two.
+    if (interacted && !settled && now - lastInput > SETTLE) {
+      settled = true;
+      target = Math.round(target * (N - 1)) / (N - 1);
     }
 
     var k = 1 - Math.pow(1 - SMOOTHING, dt / 16.7);
     var diff = target - current;
-    if (Math.abs(diff) > 0.0001) {
+    if (Math.abs(diff) > 0.00005) {
       current += diff * k;
+      dirty = true;
+    }
+    var diffY = targetY - currentY;
+    if (Math.abs(diffY) > 0.0005) {
+      currentY += diffY * k;
       dirty = true;
     }
     if (dirty) {
