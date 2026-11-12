@@ -152,13 +152,22 @@
   }
 
   var last = performance.now();
+  var wasCovered = false;
   function tick(now) {
     var dt = Math.min(64, now - last);
     last = now;
 
-    // Scrolled past the picture (on the About page): it is covered, so rest.
-    if (window.scrollY > window.innerHeight + 50) {
+    // Scrolled past the picture (on the About page): the white sheet covers it
+    // completely. Rest, and let the playground at the bottom of the page take
+    // its place (see workspace.css; it is hidden until now so it can't show
+    // through the transparent opening at the top).
+    var covered = window.scrollY >= window.innerHeight;
+    if (covered !== wasCovered) {
+      wasCovered = covered;
+      document.body.classList.toggle("ws-covered", covered);
       dirty = true;
+    }
+    if (covered) {
       requestAnimationFrame(tick);
       return;
     }

@@ -116,3 +116,17 @@
 .has-workspace .cp--reveal {
   background: var(--color-paper, #fff);
 }
+
+/* The playground only shows once the picture is fully covered (workspace.js
+   adds "ws-covered"); the picture is hidden then, so they never overlap. */
+.has-workspace .cp--reveal {
+  visibility: hidden;
+}
+
+.has-workspace.ws-covered .cp--reveal {
+  visibility: visible;
+}
+
+.has-workspace.ws-covered .ws--behind {
+  visibility: hidden;
+}
