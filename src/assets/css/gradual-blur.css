@@ -1,0 +1,36 @@
+/* A soft blur along the bottom edge of the screen, so content fades out
+   gently as it scrolls away. A plain-CSS/JS version of the "Gradual Blur"
+   component from reactbits.dev (the "subtle" preset). The layers are built
+   by assets/js/gradual-blur.js. To change how it looks, see the settings at
+   the top of that file. */
+
+.gradual-blur {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4rem; /* depth: how far up the screen the blur reaches */
+  z-index: 15; /* above the page, below the menu and any pop-ups */
+  pointer-events: none; /* never gets in the way of clicks */
+  --gradual-blur-reveal: 1; /* 0 = off (near the end of the page) ... 1 = full */
+  --gradual-blur-hover: 1; /* raised a little while the pointer is over it */
+}
+
+.gradual-blur > div {
+  position: absolute;
+  inset: 0;
+  transition: backdrop-filter 0.3s ease-out, -webkit-backdrop-filter 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* Browsers without blur support simply show nothing. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .gradual-blur {
+    display: none;
+  }
+}
+
+@media print {
+  .gradual-blur {
+    display: none;
+  }
+}

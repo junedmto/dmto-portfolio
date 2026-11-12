@@ -204,34 +204,42 @@
   requestAnimationFrame(tick);
 })();
 
-// The "i" window on the About page: opens from the button, closes with the
-// cross, a click outside it, or the Escape key.
+// The "i" window on the About page: a small window above the button. It opens
+// and closes with the button, closes with its cross, a click anywhere else, or
+// the Escape key. The page can still be scrolled while it is open.
 (function () {
   var overlay = document.querySelector("[data-info]");
   var openBtn = document.querySelector("[data-info-open]");
   var closeBtn = document.querySelector("[data-info-close]");
   if (!overlay || !openBtn || !closeBtn) return;
-  var returnTo = null;
+
+  function isOpen() {
+    return overlay.classList.contains("is-open");
+  }
 
   function open() {
-    returnTo = document.activeElement;
     overlay.classList.add("is-open");
-    document.documentElement.style.overflow = "hidden"; // the page behind stays put
-    closeBtn.focus();
+    openBtn.setAttribute("aria-expanded", "true");
   }
 
-  function close() {
+  function close(focusButton) {
     overlay.classList.remove("is-open");
-    document.documentElement.style.overflow = "";
-    if (returnTo && returnTo.focus) returnTo.focus();
+    openBtn.setAttribute("aria-expanded", "false");
+    if (focusButton) openBtn.focus();
   }
 
-  openBtn.addEventListener("click", open);
-  closeBtn.addEventListener("click", close);
-  overlay.addEventListener("click", function (e) {
-    if (e.target === overlay) close();
+  openBtn.setAttribute("aria-expanded", "false");
+  openBtn.addEventListener("click", function () {
+    if (isOpen()) close(false);
+    else open();
+  });
+  closeBtn.addEventListener("click", function () {
+    close(true);
+  });
+  document.addEventListener("click", function (e) {
+    if (isOpen() && !overlay.contains(e.target) && !openBtn.contains(e.target)) close(false);
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && overlay.classList.contains("is-open")) close();
+    if (e.key === "Escape" && isOpen()) close(true);
   });
 })();

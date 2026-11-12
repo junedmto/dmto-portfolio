@@ -43,12 +43,11 @@ layout: layouts/base.njk
   <button class="ws-info__btn" type="button" data-info-open aria-haspopup="dialog" aria-label="What is this?">
     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="10" y="4" width="4" height="4" fill="currentColor"/><rect x="10" y="10" width="4" height="10" fill="currentColor"/></svg>
   </button>
-</section>
 
-{# What the "i" opens. To change the words, edit them below. For the photo,
+{# What the "i" opens: a small window above the button; the page can still be scrolled while it is open. To change the words, edit them below. For the photo,
    put a picture called desk.jpg in src/assets/img/ (until it is there, a grey
    placeholder is shown). #}
-<div class="ws-info" data-info role="dialog" aria-modal="true" aria-labelledby="ws-info-title">
+<div class="ws-info" data-info role="dialog" aria-labelledby="ws-info-title">
   <div class="ws-info__card">
     <button class="ws-info__close" type="button" data-info-close aria-label="Close">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>
@@ -61,6 +60,8 @@ layout: layouts/base.njk
     </div>
   </div>
 </div>
+</section>
+
 
 {# The white sheet that slides over the picture. #}
 <div class="ws-sheet">

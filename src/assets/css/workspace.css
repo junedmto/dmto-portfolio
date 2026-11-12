@@ -84,6 +84,7 @@
   color: #fff;
   mix-blend-mode: difference;
   pointer-events: none;
+  z-index: 30;
 }
 
 /* While the picture is still loading, the "Loading" note takes this spot. */
@@ -148,6 +149,7 @@
   border: 3px solid currentColor;
   border-radius: 0; /* a sharp square, like the logo */
   cursor: pointer;
+  z-index: 30; /* above the soft blur along the bottom of the screen */
   mix-blend-mode: difference; /* inverts over the picture, like the menu */
   transition: transform 0.2s ease;
 }
@@ -174,42 +176,48 @@
   }
 }
 
+/* The window sits above the "i" button, lined up with the right margin. It is
+   part of the opening screen, so it scrolls with the page, and the page can be
+   scrolled while it is open. */
 .ws-info {
-  position: fixed;
-  inset: 0;
-  z-index: 900;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.45);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  position: absolute;
+  right: calc(var(--page-inset, 0.875rem) + 2rem);
+  bottom: calc(1.25rem + 2.75rem + 0.75rem);
+  z-index: 30;
+  width: min(22rem, calc(100vw - 2 * var(--page-inset, 0.875rem) - 2rem));
+  max-height: calc(100% - 2rem - 4.5rem);
+  display: flex;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+  transform: translateY(10px) scale(0.97);
+  transform-origin: bottom right; /* grows out of the button */
+  transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.3s;
 }
 
 .ws-info.is-open {
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.25s ease;
+  transform: none;
+  transition: opacity 0.22s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (max-width: 640px) {
+  .ws-info {
+    right: calc(var(--page-inset, 0.875rem) + 1rem);
+    bottom: calc(1.25rem + 2.4rem + 0.75rem);
+    width: min(22rem, calc(100vw - 2 * var(--page-inset, 0.875rem) - 1rem));
+  }
 }
 
 .ws-info__card {
   position: relative;
-  width: min(26rem, 100%);
-  max-height: 100%;
+  width: 100%;
   overflow: auto;
   padding: 1.5rem;
   background: var(--color-paper, #fff);
   color: var(--color-ink, #111);
   border-radius: var(--radius-image, 14px);
-  transform: translateY(14px) scale(0.98);
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.ws-info.is-open .ws-info__card {
-  transform: none;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
 .ws-info__title {

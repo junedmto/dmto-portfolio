@@ -56,6 +56,7 @@
   </script>
   <link rel="preload" href="{{ '/assets/fonts/DMTOPixel.woff2' | url }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ '/assets/css/loader.css' | url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/gradual-blur.css' | url }}">
 
   <!-- Poppins carries the text wordmark and headings, Inter carries
        everything meant to be read (nav, body copy, UI text). -->
@@ -132,7 +133,11 @@
   {% include "partials/playground-reveal.njk" %}
   {% endif %}
 
+  {# The soft blur along the bottom edge of the screen (assets/js/gradual-blur.js). #}
+  <div class="gradual-blur" data-gradual-blur aria-hidden="true"></div>
+
   <script src="{{ '/assets/js/loader.js' | url }}"></script>
+  <script src="{{ '/assets/js/gradual-blur.js' | url }}"></script>
   <script src="{{ '/assets/js/main.js' | url }}"></script>
   {# Extra scripts a page asks for with "extraJs: [...]". #}
   {% for js in extraJs %}<script src="{{ js | url }}"></script>{% endfor %}
