@@ -33,8 +33,8 @@ spots:
     'y': 0.655
     frame: 0
   - title: Projects
-    text: Open on whatever is being worked out that week.
-    link: ''
+    text: Check out my work!
+    link: /homepage/
     media: ''
     images: []
     youtube: ''
