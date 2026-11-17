@@ -148,8 +148,8 @@ spots:
     frame: 0
   - title: Music?
     text: ''
-    action: ''
-    link: ''
+    action: link
+    link: https://open.spotify.com/artist/08fDg7Bj8Z3axCBL4NHMdd?si=ZjZ86lFqQQ6NV3hwIAC7IA
     media: ''
     images:
       - /assets/img/uploads/IMG_5644.jpeg
