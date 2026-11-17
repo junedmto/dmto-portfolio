@@ -17,6 +17,9 @@
 //   SETTLE      how long the mouse must be still, in milliseconds, before the
 //               view settles onto one single picture (so there is never a
 //               see-through mix of two)
+//   BLEND       true fades between two neighbouring pictures while the view
+//               moves, which is smoother but can look see-through; false
+//               jumps straight from one picture to the next
 //
 // The page can also carry dots pinned to things in the room (the "spots" list
 // in src/workspace-temp.md). They slide along with the room as it turns, show
@@ -29,6 +32,7 @@
   var DRIFT_STOP = 8200;
   var ZOOM = 0.1;
   var SETTLE = 90;
+  var BLEND = false;
 
   var canvas = document.querySelector("[data-workspace]");
   if (!canvas) return;
@@ -195,8 +199,122 @@
         depth: el.dataset.depth ? parseFloat(el.dataset.depth) : 1,
         btn: el.querySelector(".ws-spot__dot"),
         card: el.querySelector(".ws-spot__card"),
-        cardW: 0
+        cardW: 0,
+        on: false,
+        typers: Array.prototype.map.call(el.querySelectorAll("[data-type]"), function (t) {
+          return { el: t, full: t.getAttribute("data-type") || "", speed: t.classList.contains("ws-spot__title") ? 34 : 16 };
+        }),
+        shots: Array.prototype.slice.call(el.querySelectorAll(".ws-spot__shot")),
+        video: el.querySelector("[data-video]"),
+        yt: el.querySelector("[data-yt]"),
+        shot: 0,
+        typeTimer: null,
+        shotTimer: null
       });
+    });
+  }
+
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- Writing the words out, as if they were being typed in the air ---- */
+  function stopTyping(s) {
+    if (s.typeTimer) {
+      clearTimeout(s.typeTimer);
+      s.typeTimer = null;
+    }
+    s.typers.forEach(function (t) {
+      t.el.classList.remove("is-typing");
+    });
+  }
+
+  function startTyping(s) {
+    stopTyping(s);
+    if (reduceMotion) {
+      s.typers.forEach(function (t) {
+        t.el.textContent = t.full;
+      });
+      return;
+    }
+    s.typers.forEach(function (t) {
+      t.el.textContent = "";
+    });
+    var line = 0;
+    var ch = 0;
+    function step() {
+      if (line >= s.typers.length) {
+        s.typeTimer = null;
+        return;
+      }
+      var t = s.typers[line];
+      if (!t.full) {
+        line++;
+        step();
+        return;
+      }
+      t.el.classList.add("is-typing");
+      ch++;
+      t.el.textContent = t.full.slice(0, ch);
+      if (ch >= t.full.length) {
+        t.el.classList.remove("is-typing");
+        line++;
+        ch = 0;
+        s.typeTimer = setTimeout(step, 240); // a short pause between the lines
+        return;
+      }
+      s.typeTimer = setTimeout(step, t.speed);
+    }
+    step();
+  }
+
+  /* ---- The little video or the photos under the words ---- */
+  function tellYouTube(s, command) {
+    if (!s.yt || !s.yt.contentWindow) return;
+    try {
+      s.yt.contentWindow.postMessage(JSON.stringify({ event: "command", func: command, args: [] }), "*");
+    } catch (e) {}
+  }
+
+  function startMedia(s) {
+    if (s.yt) {
+      if (!s.yt.getAttribute("src")) s.yt.setAttribute("src", s.yt.getAttribute("data-yt"));
+      else tellYouTube(s, "playVideo");
+    }
+    if (s.video) {
+      var play = s.video.play();
+      if (play && play.catch) play.catch(function () {});
+    }
+    if (s.shots.length > 1 && !s.shotTimer) {
+      s.shotTimer = setInterval(function () {
+        s.shots[s.shot].classList.remove("is-on");
+        s.shot = (s.shot + 1) % s.shots.length;
+        s.shots[s.shot].classList.add("is-on");
+      }, 2300);
+    }
+  }
+
+  function stopMedia(s) {
+    if (s.yt && s.yt.getAttribute("src")) tellYouTube(s, "pauseVideo");
+    if (s.video) s.video.pause();
+    if (s.shotTimer) {
+      clearInterval(s.shotTimer);
+      s.shotTimer = null;
+    }
+  }
+
+  // A dot is "open" while the mouse is on it or while it is held open.
+  var hovered = null;
+  function refreshOpen() {
+    spots.forEach(function (s) {
+      var open = s === pinned || s === hovered;
+      if (open === s.on) return;
+      s.on = open;
+      if (open) {
+        startTyping(s);
+        startMedia(s);
+      } else {
+        stopTyping(s);
+        stopMedia(s);
+      }
     });
   }
 
@@ -207,6 +325,7 @@
     s.el.classList.add("is-pinned");
     if (s.btn) s.btn.setAttribute("aria-expanded", "true");
     layer.classList.add("has-pinned");
+    refreshOpen();
 
     var f = panInverse(0.5 - s.x + panAt(s.frame));
     target = Math.round(f) / (N - 1); // a whole picture, so there is no ghosting
@@ -224,6 +343,7 @@
     if (pinned.btn) pinned.btn.setAttribute("aria-expanded", "false");
     pinned = null;
     layer.classList.remove("has-pinned");
+    refreshOpen();
   }
 
   spots.forEach(function (s) {
@@ -231,10 +351,29 @@
     // The room stops turning while the mouse is on a dot or its card, so the
     // card can be read without everything sliding away.
     s.el.addEventListener("pointerenter", function (e) {
-      if (e.pointerType === "mouse") hovering = true; // only a real mouse; a tap must not freeze the room
+      if (e.pointerType === "mouse") {
+        hovering = true; // only a real mouse; a tap must not freeze the room
+        hovered = s;
+        refreshOpen();
+      }
     });
     s.el.addEventListener("pointerleave", function () {
       hovering = false;
+      if (hovered === s) {
+        hovered = null;
+        refreshOpen();
+      }
+    });
+    // Keyboard: tabbing onto a dot writes its words out too.
+    s.btn.addEventListener("focus", function () {
+      hovered = s;
+      refreshOpen();
+    });
+    s.btn.addEventListener("blur", function () {
+      if (hovered === s) {
+        hovered = null;
+        refreshOpen();
+      }
     });
     s.btn.addEventListener("click", function (e) {
       e.stopPropagation();
@@ -295,8 +434,10 @@
 
   function draw(pos) {
     var f = pos * (N - 1);
-    var a = Math.floor(f);
-    var b = Math.ceil(f);
+    // With blending on, the two pictures either side are faded together;
+    // with it off, the nearest one is shown on its own.
+    var a = BLEND ? Math.floor(f) : Math.round(f);
+    var b = BLEND ? Math.ceil(f) : a;
     while (a > 0 && !frames[a]) a--;
     while (b < N - 1 && !frames[b]) b++;
     var fa = frames[a];
@@ -305,7 +446,7 @@
     if (!fa) fa = fb;
     if (!fb) fb = fa;
     drawCover(fa);
-    if (fb !== fa && b !== a) {
+    if (BLEND && fb !== fa && b !== a) {
       // Blend the two neighbouring pictures while moving; once it is nearly
       // on one picture, show just that one.
       var mix = clamp01((f - a) / (b - a));

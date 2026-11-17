@@ -387,33 +387,28 @@
   }
 }
 
-/* ---- The card ----
-   It hangs to the right of the dot, or to the left when there is no room
-   (workspace.js adds "is-left"), and a little lower when the dot is near the
-   top of the window ("is-below"). */
+/* ---- The words ----
+   No card and no panel: the words are written out in the air over the room,
+   with a small looping video or a few photos under them. They hang to the
+   right of the dot, or to the left when there is no room (workspace.js adds
+   "is-left"), and a little lower when the dot is near the top ("is-below"). */
 .ws-spot__card {
   position: absolute;
   top: var(--y);
   left: var(--x);
-  width: 17rem;
-  max-height: 60vh;
-  overflow: auto;
-  padding: 1rem 1.1rem 1.1rem;
-  background: var(--color-paper, #fff);
-  color: var(--color-ink, #111);
-  border-radius: var(--radius-image, 14px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+  width: 16rem;
   opacity: 0;
   visibility: hidden;
-  --card-x: 1.5rem; /* its distance from the dot */
+  --card-x: 1.75rem; /* its distance from the dot */
   --card-y: -50%;
   transform: translate(calc(var(--card-x) - 6px), var(--card-y));
-  transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.32s;
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.4s;
 }
 
 .ws-spot.is-left .ws-spot__card {
-  --card-x: calc(-100% - 1.5rem);
+  --card-x: calc(-100% - 1.75rem);
   transform: translate(calc(var(--card-x) + 6px), var(--card-y));
+  text-align: right;
 }
 
 .ws-spot.is-below .ws-spot__card {
@@ -425,8 +420,7 @@
   opacity: 1;
   visibility: visible;
   transform: translate(var(--card-x), var(--card-y));
-  transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
-  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @media (hover: hover) {
@@ -434,67 +428,128 @@
     opacity: 1;
     visibility: visible;
     transform: translate(var(--card-x), var(--card-y));
-    transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
-    pointer-events: auto;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 }
 
-/* The little line from the dot to the card. */
+/* A soft breath of shade behind the words, so they stay readable over the
+   bright parts of the room. It has no edge: it fades out into the picture. */
 .ws-spot__card::before {
   content: "";
   position: absolute;
-  top: 50%;
-  right: 100%;
-  width: 1.5rem;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.55);
+  inset: -0.9rem -1.2rem;
+  z-index: -1;
+  border-radius: 1.5rem;
+  background: rgba(0, 0, 0, 0.42);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  -webkit-mask-image: radial-gradient(120% 105% at 22% 38%, #000 38%, transparent 72%);
+  mask-image: radial-gradient(120% 105% at 22% 38%, #000 38%, transparent 72%);
+  pointer-events: none;
 }
 
 .ws-spot.is-left .ws-spot__card::before {
-  right: auto;
-  left: 100%;
+  -webkit-mask-image: radial-gradient(120% 105% at 78% 38%, #000 38%, transparent 72%);
+  mask-image: radial-gradient(120% 105% at 78% 38%, #000 38%, transparent 72%);
 }
 
-.ws-spot.is-below .ws-spot__card::before {
-  top: 1.75rem;
+.ws-spot__title,
+.ws-spot__text {
+  margin: 0;
+  color: #fff;
+  /* keeps the words readable over the bright parts of the room */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 2px 16px rgba(0, 0, 0, 0.75), 0 0 36px rgba(0, 0, 0, 0.6);
 }
 
 .ws-spot__title {
-  margin: 0 0 0.35rem;
   font-family: var(--font-display, inherit);
-  font-size: 1.05rem;
-  line-height: 1.2;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  min-height: 1.25em; /* keeps the line from jumping while it is written */
 }
 
 .ws-spot__text {
-  margin: 0;
+  margin-top: 0.3rem;
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
-.ws-spot__img {
-  display: block;
-  width: 100%;
-  margin-top: 0.85rem;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: calc(var(--radius-image, 14px) - 5px);
-  background: #e7e7e7;
+/* The little bar that blinks at the end of the line being written. */
+.ws-spot__title.is-typing::after,
+.ws-spot__text.is-typing::after {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 1em;
+  margin-left: 0.12em;
+  background: #fff;
+  vertical-align: -0.14em;
+  animation: ws-caret 1s steps(1) infinite;
 }
 
-/* On a phone there is no room beside a dot, so the card sits along the bottom
-   of the window instead of hanging off the dot. */
+@keyframes ws-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---- The video or photos under the words ---- */
+.ws-spot__media {
+  position: relative;
+  width: 11rem;
+  margin-top: 0.85rem;
+  overflow: hidden;
+  border-radius: calc(var(--radius-image, 14px) - 4px);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  pointer-events: none; /* nothing here can be clicked */
+}
+
+.ws-spot.is-left .ws-spot__media {
+  margin-left: auto; /* stays under the words when they are right-aligned */
+}
+
+.ws-spot__media--photos {
+  aspect-ratio: 4 / 3;
+}
+
+.ws-spot__media--video {
+  aspect-ratio: 16 / 9;
+}
+
+.ws-spot__shot,
+.ws-spot__media video,
+.ws-spot__media iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+}
+
+/* The photos cross-fade from one to the next. */
+.ws-spot__shot {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.ws-spot__shot.is-on {
+  opacity: 1;
+}
+
+/* On a phone the words sit along the bottom of the window instead of beside
+   the dot, where there is no room for them. */
 @media (max-width: 640px) {
   .ws-spot__card,
   .ws-spot.is-left .ws-spot__card {
+    position: fixed;
     top: auto;
     left: var(--page-inset, 0.875rem);
     right: var(--page-inset, 0.875rem);
-    bottom: var(--page-inset, 0.875rem);
-    position: fixed;
+    bottom: calc(var(--page-inset, 0.875rem) + 0.5rem);
     width: auto;
-    max-height: 45vh;
-    padding: 0.95rem 1.05rem 1.1rem;
+    text-align: left;
     --card-x: 0;
     --card-y: 12px;
     transform: translate(0, var(--card-y));
@@ -505,8 +560,15 @@
     --card-y: 0;
   }
 
-  .ws-spot__card::before {
-    display: none; /* no line to the dot: the card is not beside it any more */
+  .ws-spot.is-left .ws-spot__media {
+    margin-left: 0;
+  }
+
+  .ws-spot__card::before,
+  .ws-spot.is-left .ws-spot__card::before {
+    inset: -1rem -1.2rem -1.2rem;
+    -webkit-mask-image: radial-gradient(130% 110% at 40% 55%, #000 45%, transparent 80%);
+    mask-image: radial-gradient(130% 110% at 40% 55%, #000 45%, transparent 80%);
   }
 
   .ws-spot__dot {

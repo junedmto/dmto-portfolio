@@ -15,11 +15,15 @@ layout: layouts/base.njk
         data-ext      their file type (webp, jpg...)
         data-invert   "true" to flip the direction
 
-  The dots come from the "spots" list in src/workspace-temp.md. Each one
-  needs x and y (where it is in the picture, 0 to 1) and the number of the
-  picture those were measured on; the script keeps it on its item as the room
-  turns. To place new ones, open the page with ?place at the end of the
-  address.
+  The dots come from the "spots" list in src/workspace-temp.md, which can also
+  be edited in /admin under Pages. Each one needs x and y (where it is in the
+  picture, 0 to 1) and the number of the picture those were measured on; the
+  script keeps it on its item as the room turns. To place new ones, open the
+  page with ?place at the end of the address.
+
+  Each dot can also carry either a few photos that loop, or one small video
+  (an uploaded file or a YouTube link). They play by themselves and cannot be
+  clicked.
 #}
 <h1 class="visually-hidden">{{ title }}</h1>
 
@@ -35,18 +39,43 @@ layout: layouts/base.njk
 {% if spots %}
 <div class="ws-spots" data-spots>
   {% for spot in spots %}
+  {% set kind = spot.media or ("photos" if spot.images else ("video" if (spot.youtube or spot.video) else "")) %}
   <div class="ws-spot" data-spot
        data-x="{{ spot.x }}"
        data-y="{{ spot.y }}"
        data-frame="{{ spot.frame or 0 }}"
        {% if spot.depth %}data-depth="{{ spot.depth }}"{% endif %}>
     <button class="ws-spot__dot" type="button" aria-expanded="false" aria-controls="ws-spot-{{ loop.index }}">
-      <span class="visually-hidden">{{ spot.title }}</span>
+      <span class="visually-hidden">{{ spot.title }}{% if spot.text %}. {{ spot.text }}{% endif %}</span>
     </button>
-    <div class="ws-spot__card" id="ws-spot-{{ loop.index }}">
-      <h2 class="ws-spot__title">{{ spot.title }}</h2>
-      {% if spot.text %}<p class="ws-spot__text">{{ spot.text }}</p>{% endif %}
-      {% if spot.image %}<img class="ws-spot__img" src="{{ spot.image | url }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}
+
+    <div class="ws-spot__card" id="ws-spot-{{ loop.index }}" aria-hidden="true">
+      {# The words are written out one letter at a time by workspace.js; they
+         start empty and live in the data-type attribute. #}
+      <p class="ws-spot__title" data-type="{{ spot.title }}"></p>
+      {% if spot.text %}<p class="ws-spot__text" data-type="{{ spot.text }}"></p>{% endif %}
+
+      {% if kind == "photos" and spot.images %}
+      <div class="ws-spot__media ws-spot__media--photos">
+        {% for shot in spot.images %}
+        <img class="ws-spot__shot{% if loop.first %} is-on{% endif %}" src="{{ (shot.image or shot) | url }}" alt="" loading="lazy">
+        {% endfor %}
+      </div>
+      {% elif kind == "video" and spot.video %}
+      <div class="ws-spot__media ws-spot__media--video">
+        <video data-video muted loop playsinline preload="none" src="{{ spot.video | url }}"></video>
+      </div>
+      {% elif kind == "video" and spot.youtube %}
+      {% set videoId = spot.youtube | youtubeId %}
+      {% if videoId %}
+      <div class="ws-spot__media ws-spot__media--video">
+        {# The address is only put in place once the dot is opened, so nothing
+           loads from YouTube until then. #}
+        <iframe data-yt="https://www.youtube-nocookie.com/embed/{{ videoId }}?autoplay=1&mute=1&loop=1&playlist={{ videoId }}&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1"
+                title="" tabindex="-1" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+      </div>
+      {% endif %}
+      {% endif %}
     </div>
   </div>
   {% endfor %}
