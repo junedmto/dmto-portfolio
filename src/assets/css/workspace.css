@@ -391,7 +391,7 @@
    No card and no panel: the words are written out in the air over the room,
    with a small looping video or a few photos under them. They hang to the
    right of the dot, or to the left when there is no room (workspace.js adds
-   "is-left"), and a little lower when the dot is near the top ("is-below"). */
+   "is-left"), . */
 .ws-spot__card {
   position: absolute;
   top: var(--y);
@@ -409,10 +409,6 @@
   --card-x: calc(-100% - 1.75rem);
   transform: translate(calc(var(--card-x) + 6px), var(--card-y));
   text-align: right;
-}
-
-.ws-spot.is-below .ws-spot__card {
-  --card-y: -15%;
 }
 
 .ws-spot.is-pinned .ws-spot__card,
@@ -674,6 +670,43 @@ a.ws-spot__go:focus-visible {
   cursor: pointer;
 }
 
+
+/* While the laptop is showing a dot's picture or video, nothing is shown
+   under the dot's words. */
+.ws-spots.on-laptop .ws-spot__media {
+  display: none;
+}
+
+/* The picture or video of a dot, on the laptop's screen. */
+.ws-screen__quad > .ws-feature {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  aspect-ratio: auto;
+  border-radius: 0;
+  box-shadow: none;
+  background: #000;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.ws-screen__quad > .ws-feature.is-on {
+  opacity: 1;
+}
+
+.ws-screen--feature .ws-screen__quad {
+  background: transparent;
+}
+
+/* The thermos, drawn again over the monitor's video. */
+.ws-front {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 
 /* ---- The two screens: a video or picture bent onto each one ---- */
 .ws-screens {

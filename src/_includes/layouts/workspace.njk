@@ -21,6 +21,11 @@ layout: layouts/base.njk
   script keeps it on its item as the room turns. To place new ones, open the
   page with ?place at the end of the address.
 
+  A dot's picture or video appears on the laptop's screen while the dot is
+  hovered (or under the dot's words, when the laptop is hardly in view, as on a
+  phone). The thermos in front of the monitor is drawn over the monitor's
+  video from the room's own picture, so it stays in front.
+
   The two screens (the laptop and the big monitor) can play a video or show a
   picture that stays stuck to them as the room turns. They come from the
   "screens" list in src/workspace-temp.md (also in /admin): each one has
@@ -48,7 +53,7 @@ layout: layouts/base.njk
         aria-label="An interactive view of the workspace. Move the mouse left and right, up and down, to look around."></canvas>
 <p class="ws__status" data-workspace-status aria-live="polite"></p>
 
-{% if screens %}
+{% if screens or spots %}
 <div class="ws-screens" data-screens aria-hidden="true">
   {% for sc in screens %}
   {% if sc.video or sc.image %}
@@ -63,6 +68,13 @@ layout: layouts/base.njk
   </div>
   {% endif %}
   {% endfor %}
+  {% if spots %}
+  {# The laptop screen again, empty: a dot's picture or video appears on it
+     while the dot is hovered. #}
+  <div class="ws-screen ws-screen--laptop ws-screen--feature" data-screen="laptop" data-feature data-play="loop">
+    <div class="ws-screen__quad"></div>
+  </div>
+  {% endif %}
 </div>
 {% endif %}
 

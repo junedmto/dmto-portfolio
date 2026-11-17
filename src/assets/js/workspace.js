@@ -337,35 +337,108 @@
     });
   });
 
-  function startMedia(s) {
-    if (s.yt) {
-      var media = s.yt.parentNode;
-      if (!s.yt.getAttribute("src")) {
-        watchYouTube(s.yt, media);
-        fitYT(media, s.yt);
-        s.yt.setAttribute("src", s.yt.getAttribute("data-yt"));
-      } else tellYouTube(s, "playVideo");
+  // The picture or video of a dot plays in one of two places: on the laptop's
+  // screen (when the laptop is big enough on screen), or, if it is not (on a
+  // phone, say), under the dot's words. "m" is the set of things that play.
+  function runMedia(m) {
+    if (m.yt) {
+      var media = m.yt.parentNode;
+      if (!m.yt.getAttribute("src")) {
+        watchYouTube(m.yt, media);
+        fitYT(media, m.yt);
+        m.yt.setAttribute("src", m.yt.getAttribute("data-yt"));
+      } else tellYouTube(m, "playVideo");
     }
-    if (s.video) {
-      var play = s.video.play();
+    if (m.video) {
+      var play = m.video.play();
       if (play && play.catch) play.catch(function () {});
     }
-    if (s.shots.length > 1 && !s.shotTimer) {
-      s.shotTimer = setInterval(function () {
-        s.shots[s.shot].classList.remove("is-on");
-        s.shot = (s.shot + 1) % s.shots.length;
-        s.shots[s.shot].classList.add("is-on");
+    if (m.shots.length > 1 && !m.shotTimer) {
+      m.shotTimer = setInterval(function () {
+        m.shots[m.shot].classList.remove("is-on");
+        m.shot = (m.shot + 1) % m.shots.length;
+        m.shots[m.shot].classList.add("is-on");
       }, 2300);
     }
   }
 
-  function stopMedia(s) {
-    if (s.yt && s.yt.getAttribute("src")) tellYouTube(s, "pauseVideo");
-    if (s.video) s.video.pause();
-    if (s.shotTimer) {
-      clearInterval(s.shotTimer);
-      s.shotTimer = null;
+  function haltMedia(m) {
+    if (m.yt && m.yt.getAttribute("src")) tellYouTube(m, "pauseVideo");
+    if (m.video) m.video.pause();
+    if (m.shotTimer) {
+      clearInterval(m.shotTimer);
+      m.shotTimer = null;
     }
+  }
+
+  // The copy of a dot's picture / video that lives on the laptop screen.
+  function laptopMedia(s) {
+    if (s.lap !== undefined) return s.lap;
+    s.lap = null;
+    if (!featureScreen || !s.mediaEl) return null;
+    var box = document.createElement("div");
+    box.className = "ws-spot__media ws-feature";
+    var m = { box: box, shots: [], shot: 0, video: null, yt: null, shotTimer: null };
+    if (s.shots.length) {
+      s.shots.forEach(function (shot, i) {
+        var im = document.createElement("img");
+        im.className = "ws-spot__shot" + (i === 0 ? " is-on" : "");
+        im.alt = "";
+        im.src = shot.currentSrc || shot.src;
+        box.appendChild(im);
+        m.shots.push(im);
+      });
+    } else if (s.video) {
+      var v = document.createElement("video");
+      v.muted = true;
+      v.loop = true;
+      v.setAttribute("playsinline", "");
+      v.preload = "none";
+      v.src = s.video.getAttribute("src");
+      box.appendChild(v);
+      m.video = v;
+    } else if (s.yt) {
+      var f = document.createElement("iframe");
+      f.setAttribute("title", "");
+      f.setAttribute("tabindex", "-1");
+      f.setAttribute("frameborder", "0");
+      f.setAttribute("allow", "autoplay; encrypted-media");
+      f.setAttribute("data-yt", s.yt.getAttribute("data-yt"));
+      box.appendChild(f);
+      m.yt = f;
+    } else return null;
+    featureScreen.quad.appendChild(box);
+    s.lap = m;
+    return m;
+  }
+
+  function startMedia(s) {
+    if (laptopMode) {
+      var m = laptopMedia(s);
+      if (m) {
+        runMedia(m);
+        m.box.classList.add("is-on");
+      }
+    } else runMedia(s);
+  }
+
+  function stopMedia(s) {
+    haltMedia(s);
+    if (s.lap) {
+      haltMedia(s.lap);
+      s.lap.box.classList.remove("is-on");
+    }
+  }
+
+  function setLaptopMode(on) {
+    if (on === laptopMode) return;
+    var open = spots.filter(function (s) {
+      return s.on;
+    });
+    open.forEach(stopMedia);
+    laptopMode = on;
+    if (layer) layer.classList.toggle("on-laptop", on);
+    open.forEach(startMedia);
   }
 
   // A dot is "open" while the mouse is on it or while it is held open.
@@ -659,6 +732,14 @@
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var noHover = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
 
+  var featureScreen = null; // the laptop, when it is showing a dot's picture or video
+  var laptopMode = false; // true while the laptop is big enough on screen to show them
+  var front = null;
+  var fctx = null;
+  var mask = null;
+  var mctx = null;
+  var frontDrawn = false;
+
   if (screensLayer && TRACK.laptop.length === N) {
     Array.prototype.forEach.call(screensLayer.querySelectorAll("[data-screen]"), function (el) {
       var name = el.getAttribute("data-screen");
@@ -666,7 +747,7 @@
       var quad = el.querySelector(".ws-screen__quad");
       quad.style.width = SCREEN_UNIT + "px";
       quad.style.height = SCREEN_UNIT / SCREEN_ASPECT[name] + "px";
-      screens.push({
+      var sc = {
         el: el,
         quad: quad,
         name: name,
@@ -676,7 +757,9 @@
         poly: null,
         under: false,
         playing: false
-      });
+      };
+      screens.push(sc);
+      if (el.hasAttribute("data-feature")) featureScreen = sc;
     });
   }
 
@@ -747,6 +830,7 @@
     var W = window.innerWidth;
     var H = window.innerHeight;
     var f = BLEND ? current * (N - 1) : Math.round(current * (N - 1));
+    var monitorShown = false;
     for (var i = 0; i < screens.length; i++) {
       var sc = screens[i];
       var q = quadAt(sc.track, f);
@@ -768,35 +852,104 @@
       sc.quad.style.transform = quadMatrix(p, SCREEN_UNIT, SCREEN_UNIT / SCREEN_ASPECT[sc.name]);
       if (sc.video && !reducedMotion && !sc.hoverOnly) playScreen(sc, true);
 
-      // The thermos in front of the monitor is cut out.
-      if (sc.name === "monitor") {
-        var t = TRACK.thermos[Math.max(0, Math.min(N - 1, Math.round(f)))];
-        if (t) {
-          var tl = v.x + t[0] * v.w, tr = v.x + t[1] * v.w, bl = v.x + t[2] * v.w, br = v.x + t[3] * v.w;
-          var ty = v.y + t[4] * v.h;
-          var by = v.y + v.h + 40;
-          var r = Math.max(2, Math.min(28, (tr - tl) * 0.2));
-          var d =
-            "M-60 -60H" + (W + 60) + "V" + (H + 60) + "H-60Z" +
-            "M" + tl.toFixed(1) + " " + (ty + r).toFixed(1) +
-            "Q" + tl.toFixed(1) + " " + ty.toFixed(1) + " " + (tl + r).toFixed(1) + " " + ty.toFixed(1) +
-            "L" + (tr - r).toFixed(1) + " " + ty.toFixed(1) +
-            "Q" + tr.toFixed(1) + " " + ty.toFixed(1) + " " + tr.toFixed(1) + " " + (ty + r).toFixed(1) +
-            "L" + br.toFixed(1) + " " + by.toFixed(1) + "L" + bl.toFixed(1) + " " + by.toFixed(1) + "Z";
-          sc.el.style.clipPath = "path(evenodd, '" + d + "')";
-        } else sc.el.style.clipPath = "";
-      }
+      if (sc.name === "monitor" && !sc.el.hasAttribute("data-feature")) monitorShown = true;
     }
+
+    // Is the laptop big enough on screen to show a dot's picture or video?
+    if (featureScreen && featureScreen.poly) {
+      var fp = featureScreen.poly;
+      var bx0 = Math.min(fp[0], fp[2], fp[4], fp[6]);
+      var bx1 = Math.max(fp[0], fp[2], fp[4], fp[6]);
+      var by0 = Math.min(fp[1], fp[3], fp[5], fp[7]);
+      var by1 = Math.max(fp[1], fp[3], fp[5], fp[7]);
+      var vis = (Math.max(0, Math.min(bx1, W) - Math.max(bx0, 0)) * Math.max(0, Math.min(by1, H) - Math.max(by0, 0))) / ((bx1 - bx0) * (by1 - by0) || 1);
+      setLaptopMode(laptopMode ? vis > 0.45 : vis > 0.7);
+    }
+
+    updateFront(v, f, monitorShown);
+  }
+
+  /* The thermos in front of the monitor: the same picture is drawn again over
+     the video, cut out around the thermos with a soft edge (its edge is out of
+     focus in the picture, so a hard cut would look wrong). */
+  function updateFront(v, f, monitorShown) {
+    var t = monitorShown ? TRACK.thermos[Math.max(0, Math.min(N - 1, Math.round(f)))] : null;
+    if (!t) {
+      if (frontDrawn && fctx) fctx.clearRect(0, 0, front.width, front.height);
+      frontDrawn = false;
+      return;
+    }
+    if (!front) {
+      front = document.createElement("canvas");
+      front.className = "ws-front";
+      screensLayer.appendChild(front);
+      fctx = front.getContext("2d");
+      mask = document.createElement("canvas");
+      mctx = mask.getContext("2d");
+    }
+    if (front.width !== cw || front.height !== ch) {
+      front.width = mask.width = cw;
+      front.height = mask.height = ch;
+    }
+    var i = Math.max(0, Math.min(N - 1, Math.round(f)));
+    while (i > 0 && !frames[i]) i--;
+    var img = frames[i];
+    if (!img) return;
+
+    var k = cw / window.innerWidth;
+    var grow = 1.5 * k;
+    var tl = (v.x + t[0] * v.w) * k - grow;
+    var tr = (v.x + t[1] * v.w) * k + grow;
+    var bl = (v.x + t[2] * v.w) * k - grow;
+    var br = (v.x + t[3] * v.w) * k + grow;
+    var ty = (v.y + t[4] * v.h) * k - grow;
+    var by = (v.y + v.h) * k + 40 * k;
+    var r = Math.max(2, Math.min(28 * k, (tr - tl) * 0.2));
+
+    // a soft-edged shape of the thermos, drawn as a shadow so it works everywhere
+    var BIG = cw + 600;
+    mctx.clearRect(0, 0, mask.width, mask.height);
+    mctx.save();
+    mctx.shadowColor = "#fff";
+    mctx.shadowBlur = 7 * k;
+    mctx.shadowOffsetX = BIG;
+    mctx.fillStyle = "#fff";
+    mctx.translate(-BIG, 0);
+    mctx.beginPath();
+    mctx.moveTo(tl, ty + r);
+    mctx.quadraticCurveTo(tl, ty, tl + r, ty);
+    mctx.lineTo(tr - r, ty);
+    mctx.quadraticCurveTo(tr, ty, tr, ty + r);
+    mctx.lineTo(br, by);
+    mctx.lineTo(bl, by);
+    mctx.closePath();
+    mctx.fill();
+    mctx.restore();
+
+    fctx.clearRect(0, 0, front.width, front.height);
+    fctx.save();
+    fctx.beginPath();
+    // whole pixels, so the edge of the rectangle leaves no faint line
+    var rx0 = Math.floor(Math.min(tl, bl) - 30 * k);
+    var ry0 = Math.floor(ty - 30 * k);
+    fctx.rect(rx0, ry0, Math.ceil(Math.max(tr, br) + 30 * k) - rx0, Math.ceil(by + 30 * k) - ry0);
+    fctx.clip();
+    drawCover(img, fctx);
+    fctx.globalCompositeOperation = "destination-in";
+    fctx.drawImage(mask, 0, 0);
+    fctx.globalCompositeOperation = "source-over";
+    fctx.restore();
+    frontDrawn = true;
   }
 
   /* ---- Drawing ---- */
-  function drawCover(img) {
+  function drawCover(img, onto) {
     // Cover the window, enlarged a little (ZOOM) so there is spare picture
     // above and below; the mouse height decides which part is shown.
     var scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight) * (1 + ZOOM);
     var dw = img.naturalWidth * scale;
     var dh = img.naturalHeight * scale;
-    ctx.drawImage(img, (cw - dw) / 2, (ch - dh) * currentY, dw, dh);
+    (onto || ctx).drawImage(img, (cw - dw) / 2, (ch - dh) * currentY, dw, dh);
   }
 
   function draw(pos) {
