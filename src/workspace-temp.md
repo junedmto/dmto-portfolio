@@ -35,8 +35,14 @@ spots:
   - title: Projects
     text: Check out my work!
     link: /homepage/
-    media: ''
-    images: []
+    media: photos
+    images:
+      - /assets/img/uploads/backNewGendo.png
+      - /assets/img/uploads/Cover.png
+      - /assets/img/uploads/LQ1.jpg
+      - /assets/img/uploads/LDC Magazine4.jpg
+      - /assets/img/uploads/Magazine2.jpg
+      - /assets/img/uploads/Mockup Lateral B copy.png
     youtube: ''
     video: ''
     x: 0.21
