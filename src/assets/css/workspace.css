@@ -470,8 +470,12 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 2px 16px rgba(0, 0, 0, 0.75), 0 0 36px rgba(0, 0, 0, 0.6);
 }
 
-.ws-spot__go:hover,
-.ws-spot__go:focus-visible {
+.ws-spot__go--hint {
+  margin-bottom: 0;
+}
+
+a.ws-spot__go:hover,
+a.ws-spot__go:focus-visible {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
@@ -536,14 +540,30 @@
 }
 
 .ws-spot__shot,
-.ws-spot__media video,
-.ws-spot__media iframe {
+.ws-spot__media video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
   object-fit: cover;
+}
+
+/* The YouTube player is sized and placed by workspace.js (drawn larger than
+   its box so YouTube's own title and buttons fall outside it), and only shown
+   while it is really playing. */
+.ws-spot__media iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 0;
+  transform-origin: 0 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.ws-spot__media.is-playing iframe {
+  opacity: 1;
 }
 
 /* The photos cross-fade from one to the next. */
@@ -652,4 +672,138 @@
   border-radius: 7px;
   font: inherit;
   cursor: pointer;
+}
+
+
+/* ---- The two screens: a video or picture bent onto each one ---- */
+.ws-screens {
+  position: fixed;
+  inset: 0;
+  z-index: 15; /* over the picture, under the dots */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.ws-screens.is-ready {
+  opacity: 1;
+}
+
+.ws-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.ws-screen__quad {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  overflow: hidden;
+  background: #000;
+  /* a little less bright than the file, like the screens in the picture */
+  filter: brightness(0.93) contrast(1.02);
+}
+
+.ws-screen__quad video,
+.ws-screen__quad img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- A dot's picture or video, big in the middle of the window ---- */
+.ws-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.25rem 2rem;
+  background: rgba(8, 8, 8, 0.62);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.ws-lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s ease;
+}
+
+.ws-lightbox__close {
+  position: absolute;
+  top: var(--page-inset, 0.875rem);
+  right: var(--page-inset, 0.875rem);
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.ws-lightbox__stage {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  transform: scale(0.96);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ws-lightbox.is-open .ws-lightbox__stage {
+  transform: none;
+}
+
+.ws-lightbox .ws-lightbox__media {
+  --aspect: 1.7778;
+  width: min(92vw, calc(72vh * var(--aspect)));
+  margin: 0;
+  aspect-ratio: var(--aspect);
+  border-radius: var(--radius-image, 14px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+.ws-lightbox__title,
+.ws-lightbox__text {
+  max-width: min(92vw, 40rem);
+  margin: 0;
+  color: #fff;
+  text-align: center;
+}
+
+.ws-lightbox__title {
+  margin-top: 1.4rem;
+  font-family: "DMTO Pixel", var(--font-display, sans-serif);
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.ws-lightbox__text {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.ws-lightbox__title:empty,
+.ws-lightbox__text:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-lightbox,
+  .ws-lightbox__stage {
+    transition: none;
+  }
 }

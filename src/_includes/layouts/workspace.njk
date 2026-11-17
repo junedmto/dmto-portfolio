@@ -21,6 +21,14 @@ layout: layouts/base.njk
   script keeps it on its item as the room turns. To place new ones, open the
   page with ?place at the end of the address.
 
+  The two screens (the laptop and the big monitor) can play a video or show a
+  picture that stays stuck to them as the room turns. They come from the
+  "screens" list in src/workspace-temp.md (also in /admin): each one has
+  screen: laptop or monitor, then a video (a file) or an image, and
+  play: loop (always playing) or hover (only while the mouse is over it).
+
+  A dot's "action" decides what a click does: "link" goes to its link,
+  "enlarge" shows its picture or video big in the middle of the window.
   A dot with a "link" leads there when it is clicked: a page of this site
   (like /projects/) or a full web address, which opens in a new tab. On a
   phone the first tap opens the words and the second one follows the link.
@@ -40,11 +48,30 @@ layout: layouts/base.njk
         aria-label="An interactive view of the workspace. Move the mouse left and right, up and down, to look around."></canvas>
 <p class="ws__status" data-workspace-status aria-live="polite"></p>
 
+{% if screens %}
+<div class="ws-screens" data-screens aria-hidden="true">
+  {% for sc in screens %}
+  {% if sc.video or sc.image %}
+  <div class="ws-screen ws-screen--{{ sc.screen or 'laptop' }}" data-screen="{{ sc.screen or 'laptop' }}" data-play="{{ sc.play or 'loop' }}">
+    <div class="ws-screen__quad">
+      {% if sc.video %}
+      <video muted loop playsinline preload="auto" src="{{ sc.video | url }}#t=0.001"{% if sc.image %} poster="{{ sc.image | url }}"{% endif %}></video>
+      {% else %}
+      <img src="{{ sc.image | url }}" alt="">
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
 {% if spots %}
 <div class="ws-spots" data-spots>
   {% for spot in spots %}
+  {% set action = spot.action or ("link" if spot.link else "") %}
   {% set kind = spot.media or ("photos" if spot.images else ("video" if (spot.youtube or spot.video) else "")) %}
-  <div class="ws-spot{% if spot.link %} has-link{% endif %}" data-spot
+  <div class="ws-spot{% if spot.link and action == 'link' %} has-link{% endif %}" data-spot data-action="{{ action }}"
        data-x="{{ spot.x }}"
        data-y="{{ spot.y }}"
        data-frame="{{ spot.frame or 0 }}"
@@ -58,7 +85,7 @@ layout: layouts/base.njk
          start empty and live in the data-type attribute. #}
       <p class="ws-spot__title" data-type="{{ spot.title }}"></p>
       {% if spot.text %}<p class="ws-spot__text" data-type="{{ spot.text }}"></p>{% endif %}
-      {% if spot.link %}
+      {% if spot.link and action == "link" %}
       {% set external = spot.link.startsWith("http") %}
       <a class="ws-spot__go" data-type="{{ 'Visit link >' if external else 'Open page >' }}"
          href="{{ spot.link if external else (spot.link | url) }}"
@@ -86,6 +113,9 @@ layout: layouts/base.njk
                 title="" tabindex="-1" frameborder="0" allow="autoplay; encrypted-media"></iframe>
       </div>
       {% endif %}
+      {% endif %}
+      {% if action == "enlarge" and kind %}
+      <p class="ws-spot__go ws-spot__go--hint" data-type="Click to enlarge >"></p>
       {% endif %}
     </div>
   </div>
