@@ -3,7 +3,7 @@ title: Workspace
 description: An interactive look around the Department of Making workspace.
 screens:
   - screen: monitor
-    video: /assets/img/uploads/Screen Recording 2026-11-12 at 11.31.27.mov
+    video: /assets/img/uploads/11.mov
     image: ''
     play: loop
 spots:
