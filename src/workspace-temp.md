@@ -1,9 +1,15 @@
 ---
 title: Workspace
 description: An interactive look around the Department of Making workspace.
+screens:
+  - screen: monitor
+    video: /assets/img/uploads/Screen Recording 2026-11-12 at 11.31.27.mov
+    image: ''
+    play: loop
 spots:
   - title: The lamp
     text: On at all hours. The only light that gets the colour right.
+    action: ''
     link: ''
     media: ''
     images: []
@@ -14,6 +20,7 @@ spots:
     frame: 0
   - title: The 3D shelf
     text: Where the Blender habit started.
+    action: ''
     link: ''
     media: ''
     images: []
@@ -24,6 +31,7 @@ spots:
     frame: 0
   - title: Process
     text: Everything that did not make it, stacked in order.
+    action: ''
     link: ''
     media: video
     images: []
@@ -34,6 +42,7 @@ spots:
     frame: 0
   - title: Projects
     text: Check out my work!
+    action: ''
     link: /
     media: photos
     images:
@@ -50,6 +59,7 @@ spots:
     frame: 0
   - title: A valuable tool
     text: For work and personal projects alike
+    action: ''
     link: https://youtu.be/Ddo8VyJ8ikM
     media: video
     images: []
@@ -60,6 +70,7 @@ spots:
     frame: 0
   - title: The laptop
     text: Most of what you are looking at was made on this.
+    action: ''
     link: ''
     media: ''
     images: []
@@ -70,6 +81,7 @@ spots:
     frame: 0
   - title: The notebook
     text: Everything starts here before it goes anywhere near a screen.
+    action: ''
     link: ''
     media: ''
     images: []
@@ -80,6 +92,7 @@ spots:
     frame: 0
   - title: My actual layout
     text: This is all a 3D recreation of my actual desk.
+    action: ''
     link: ''
     media: ''
     images:
@@ -91,6 +104,7 @@ spots:
     frame: 30
   - title: Illustration
     text: Drawn here first, then traced back into the machine.
+    action: ''
     link: ''
     media: ''
     images: []
@@ -101,6 +115,7 @@ spots:
     frame: 59
   - title: Mate
     text: The fuel powering the creative machine
+    action: ''
     link: ''
     media: ''
     images: []
@@ -111,6 +126,7 @@ spots:
     frame: 59
   - title: Do you play?
     text: Click to challenge me!
+    action: ''
     link: https://www.chess.com/member/junedmto
     media: photos
     images:
@@ -122,6 +138,7 @@ spots:
     frame: 0
   - title: Personal Projects
     text: ''
+    action: ''
     link: ''
     media: ''
     images: []
