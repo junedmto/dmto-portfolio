@@ -34,7 +34,7 @@ spots:
     frame: 0
   - title: Projects
     text: Check out my work!
-    link: /homepage/
+    link: /
     media: photos
     images:
       - /assets/img/uploads/backNewGendo.png
