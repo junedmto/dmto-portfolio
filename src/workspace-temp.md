@@ -130,6 +130,7 @@ spots:
       - /assets/img/uploads/IMG_2196.jpeg
       - /assets/img/uploads/81f25d0d-dba9-4d7e-864c-94c248d23ef0.jpg
       - /assets/img/uploads/IMG_1897.jpeg
+      - /assets/img/uploads/IMG_1509.jpg
     youtube: ''
     video: ''
     x: 0.2355
