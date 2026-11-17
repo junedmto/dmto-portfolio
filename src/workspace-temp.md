@@ -168,4 +168,15 @@ spots:
     x: 0.3768
     'y': 0.7887
     frame: 20
+  - title: What else?
+    text: ''
+    action: enlarge
+    link: ''
+    media: video
+    images: []
+    youtube: https://youtube.com/shorts/ET6iqfG6JBw?feature=share
+    video: ''
+    x: 0.575
+    'y': 0.06
+    frame: 36
 ---
