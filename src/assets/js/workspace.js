@@ -377,6 +377,15 @@
     });
     s.btn.addEventListener("click", function (e) {
       e.stopPropagation();
+      // A dot with a link takes you there when clicked with a mouse or the
+      // keyboard. On a touch screen the first tap opens the words (so they
+      // can be read) and the next tap, on the dot or on "Open page", follows.
+      var go = s.el.querySelector(".ws-spot__go");
+      var touch = e.pointerType === "touch" || e.pointerType === "pen";
+      if (go && (!touch || pinned === s)) {
+        go.click();
+        return;
+      }
       if (pinned === s) unpin();
       else pin(s);
     });

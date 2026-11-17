@@ -432,27 +432,6 @@
   }
 }
 
-/* A soft breath of shade behind the words, so they stay readable over the
-   bright parts of the room. It has no edge: it fades out into the picture. */
-.ws-spot__card::before {
-  content: "";
-  position: absolute;
-  inset: -0.9rem -1.2rem;
-  z-index: -1;
-  border-radius: 1.5rem;
-  background: rgba(0, 0, 0, 0.42);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  -webkit-mask-image: radial-gradient(120% 105% at 22% 38%, #000 38%, transparent 72%);
-  mask-image: radial-gradient(120% 105% at 22% 38%, #000 38%, transparent 72%);
-  pointer-events: none;
-}
-
-.ws-spot.is-left .ws-spot__card::before {
-  -webkit-mask-image: radial-gradient(120% 105% at 78% 38%, #000 38%, transparent 72%);
-  mask-image: radial-gradient(120% 105% at 78% 38%, #000 38%, transparent 72%);
-}
-
 .ws-spot__title,
 .ws-spot__text {
   margin: 0;
@@ -461,11 +440,51 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 2px 16px rgba(0, 0, 0, 0.75), 0 0 36px rgba(0, 0, 0, 0.6);
 }
 
+/* Your pixel typeface (also declared in playground.css; the same file). */
+@font-face {
+  font-family: "DMTO Pixel";
+  src: url("../fonts/DMTOPixel.woff2") format("woff2"),
+       url("../fonts/DMTOPixel.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 .ws-spot__title {
-  font-family: var(--font-display, inherit);
+  font-family: "DMTO Pixel", var(--font-display, sans-serif);
+  font-size: 1.5rem;
+  line-height: 1.1;
+  min-height: 1.1em; /* keeps the line from jumping while it is written */
+}
+
+/* "Open page >" under the words, for dots that lead somewhere. */
+.ws-spot__go {
+  display: inline-block;
+  margin-top: 0.6rem;
+  min-height: 1.1em;
+  color: #fff;
+  font-family: "DMTO Pixel", var(--font-display, sans-serif);
   font-size: 1.1rem;
-  line-height: 1.25;
-  min-height: 1.25em; /* keeps the line from jumping while it is written */
+  line-height: 1.1;
+  text-decoration: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 2px 16px rgba(0, 0, 0, 0.75), 0 0 36px rgba(0, 0, 0, 0.6);
+}
+
+.ws-spot__go:hover,
+.ws-spot__go:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.ws-spot__go.is-typing::after {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 1em;
+  margin-left: 0.12em;
+  background: #fff;
+  vertical-align: -0.14em;
+  animation: ws-caret 1s steps(1) infinite;
 }
 
 .ws-spot__text {
@@ -500,7 +519,6 @@
   margin-top: 0.85rem;
   overflow: hidden;
   border-radius: calc(var(--radius-image, 14px) - 4px);
-  background: rgba(0, 0, 0, 0.35);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   pointer-events: none; /* nothing here can be clicked */
 }
@@ -564,12 +582,6 @@
     margin-left: 0;
   }
 
-  .ws-spot__card::before,
-  .ws-spot.is-left .ws-spot__card::before {
-    inset: -1rem -1.2rem -1.2rem;
-    -webkit-mask-image: radial-gradient(130% 110% at 40% 55%, #000 45%, transparent 80%);
-    mask-image: radial-gradient(130% 110% at 40% 55%, #000 45%, transparent 80%);
-  }
 
   .ws-spot__dot {
     width: 1.25rem;

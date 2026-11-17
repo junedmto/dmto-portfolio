@@ -7,6 +7,9 @@ description: An interactive look around the Department of Making workspace.
 #   media: photos      and      images: [ /assets/img/..., /assets/img/... ]
 #   media: video       and      youtube: "https://www.youtube.com/watch?v=..."
 #                      or       video: /assets/img/clip.mp4
+# A dot can also lead somewhere when it is clicked:
+#   link: /projects/                 (a page of this site)
+#   link: https://example.com        (another website, opens in a new tab)
 # These can all be set in /admin under Pages.
 spots:
   - x: 0.2950
@@ -14,6 +17,11 @@ spots:
     frame: 0
     title: "The lamp"
     text: "On at all hours. The only light that gets the colour right."
+  - x: 0.2355
+    y: 0.4700
+    frame: 0
+    title: "The knight"
+    text: "Keeps an eye on the lamp."
   - x: 0.1650
     y: 0.4500
     frame: 0

@@ -21,6 +21,10 @@ layout: layouts/base.njk
   script keeps it on its item as the room turns. To place new ones, open the
   page with ?place at the end of the address.
 
+  A dot with a "link" leads there when it is clicked: a page of this site
+  (like /projects/) or a full web address, which opens in a new tab. On a
+  phone the first tap opens the words and the second one follows the link.
+
   Each dot can also carry either a few photos that loop, or one small video
   (an uploaded file or a YouTube link). They play by themselves and cannot be
   clicked.
@@ -40,7 +44,7 @@ layout: layouts/base.njk
 <div class="ws-spots" data-spots>
   {% for spot in spots %}
   {% set kind = spot.media or ("photos" if spot.images else ("video" if (spot.youtube or spot.video) else "")) %}
-  <div class="ws-spot" data-spot
+  <div class="ws-spot{% if spot.link %} has-link{% endif %}" data-spot
        data-x="{{ spot.x }}"
        data-y="{{ spot.y }}"
        data-frame="{{ spot.frame or 0 }}"
@@ -54,6 +58,13 @@ layout: layouts/base.njk
          start empty and live in the data-type attribute. #}
       <p class="ws-spot__title" data-type="{{ spot.title }}"></p>
       {% if spot.text %}<p class="ws-spot__text" data-type="{{ spot.text }}"></p>{% endif %}
+      {% if spot.link %}
+      {% set external = spot.link.startsWith("http") %}
+      <a class="ws-spot__go" data-type="{{ 'Visit link >' if external else 'Open page >' }}"
+         href="{{ spot.link if external else (spot.link | url) }}"
+         {% if external %}target="_blank" rel="noopener"{% endif %}
+         aria-label="{{ spot.title }}: {{ 'open link' if external else 'open page' }}"></a>
+      {% endif %}
 
       {% if kind == "photos" and spot.images %}
       <div class="ws-spot__media ws-spot__media--photos">
