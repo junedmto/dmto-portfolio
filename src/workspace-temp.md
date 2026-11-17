@@ -4,6 +4,7 @@ description: An interactive look around the Department of Making workspace.
 spots:
   - title: The lamp
     text: On at all hours. The only light that gets the colour right.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -13,6 +14,7 @@ spots:
     frame: 0
   - title: The 3D shelf
     text: Where the Blender habit started.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -22,6 +24,7 @@ spots:
     frame: 0
   - title: Process
     text: Everything that did not make it, stacked in order.
+    link: ''
     media: video
     images: []
     youtube: https://youtu.be/KeRm8CExl2E
@@ -31,6 +34,7 @@ spots:
     frame: 0
   - title: Projects
     text: Open on whatever is being worked out that week.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -40,6 +44,7 @@ spots:
     frame: 0
   - title: The camera
     text: Still the fastest way to work out a composition.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -49,6 +54,7 @@ spots:
     frame: 0
   - title: The laptop
     text: Most of what you are looking at was made on this.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -58,6 +64,7 @@ spots:
     frame: 0
   - title: The notebook
     text: Everything starts here before it goes anywhere near a screen.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -67,6 +74,7 @@ spots:
     frame: 0
   - title: The big screen
     text: For layouts that need room to breathe.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -76,6 +84,7 @@ spots:
     frame: 30
   - title: Illustration
     text: Drawn here first, then traced back into the machine.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -85,6 +94,7 @@ spots:
     frame: 59
   - title: Fuel
     text: Refilled more often than it should be.
+    link: ''
     media: ''
     images: []
     youtube: ''
@@ -92,4 +102,15 @@ spots:
     x: 0.77
     'y': 0.79
     frame: 59
+  - title: Do you play?
+    text: Click to challenge me!
+    link: https://www.chess.com/member/junedmto
+    media: photos
+    images:
+      - /assets/img/uploads/2d2ad4e1-df2f-4db6-ae92-fcc80193fb1c.JPG
+    youtube: ''
+    video: ''
+    x: 0.2355
+    'y': 0.47
+    frame: 0
 ---
