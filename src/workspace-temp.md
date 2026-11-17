@@ -7,17 +7,6 @@ screens:
     image: ''
     play: loop
 spots:
-  - title: The lamp
-    text: On at all hours. The only light that gets the colour right.
-    action: ''
-    link: ''
-    media: ''
-    images: []
-    youtube: ''
-    video: ''
-    x: 0.295
-    'y': 0.19
-    frame: 0
   - title: The 3D shelf
     text: Where the Blender habit started.
     action: ''
@@ -140,10 +129,11 @@ spots:
     frame: 0
   - title: Personal Projects
     text: ''
-    action: ''
-    link: ''
+    action: link
+    link: https://www.amazon.es/Bikepacking-Budget-Cycled-Across-Europe/dp/B0HG7R4TTW/ref=sr_1_2?crid=2F10MW9M0HNPM&dib=eyJ2IjoiMSJ9.Qyinhku2SamxtQ3Cb2sBBDNoa4P6y2ih36ZCAgYSytw9nNlDd1Sw-LO-zX1XEPfesv7XFhEIgj8e2KngafXbizpgTq0kYU-4XFypB-Tp7y9P9h1CA1IB_V_yPUd_JEtp4CGaAhr5_QEeyey7-065iYpcm2HSN3xoyiEXDKWr2X5omXB2FadkKupp_DPmRU9bKXH7imjgJBkN4icZ9E2zpaOOnJGz2ZWTuizuAISrLzMi9Qpfs9Ous7yfnUkJikwZtIpdk-PU5M1LTwL1VOIz7abhkj2eX6-a-V5p4pv93LA.PyGh-wthJdFm55iXXiFUJXgTXGqb5DA00N6RicCWi5Y&dib_tag=se&keywords=bikepacking+on+a+budget&qid=1794936162&sprefix=%2Caps%2C93&sr=8-2
     media: ''
-    images: []
+    images:
+      - /assets/img/uploads/IMG_2140.jpeg
     youtube: ''
     video: ''
     x: 0.439
