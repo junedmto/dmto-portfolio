@@ -6,10 +6,6 @@ screens:
     video: /assets/img/uploads/Screen Recording 2026-11-12 at 11.31.27.mov
     image: ''
     play: loop
-  - screen: laptop
-    video: ''
-    image: /assets/img/uploads/fireRoomPeople-2.png
-    play: ''
 spots:
   - title: The lamp
     text: On at all hours. The only light that gets the colour right.
@@ -46,7 +42,7 @@ spots:
     frame: 0
   - title: Projects
     text: Check out my work!
-    action: enlarge
+    action: link
     link: /
     media: photos
     images:
