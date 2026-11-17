@@ -59,7 +59,7 @@ spots:
     frame: 0
   - title: A valuable tool
     text: For work and personal projects alike
-    action: enlarge
+    action: ''
     link: https://youtu.be/Ddo8VyJ8ikM
     media: video
     images: []
@@ -67,17 +67,6 @@ spots:
     video: ''
     x: 0.33
     'y': 0.645
-    frame: 0
-  - title: The laptop
-    text: Most of what you are looking at was made on this.
-    action: ''
-    link: ''
-    media: ''
-    images: []
-    youtube: ''
-    video: ''
-    x: 0.64
-    'y': 0.45
     frame: 0
   - title: The notebook
     text: Everything starts here before it goes anywhere near a screen.
@@ -97,6 +86,11 @@ spots:
     media: ''
     images:
       - /assets/img/uploads/IMG_2246.jpeg
+      - /assets/img/uploads/IMG_1706.jpeg
+      - /assets/img/uploads/IMG_0601.jpeg
+      - /assets/img/uploads/IMG_9088.jpeg
+      - /assets/img/uploads/IMG_8999.jpeg
+      - /assets/img/uploads/IMG_6210.jpeg
     youtube: ''
     video: ''
     x: 0.86
