@@ -78,11 +78,12 @@ spots:
     x: 0.63
     'y': 0.87
     frame: 0
-  - title: The big screen
-    text: For layouts that need room to breathe.
+  - title: My actual layout
+    text: This is all a 3D recreation of my actual desk.
     link: ''
     media: ''
-    images: []
+    images:
+      - /assets/img/uploads/IMG_2246.jpeg
     youtube: ''
     video: ''
     x: 0.86
