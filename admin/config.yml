@@ -121,12 +121,34 @@ collections:
           - { label: Phone, name: phone, widget: string, required: false }
           - { label: Instagram URL, name: instagram, widget: string, required: false }
 
+
       - name: workspace_temp
         label: Workspace (temporary)
         file: src/workspace-temp.md
         fields:
           - { label: Title, name: title, widget: string }
           - { label: SEO description, name: description, widget: string }
+          - label: Screens
+            name: screens
+            widget: list
+            label_singular: Screen
+            summary: "{{fields.screen}}"
+            fields:
+              - label: Which screen
+                name: screen
+                widget: select
+                options:
+                  - { label: "Laptop", value: "laptop" }
+                  - { label: "Big monitor", value: "monitor" }
+              - { label: "Video file", name: video, widget: file, required: false, hint: "An .mp4. Leave empty to use a picture instead." }
+              - { label: "Picture", name: image, widget: image, required: false, hint: "Shown if there is no video (and before the video starts)." }
+              - label: "When it plays"
+                name: play
+                widget: select
+                required: false
+                options:
+                  - { label: "Always loops", value: "loop" }
+                  - { label: "Only while the mouse is over it", value: "hover" }
           - label: Dots
             name: spots
             widget: list
@@ -135,11 +157,18 @@ collections:
             fields:
               - { label: Name, name: title, widget: string }
               - { label: Text, name: text, widget: text, required: false }
+              - label: "What a click does"
+                name: action
+                widget: select
+                required: false
+                options:
+                  - { label: "Go to the link", value: "link" }
+                  - { label: "Enlarge the picture or video", value: "enlarge" }
               - label: "Link when clicked"
                 name: link
                 widget: string
                 required: false
-                hint: "Optional. A page of this site like /projects/ , or a full web address like https://instagram.com/... which opens in a new tab."
+                hint: "A page of this site like /projects/ , or a full web address like https://instagram.com/... which opens in a new tab."
               - label: Show under the text
                 name: media
                 widget: select
