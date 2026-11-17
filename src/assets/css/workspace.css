@@ -283,3 +283,299 @@
   width: 1rem;
   height: 1rem;
 }
+
+/* ---- The dots pinned to things in the room -------------------------------
+   The dots live in a layer over the picture and are moved by
+   assets/js/workspace.js, which keeps each one on its own item as the room
+   turns. Hovering a dot opens its card; clicking brings the item to the
+   middle and holds the room still until you close it. */
+
+.ws-spots {
+  position: fixed;
+  inset: 0;
+  z-index: 16; /* over the picture and the soft blur, under the menu */
+  pointer-events: none; /* only the dots themselves can be clicked */
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.ws-spots.is-ready {
+  opacity: 1;
+}
+
+.ws-spot {
+  /* A point with no size of its own: the dot and the card hang off it, so
+     neither is trapped inside a box. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  --x: -100px; /* where its item is on the screen, set by workspace.js */
+  --y: -100px;
+  --spot-near: 1; /* 1 in the middle of the window, smaller towards the edges */
+}
+
+/* While one dot is open the others step back. */
+.ws-spots.has-pinned .ws-spot:not(.is-pinned) {
+  opacity: 0.35;
+}
+
+.ws-spot.is-pinned {
+  z-index: 3;
+}
+
+.ws-spot:hover,
+.ws-spot:focus-within {
+  z-index: 2;
+}
+
+/* ---- The dot ---- */
+.ws-spot__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  background: #fff;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: calc(0.35 + 0.65 * var(--spot-near));
+  transform: translate(calc(var(--x) - 50%), calc(var(--y) - 50%)) scale(var(--spot-near));
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 2px 12px rgba(0, 0, 0, 0.55);
+  transition: opacity 0.25s ease;
+}
+
+.ws-spot__dot:hover,
+.ws-spot__dot:focus-visible,
+.ws-spot.is-pinned .ws-spot__dot {
+  transform: translate(calc(var(--x) - 50%), calc(var(--y) - 50%)) scale(calc(var(--spot-near) * 1.4));
+  opacity: 1;
+}
+
+.ws-spot__dot:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+/* The ring that keeps pulsing out of the dot. */
+.ws-spot__dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  animation: ws-ping 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+.ws-spot.is-pinned .ws-spot__dot::after {
+  animation: none;
+}
+
+@keyframes ws-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* ---- The card ----
+   It hangs to the right of the dot, or to the left when there is no room
+   (workspace.js adds "is-left"), and a little lower when the dot is near the
+   top of the window ("is-below"). */
+.ws-spot__card {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: 17rem;
+  max-height: 60vh;
+  overflow: auto;
+  padding: 1rem 1.1rem 1.1rem;
+  background: var(--color-paper, #fff);
+  color: var(--color-ink, #111);
+  border-radius: var(--radius-image, 14px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  --card-x: 1.5rem; /* its distance from the dot */
+  --card-y: -50%;
+  transform: translate(calc(var(--card-x) - 6px), var(--card-y));
+  transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.32s;
+}
+
+.ws-spot.is-left .ws-spot__card {
+  --card-x: calc(-100% - 1.5rem);
+  transform: translate(calc(var(--card-x) + 6px), var(--card-y));
+}
+
+.ws-spot.is-below .ws-spot__card {
+  --card-y: -15%;
+}
+
+.ws-spot.is-pinned .ws-spot__card,
+.ws-spot:focus-within .ws-spot__card {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(var(--card-x), var(--card-y));
+  transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: auto;
+}
+
+@media (hover: hover) {
+  .ws-spot:hover .ws-spot__card {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(var(--card-x), var(--card-y));
+    transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: auto;
+  }
+}
+
+/* The little line from the dot to the card. */
+.ws-spot__card::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 1.5rem;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.ws-spot.is-left .ws-spot__card::before {
+  right: auto;
+  left: 100%;
+}
+
+.ws-spot.is-below .ws-spot__card::before {
+  top: 1.75rem;
+}
+
+.ws-spot__title {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display, inherit);
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.ws-spot__text {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.ws-spot__img {
+  display: block;
+  width: 100%;
+  margin-top: 0.85rem;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: calc(var(--radius-image, 14px) - 5px);
+  background: #e7e7e7;
+}
+
+/* On a phone there is no room beside a dot, so the card sits along the bottom
+   of the window instead of hanging off the dot. */
+@media (max-width: 640px) {
+  .ws-spot__card,
+  .ws-spot.is-left .ws-spot__card {
+    top: auto;
+    left: var(--page-inset, 0.875rem);
+    right: var(--page-inset, 0.875rem);
+    bottom: var(--page-inset, 0.875rem);
+    position: fixed;
+    width: auto;
+    max-height: 45vh;
+    padding: 0.95rem 1.05rem 1.1rem;
+    --card-x: 0;
+    --card-y: 12px;
+    transform: translate(0, var(--card-y));
+  }
+
+  .ws-spot.is-pinned .ws-spot__card,
+  .ws-spot:focus-within .ws-spot__card {
+    --card-y: 0;
+  }
+
+  .ws-spot__card::before {
+    display: none; /* no line to the dot: the card is not beside it any more */
+  }
+
+  .ws-spot__dot {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-spot__dot::after {
+    animation: none;
+  }
+}
+
+/* ---- Placing new dots (open the page with ?place at the end) ---- */
+.ws-place {
+  display: none;
+}
+
+.ws-placing .ws-place {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 40;
+  display: block;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: 60vh;
+  overflow: auto;
+  padding: 0.9rem 1rem;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.ws-placing .ws {
+  cursor: crosshair;
+}
+
+.ws-place h2 {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+}
+
+.ws-place p {
+  margin: 0 0 0.6rem;
+  opacity: 0.75;
+}
+
+.ws-place__readout,
+.ws-place__list {
+  display: block;
+  margin: 0 0 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  white-space: pre-wrap;
+}
+
+.ws-place button {
+  margin-right: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  background: #fff;
+  color: #111;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  cursor: pointer;
+}

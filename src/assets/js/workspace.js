@@ -9,16 +9,24 @@
 //               the way left" / "all the way right" (0.08 = 8%)
 //   DRIFT       while nobody has moved the mouse yet (or touched the screen),
 //               the view drifts slowly left and right by itself
+//   DRIFT_STOP  on touch screens the drift comes to rest after this many
+//               milliseconds, so the dots stop being a moving target
 //   ZOOM        how much the picture is enlarged, to leave room above and below
 //               that is only shown when the mouse goes up or down (0.1 = 10%;
 //               0 = no up and down movement at all)
 //   SETTLE      how long the mouse must be still, in milliseconds, before the
 //               view settles onto one single picture (so there is never a
 //               see-through mix of two)
+//
+// The page can also carry dots pinned to things in the room (the "spots" list
+// in src/workspace-temp.md). They slide along with the room as it turns, show
+// a card on hover, and bring their item to the middle when clicked. To place
+// new ones, open the page with ?place at the end of the address.
 (function () {
   var SMOOTHING = 0.07;
   var EDGE = 0.08;
   var DRIFT = true;
+  var DRIFT_STOP = 8200;
   var ZOOM = 0.1;
   var SETTLE = 90;
 
@@ -34,6 +42,8 @@
 
   var frames = new Array(N);
   var loaded = 0;
+  var natW = 0; // the size of one picture, known once the first one has loaded
+  var natH = 0;
   var dirty = true;
 
   function fileName(i) {
@@ -64,6 +74,10 @@
     var img = new Image();
     img.onload = function () {
       frames[i] = img;
+      if (!natW) {
+        natW = img.naturalWidth;
+        natH = img.naturalHeight;
+      }
       loaded++;
       dirty = true;
       setStatus();
@@ -87,7 +101,10 @@
     canvas.height = ch;
     dirty = true;
   }
-  window.addEventListener("resize", resize);
+  window.addEventListener("resize", function () {
+    resize();
+    measured = false; // the cards may be a different width now
+  });
   resize();
 
   /* ---- Input ---- */
@@ -103,6 +120,7 @@
   }
 
   function setFromPointer(e) {
+    if (pinned || hovering) return; // a dot is open or under the mouse: hold still so it can be read
     var t = clamp01((e.clientX / window.innerWidth - EDGE) / (1 - EDGE * 2));
     target = invert ? 1 - t : t;
     targetY = clamp01((e.clientY / window.innerHeight - EDGE) / (1 - EDGE * 2));
@@ -111,8 +129,159 @@
     settled = false;
   }
   var settled = true;
+  var pinned = null;
+  var hovering = false;
   window.addEventListener("pointermove", setFromPointer);
   window.addEventListener("pointerdown", setFromPointer);
+
+  /* ---- Where everything is in the room --------------------------------
+
+     PAN says how far the room has slid sideways in each picture, as a
+     fraction of the picture's width. It was measured from the pictures
+     themselves, so a dot placed on the lamp stays on the lamp as the room
+     turns. If the animation is ever re-rendered in Blender, this table has to
+     be measured again. ---------------------------------------------------- */
+
+  var PAN = [
+    0.0000, -0.0005, -0.0012, -0.0024, -0.0039, -0.0058, -0.0082, -0.0108, -0.0138, -0.0172,
+    -0.0210, -0.0250, -0.0293, -0.0338, -0.0386, -0.0437, -0.0490, -0.0544, -0.0601, -0.0659,
+    -0.0719, -0.0781, -0.0843, -0.0907, -0.0971, -0.1037, -0.1103, -0.1169, -0.1235, -0.1301,
+    -0.1368, -0.1434, -0.1500, -0.1565, -0.1631, -0.1695, -0.1759, -0.1820, -0.1880, -0.1938,
+    -0.1993, -0.2046, -0.2100, -0.2151, -0.2197, -0.2239, -0.2282, -0.2324, -0.2365, -0.2402,
+    -0.2437, -0.2468, -0.2495, -0.2519, -0.2539, -0.2555, -0.2568, -0.2577, -0.2582, -0.2585
+  ];
+
+  // How far the room has slid in picture number f (f can be between two).
+  function panAt(f) {
+    var a = Math.max(0, Math.min(N - 1, Math.floor(f)));
+    var b = Math.min(N - 1, a + 1);
+    return PAN[a] + (PAN[b] - PAN[a]) * (f - a);
+  }
+
+  // The other way round: which picture has the room slid this far.
+  function panInverse(g) {
+    if (g >= PAN[0]) return 0;
+    if (g <= PAN[N - 1]) return N - 1;
+    for (var i = 1; i < N; i++) {
+      if (PAN[i] <= g) {
+        var span = PAN[i] - PAN[i - 1];
+        return i - 1 + (span ? (g - PAN[i - 1]) / span : 0);
+      }
+    }
+    return N - 1;
+  }
+
+  // Where the picture sits on the screen right now, in ordinary pixels.
+  function view() {
+    var dpr = cw / window.innerWidth || 1;
+    var scale = Math.max(cw / natW, ch / natH) * (1 + ZOOM);
+    var dw = natW * scale;
+    var dh = natH * scale;
+    return { x: (cw - dw) / 2 / dpr, y: ((ch - dh) * currentY) / dpr, w: dw / dpr, h: dh / dpr };
+  }
+
+  /* ---- The dots pinned to things in the room ---- */
+  var layer = document.querySelector("[data-spots]");
+  var spots = [];
+  var measured = false;
+
+  if (layer && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    Array.prototype.forEach.call(layer.querySelectorAll("[data-spot]"), function (el) {
+      spots.push({
+        el: el,
+        x: parseFloat(el.dataset.x) || 0,
+        y: parseFloat(el.dataset.y) || 0,
+        frame: parseFloat(el.dataset.frame) || 0,
+        depth: el.dataset.depth ? parseFloat(el.dataset.depth) : 1,
+        btn: el.querySelector(".ws-spot__dot"),
+        card: el.querySelector(".ws-spot__card"),
+        cardW: 0
+      });
+    });
+  }
+
+  // Bring a dot's item to the middle of the window and hold the room there.
+  function pin(s) {
+    if (pinned) pinned.el.classList.remove("is-pinned");
+    pinned = s;
+    s.el.classList.add("is-pinned");
+    if (s.btn) s.btn.setAttribute("aria-expanded", "true");
+    layer.classList.add("has-pinned");
+
+    var f = panInverse(0.5 - s.x + panAt(s.frame));
+    target = Math.round(f) / (N - 1); // a whole picture, so there is no ghosting
+    var v = view();
+    var H = window.innerHeight;
+    if (H - v.h !== 0) targetY = clamp01((H / 2 - s.y * v.h) / (H - v.h));
+    interacted = true;
+    settled = true;
+    dirty = true;
+  }
+
+  function unpin() {
+    if (!pinned) return;
+    pinned.el.classList.remove("is-pinned");
+    if (pinned.btn) pinned.btn.setAttribute("aria-expanded", "false");
+    pinned = null;
+    layer.classList.remove("has-pinned");
+  }
+
+  spots.forEach(function (s) {
+    if (!s.btn) return;
+    // The room stops turning while the mouse is on a dot or its card, so the
+    // card can be read without everything sliding away.
+    s.el.addEventListener("pointerenter", function (e) {
+      if (e.pointerType === "mouse") hovering = true; // only a real mouse; a tap must not freeze the room
+    });
+    s.el.addEventListener("pointerleave", function () {
+      hovering = false;
+    });
+    s.btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (pinned === s) unpin();
+      else pin(s);
+    });
+  });
+
+  if (spots.length) {
+    document.addEventListener("click", function (e) {
+      if (pinned && !pinned.el.contains(e.target)) unpin();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") unpin();
+    });
+  }
+
+  // Put every dot where its item is now.
+  function updateSpots() {
+    if (!spots.length || !natW) return;
+    layer.classList.add("is-ready"); // the first picture is up: fade the dots in
+    var v = view();
+    if (!measured) {
+      measured = true;
+      for (var m = 0; m < spots.length; m++) {
+        spots[m].cardW = spots[m].card ? spots[m].card.offsetWidth : 240;
+      }
+    }
+    var g = panAt(current * (N - 1));
+    var W = window.innerWidth;
+    var H = window.innerHeight;
+    for (var i = 0; i < spots.length; i++) {
+      var s = spots[i];
+      var px = v.x + (s.x + s.depth * (g - panAt(s.frame))) * v.w;
+      var py = v.y + s.y * v.h;
+      var away = Math.min(1, Math.abs(px - W / 2) / (W / 2)); // 0 in the middle, 1 at the edge
+      var onScreen = px > -40 && px < W + 40 && py > -40 && py < H + 40;
+      var el = s.el;
+      el.style.setProperty("--x", px.toFixed(1) + "px");
+      el.style.setProperty("--y", py.toFixed(1) + "px");
+      el.style.setProperty("--spot-near", (1 - 0.45 * away).toFixed(3)); // dots to the side are smaller and fainter
+      el.style.visibility = onScreen ? "" : "hidden";
+      // The card hangs on whichever side has room for it.
+      el.classList.toggle("is-left", px + 24 + s.cardW > W - 12 && px - 24 - s.cardW > 12);
+      el.classList.toggle("is-below", py < H * 0.4);
+    }
+  }
 
   /* ---- Drawing ---- */
   function drawCover(img) {
@@ -152,6 +321,8 @@
   }
 
   var last = performance.now();
+  var startedAt = last;
+  var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
   var wasCovered = false;
   function tick(now) {
     var dt = Math.min(64, now - last);
@@ -173,8 +344,15 @@
     }
 
     if (DRIFT && !interacted) {
-      target = 0.5 - 0.5 * Math.cos(now / 2600); // starts at the left, sways across
-      targetY = 0.5 + 0.12 * Math.sin(now / 3400);
+      if (coarse && now - startedAt > DRIFT_STOP) {
+        // On a phone there is no mouse to take over, so after one sway the
+        // room settles in the middle and the dots can be tapped.
+        target = 0.5;
+        targetY = 0.5;
+      } else {
+        target = 0.5 - 0.5 * Math.cos(now / 2600); // starts at the left, sways across
+        targetY = 0.5 + 0.12 * Math.sin(now / 3400);
+      }
     }
 
     // When the mouse has been still for a moment, aim for the nearest single
@@ -198,10 +376,85 @@
     if (dirty) {
       dirty = false;
       draw(current);
+      updateSpots();
     }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+
+  /* ---- Placing new dots: open the page with ?place at the end ---- */
+  if (layer && /[?&]place\b/.test(location.search)) {
+    var panel = document.querySelector("[data-place]");
+    if (panel) {
+      var readout = panel.querySelector("[data-place-readout]");
+      var list = panel.querySelector("[data-place-list]");
+      var picked = [];
+
+      document.body.classList.add("ws-placing");
+
+      function toImage(clientX, clientY) {
+        var v = view();
+        return { x: (clientX - v.x) / v.w, y: (clientY - v.y) / v.h };
+      }
+
+      function asYaml() {
+        return picked
+          .map(function (p) {
+            return (
+              "  - x: " + p.x.toFixed(4) + "\n" +
+              "    y: " + p.y.toFixed(4) + "\n" +
+              "    frame: " + p.frame + "\n" +
+              '    title: "Name it"\n' +
+              '    text: "Say something about it."'
+            );
+          })
+          .join("\n");
+      }
+
+      function render() {
+        list.textContent = picked.length ? "spots:\n" + asYaml() : "No dots yet. Click something in the room.";
+      }
+
+      window.addEventListener("pointermove", function (e) {
+        if (!natW) return;
+        var p = toImage(e.clientX, e.clientY);
+        readout.textContent = "x " + p.x.toFixed(3) + "  y " + p.y.toFixed(3) + "  picture " + Math.round(current * (N - 1));
+      });
+
+      canvas.addEventListener("click", function (e) {
+        var p = toImage(e.clientX, e.clientY);
+        picked.push({ x: p.x, y: p.y, frame: Math.round(current * (N - 1)) });
+        render();
+      });
+
+      panel.querySelector("[data-place-undo]").addEventListener("click", function () {
+        picked.pop();
+        render();
+      });
+
+      panel.querySelector("[data-place-copy]").addEventListener("click", function (e) {
+        var text = list.textContent;
+        var done = function () {
+          e.target.textContent = "Copied";
+          setTimeout(function () {
+            e.target.textContent = "Copy";
+          }, 1400);
+        };
+        if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done);
+        else {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          done();
+        }
+      });
+
+      render();
+    }
+  }
 })();
 
 // The "i" window on the About page: a small window above the button. It opens
