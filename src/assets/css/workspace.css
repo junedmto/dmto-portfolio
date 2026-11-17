@@ -545,27 +545,20 @@ a.ws-spot__go:focus-visible {
   object-fit: cover;
 }
 
-/* The YouTube player is sized and placed by workspace.js (drawn larger than
-   its box so YouTube's own title and buttons fall outside it), and only shown
-   while it is really playing. */
-.ws-spot__media iframe {
+.ws-spot__media iframe,
+.ws-win__body iframe,
+.ws-lightbox__media iframe {
   position: absolute;
-  left: 0;
-  top: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border: 0;
-  transform-origin: 0 0;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.ws-spot__media.is-playing iframe {
-  opacity: 1;
 }
 
 /* The photos cross-fade from one to the next. */
 .ws-spot__shot {
   opacity: 0;
-  transition: opacity 0.9s ease;
+  transition: opacity 0.3s ease;
 }
 
 .ws-spot__shot.is-on {
@@ -677,22 +670,97 @@ a.ws-spot__go:focus-visible {
   display: none;
 }
 
-/* The picture or video of a dot, on the laptop's screen. */
+/* A dot's picture or video, as a little window that pops up on the laptop's
+   screen (in the style of the Mac the laptop is). */
 .ws-screen__quad > .ws-feature {
   position: absolute;
   inset: 0;
-  width: 100%;
-  margin: 0;
-  aspect-ratio: auto;
-  border-radius: 0;
-  box-shadow: none;
-  background: #000;
+  display: grid;
+  place-items: center;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.2s ease;
 }
 
 .ws-screen__quad > .ws-feature.is-on {
   opacity: 1;
+}
+
+.ws-win {
+  width: 62%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #1e1e1e;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 22px 60px rgba(0, 0, 0, 0.55), 0 6px 14px rgba(0, 0, 0, 0.35);
+  transform: translateY(14px) scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.2, 1.25, 0.35, 1);
+}
+
+.ws-feature.is-on .ws-win {
+  transform: none;
+}
+
+.ws-win__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 14px;
+  background: linear-gradient(#e9e9e9, #d8d8d8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.ws-win__lights {
+  display: flex;
+  gap: 8px;
+}
+
+.ws-win__lights i {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+
+.ws-win__lights i:nth-child(2) {
+  background: #febc2e;
+}
+
+.ws-win__lights i:nth-child(3) {
+  background: #28c840;
+}
+
+.ws-win__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 0 80px;
+  overflow: hidden;
+  color: #3c3c3c;
+  font: 600 13px/34px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ws-win__body {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.ws-win__body--photos {
+  aspect-ratio: 4 / 3;
+}
+
+.ws-win__body video,
+.ws-win__body .ws-spot__shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .ws-screen--feature .ws-screen__quad {
