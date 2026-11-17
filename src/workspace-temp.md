@@ -31,7 +31,7 @@ spots:
     frame: 0
   - title: Process
     text: Everything that did not make it, stacked in order.
-    action: ''
+    action: enlarge
     link: ''
     media: video
     images: []
@@ -42,7 +42,7 @@ spots:
     frame: 0
   - title: Projects
     text: Check out my work!
-    action: ''
+    action: enlarge
     link: /
     media: photos
     images:
@@ -59,7 +59,7 @@ spots:
     frame: 0
   - title: A valuable tool
     text: For work and personal projects alike
-    action: ''
+    action: enlarge
     link: https://youtu.be/Ddo8VyJ8ikM
     media: video
     images: []
@@ -92,7 +92,7 @@ spots:
     frame: 0
   - title: My actual layout
     text: This is all a 3D recreation of my actual desk.
-    action: ''
+    action: enlarge
     link: ''
     media: ''
     images:
@@ -126,7 +126,7 @@ spots:
     frame: 59
   - title: Do you play?
     text: Click to challenge me!
-    action: ''
+    action: link
     link: https://www.chess.com/member/junedmto
     media: photos
     images:
