@@ -125,6 +125,11 @@ spots:
     media: photos
     images:
       - /assets/img/uploads/2d2ad4e1-df2f-4db6-ae92-fcc80193fb1c.JPG
+      - /assets/img/uploads/IMG_2131.jpeg
+      - /assets/img/uploads/e6150197-cce1-4621-b8da-2f64fdf9e43d.jpg
+      - /assets/img/uploads/IMG_2196.jpeg
+      - /assets/img/uploads/81f25d0d-dba9-4d7e-864c-94c248d23ef0.jpg
+      - /assets/img/uploads/IMG_1897.jpeg
     youtube: ''
     video: ''
     x: 0.2355
@@ -140,5 +145,16 @@ spots:
     video: ''
     x: 0.439
     'y': 0.585
+    frame: 0
+  - title: Music?
+    text: ''
+    action: ''
+    link: ''
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.3768
+    'y': 0.7887
     frame: 0
 ---
