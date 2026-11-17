@@ -92,8 +92,8 @@ spots:
     x: 0.72
     'y': 0.69
     frame: 59
-  - title: Fuel
-    text: Refilled more often than it should be.
+  - title: Mate
+    text: The fuel powering the creative machine
     link: ''
     media: ''
     images: []
