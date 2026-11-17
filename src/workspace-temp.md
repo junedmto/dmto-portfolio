@@ -120,4 +120,14 @@ spots:
     x: 0.2355
     'y': 0.47
     frame: 0
+  - title: Personal Projects
+    text: ''
+    link: ''
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.439
+    'y': 0.585
+    frame: 0
 ---
