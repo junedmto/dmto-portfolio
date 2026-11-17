@@ -120,3 +120,35 @@ collections:
           - { label: Email, name: email, widget: string }
           - { label: Phone, name: phone, widget: string, required: false }
           - { label: Instagram URL, name: instagram, widget: string, required: false }
+
+      - name: workspace_temp
+        label: Workspace (temporary)
+        file: src/workspace-temp.md
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: SEO description, name: description, widget: string }
+          - label: Dots
+            name: spots
+            widget: list
+            label_singular: Dot
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Name, name: title, widget: string }
+              - { label: Text, name: text, widget: text, required: false }
+              - label: Show under the text
+                name: media
+                widget: select
+                required: false
+                options:
+                  - { label: "Photos", value: "photos" }
+                  - { label: "Video", value: "video" }
+              - label: Photos
+                name: images
+                widget: list
+                required: false
+                field: { label: Photo, name: image, widget: image }
+              - { label: "YouTube link", name: youtube, widget: string, required: false, hint: "Paste any YouTube link." }
+              - { label: "Video file", name: video, widget: file, required: false, hint: "An .mp4, if you would rather upload one than use YouTube." }
+              - { label: "Across (x)", name: x, widget: number, value_type: float, step: 0.0001, hint: "Get these from /workspace-temp/?place" }
+              - { label: "Down (y)", name: y, widget: number, value_type: float, step: 0.0001 }
+              - { label: "Picture number", name: frame, widget: number, value_type: int, default: 0 }
