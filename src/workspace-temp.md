@@ -42,12 +42,12 @@ spots:
     x: 0.21
     'y': 0.885
     frame: 0
-  - title: The camera
-    text: Still the fastest way to work out a composition.
-    link: ''
-    media: ''
+  - title: A valuable tool
+    text: For work and personal projects alike
+    link: https://youtu.be/Ddo8VyJ8ikM
+    media: video
     images: []
-    youtube: ''
+    youtube: https://youtu.be/Ddo8VyJ8ikM
     video: ''
     x: 0.33
     'y': 0.645
