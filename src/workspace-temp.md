@@ -91,6 +91,7 @@ spots:
       - /assets/img/uploads/IMG_9088.jpeg
       - /assets/img/uploads/IMG_8999.jpeg
       - /assets/img/uploads/IMG_6210.jpeg
+      - /assets/img/uploads/IMG_7985.jpeg
     youtube: ''
     video: ''
     x: 0.86
@@ -112,7 +113,8 @@ spots:
     action: ''
     link: ''
     media: ''
-    images: []
+    images:
+      - /assets/img/uploads/9A3848A8-A36A-4402-B583-C46DABF3E7DE.JPG
     youtube: ''
     video: ''
     x: 0.77
