@@ -151,10 +151,20 @@ spots:
     action: ''
     link: ''
     media: ''
-    images: []
+    images:
+      - /assets/img/uploads/IMG_5644.jpeg
+      - /assets/img/uploads/a9e606a4-2b38-406d-a888-e90d022955a8.JPG
+      - /assets/img/uploads/IMG_9354.JPG
+      - /assets/img/uploads/144ef5ed-1d34-4ccd-9753-e6673c4293ad.JPG
+      - /assets/img/uploads/IMG_0433.JPG
+      - /assets/img/uploads/e5c52c07-e380-400b-a5c3-2546c8e998cb.jpg
+      - /assets/img/uploads/c6030010-0ef2-439e-b6ab-b906cb6960e5.jpg
+      - /assets/img/uploads/IMG_5933.jpg
+      - /assets/img/uploads/IMG_7005.JPG
+      - /assets/img/uploads/Screenshot 2026-11-17 at 16.52.51.png
     youtube: ''
     video: ''
     x: 0.3768
     'y': 0.7887
-    frame: 0
+    frame: 20
 ---
