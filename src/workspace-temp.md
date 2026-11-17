@@ -1,62 +1,95 @@
 ---
 title: Workspace
 description: An interactive look around the Department of Making workspace.
-
-# Each dot needs x, y and frame (use /workspace-temp/?place to get them).
-# A dot can also carry pictures or a video, which play by themselves:
-#   media: photos      and      images: [ /assets/img/..., /assets/img/... ]
-#   media: video       and      youtube: "https://www.youtube.com/watch?v=..."
-#                      or       video: /assets/img/clip.mp4
-# These can all be set in /admin under Pages.
 spots:
-  - x: 0.2950
-    y: 0.1900
+  - title: The lamp
+    text: On at all hours. The only light that gets the colour right.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.295
+    'y': 0.19
     frame: 0
-    title: "The lamp"
-    text: "On at all hours. The only light that gets the colour right."
-  - x: 0.1650
-    y: 0.4500
+  - title: The 3D shelf
+    text: Where the Blender habit started.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.165
+    'y': 0.45
     frame: 0
-    title: "The 3D shelf"
-    text: "Where the Blender habit started."
-  - x: 0.1900
-    y: 0.6550
+  - title: Process
+    text: Everything that did not make it, stacked in order.
+    media: video
+    images: []
+    youtube: https://youtu.be/KeRm8CExl2E
+    video: ''
+    x: 0.19
+    'y': 0.655
     frame: 0
-    title: "Process"
-    text: "Everything that did not make it, stacked in order."
-  - x: 0.2100
-    y: 0.8850
+  - title: Projects
+    text: Open on whatever is being worked out that week.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.21
+    'y': 0.885
     frame: 0
-    title: "Projects"
-    text: "Open on whatever is being worked out that week."
-  - x: 0.3300
-    y: 0.6450
+  - title: The camera
+    text: Still the fastest way to work out a composition.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.33
+    'y': 0.645
     frame: 0
-    title: "The camera"
-    text: "Still the fastest way to work out a composition."
-  - x: 0.6400
-    y: 0.4500
+  - title: The laptop
+    text: Most of what you are looking at was made on this.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.64
+    'y': 0.45
     frame: 0
-    title: "The laptop"
-    text: "Most of what you are looking at was made on this."
-  - x: 0.6300
-    y: 0.8700
+  - title: The notebook
+    text: Everything starts here before it goes anywhere near a screen.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.63
+    'y': 0.87
     frame: 0
-    title: "The notebook"
-    text: "Everything starts here before it goes anywhere near a screen."
-  - x: 0.8600
-    y: 0.3300
+  - title: The big screen
+    text: For layouts that need room to breathe.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.86
+    'y': 0.33
     frame: 30
-    title: "The big screen"
-    text: "For layouts that need room to breathe."
-  - x: 0.7200
-    y: 0.6900
+  - title: Illustration
+    text: Drawn here first, then traced back into the machine.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.72
+    'y': 0.69
     frame: 59
-    title: "Illustration"
-    text: "Drawn here first, then traced back into the machine."
-  - x: 0.7700
-    y: 0.7900
+  - title: Fuel
+    text: Refilled more often than it should be.
+    media: ''
+    images: []
+    youtube: ''
+    video: ''
+    x: 0.77
+    'y': 0.79
     frame: 59
-    title: "Fuel"
-    text: "Refilled more often than it should be."
 ---
