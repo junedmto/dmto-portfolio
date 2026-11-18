@@ -1,5 +1,5 @@
 ---
-order: 3
+order: 5
 title: Sotogrande Magazine
 category: Editorial Design
 category_other: ''
@@ -17,5 +17,5 @@ gallery:
   - /assets/img/uploads/LDC Magazine5.jpg
   - /assets/img/uploads/LDC Magazine6.jpg
   - /assets/img/uploads/LDC Magazine13.jpg
-row_layout: 2,2,2,2
+row_layout: '2,2,2,2'
 ---

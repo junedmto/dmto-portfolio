@@ -1,5 +1,5 @@
 ---
-order: 7
+order: 9
 title: East Crema Coffee
 category: Other
 category_other: Various Projects
@@ -34,5 +34,5 @@ gallery:
   - /assets/img/uploads/Mockup Lateral B copy.png
   - /assets/img/uploads/Mockup Frontal copy.png
   - /assets/img/uploads/Mockup Lateral copy.png
-row_layout: 2,2,3,2,2,2,2,2,1,2
+row_layout: '2,2,3,2,2,2,2,2,1,2'
 ---

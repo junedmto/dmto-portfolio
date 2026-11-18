@@ -1,5 +1,5 @@
 ---
-order: 10
+order: 11
 title: Bodega Millcayac
 category: Other
 category_other: Label Design
@@ -12,5 +12,5 @@ gallery:
   - /assets/img/uploads/Colour change-03.png
   - /assets/img/uploads/Mockup Separate.png
   - /assets/img/uploads/Screenshot 2026-10-09 at 16.06.28.png
-row_layout: 1,2,1,1
+row_layout: '1,2,1,1'
 ---

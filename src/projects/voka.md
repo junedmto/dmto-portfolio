@@ -1,5 +1,5 @@
 ---
-order: 5
+order: 4
 title: VOKA
 category: Other
 category_other: Branding & Packaging

@@ -1,5 +1,5 @@
 ---
-order: 15
+order: 3
 title: Sony FE 600mm F6.3 GM OSS Lens
 category: 3D Modelling
 category_other: ''

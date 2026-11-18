@@ -1,5 +1,5 @@
 ---
-order: 11
+order: 12
 title: Recipe App Concept
 category: Other
 category_other: User Interface
@@ -11,5 +11,5 @@ gallery:
   - /assets/img/uploads/Mockup4.png
   - /assets/img/uploads/Mockup.png
   - /assets/img/uploads/Mockup2.png
-row_layout: 2,2
+row_layout: '2,2'
 ---

@@ -1,5 +1,5 @@
 ---
-order: 9
+order: 10
 title: VOKA Packaging
 category: Packaging
 category_other: ''
@@ -20,5 +20,5 @@ gallery:
   - /assets/img/uploads/Screenshot 2026-10-09 at 16.14.52.png
   - /assets/img/uploads/Untitled.mov
   - /assets/img/uploads/IMG_9120.jpeg
-row_layout: 3,1,3
+row_layout: '3,1,3'
 ---
