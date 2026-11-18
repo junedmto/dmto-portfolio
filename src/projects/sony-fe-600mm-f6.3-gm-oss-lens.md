@@ -14,5 +14,5 @@ gallery:
   - /assets/img/uploads/im4.jpg
   - /assets/img/uploads/im5.jpg
   - /assets/img/uploads/im6.jpg
-row_layout: ''
+row_layout: '1,2,3,1'
 ---
