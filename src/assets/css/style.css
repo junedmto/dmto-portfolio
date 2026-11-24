@@ -147,9 +147,11 @@ p {
   background: #000;
   color: #fff;
   /* Strip height and logo height: change them here. */
-  --strip-height: 2.75rem;
+  --strip-height: 3.5rem;
   --logo-height: 1.1rem;
   height: var(--strip-height);
+  /* A very subtle shadow under the strip. */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
 }
 
 .site-nav__row {
@@ -313,7 +315,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: var(--gallery-gap);
-  padding: 0 var(--page-inset) var(--space-5);
+  padding: var(--page-inset) var(--page-inset) var(--space-5);
 }
 
 .gallery-stack > .justified-gallery {
@@ -700,7 +702,7 @@ main {
 
   /* Smaller strip on a phone so everything fits on one line. */
   .site-nav {
-    --strip-height: 2.5rem;
+    --strip-height: 3rem;
     --logo-height: 0.85rem;
   }
 

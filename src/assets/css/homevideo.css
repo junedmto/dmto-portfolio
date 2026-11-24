@@ -5,14 +5,14 @@
 .page-homevideo {
   /* Height of the header (its padding plus the logo height), so the video
      can fill exactly the rest of the screen. Keep in step with style.css. */
-  --hv-header: 2.75rem;
+  --hv-header: 3.5rem;
   /* Space between the video and the gallery under it. */
   --hv-gap: 0.5rem;
 }
 
 @media (max-width: 640px) {
   .page-homevideo {
-    --hv-header: 2.5rem;
+    --hv-header: 3rem;
   }
 }
 
