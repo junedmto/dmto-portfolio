@@ -148,7 +148,7 @@ p {
   color: #fff;
   /* Strip height and logo height: change them here. */
   --strip-height: 3.5rem;
-  --logo-height: 2.2rem;
+  --logo-height: 1.8rem;
   height: var(--strip-height);
   /* A very subtle shadow under the strip. */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
