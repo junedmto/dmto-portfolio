@@ -7,21 +7,21 @@ screens:
     image: ''
     play: loop
 spots:
-  - title: The 3D shelf
-    text: Where the Blender habit started.
-    action: ''
+  - title: 3D
+    text: My newest passion.
+    action: enlarge
     link: ''
     media: ''
     images: []
     youtube: ''
-    video: ''
+    video: /assets/img/uploads/sony lens.mov
     x: 0.165
     'y': 0.45
     frame: 0
   - title: Process
-    text: Everything that did not make it, stacked in order.
-    action: enlarge
-    link: ''
+    text: The "behind the scenes"
+    action: link
+    link: /about/
     media: video
     images: []
     youtube: https://youtu.be/KeRm8CExl2E
@@ -38,7 +38,7 @@ spots:
       - /assets/img/uploads/backNewGendo.png
       - /assets/img/uploads/Cover.png
       - /assets/img/uploads/LQ1.jpg
-      - /assets/img/uploads/LDC Magazine4.jpg
+      - /assets/img/uploads/im4.jpg
       - /assets/img/uploads/Magazine2.jpg
       - /assets/img/uploads/Mockup Lateral B copy.png
     youtube: ''
@@ -69,7 +69,7 @@ spots:
     'y': 0.87
     frame: 0
   - title: My actual layout
-    text: This is all a 3D recreation of my actual desk.
+    text: This is all a 3D recreation of my current desk, of many.
     action: enlarge
     link: ''
     media: ''
@@ -87,7 +87,7 @@ spots:
     'y': 0.33
     frame: 30
   - title: Illustration
-    text: Drawn here first, then traced back into the machine.
+    text: How it all began, not my specialty anymore.
     action: ''
     link: ''
     media: ''
@@ -127,8 +127,8 @@ spots:
     x: 0.2355
     'y': 0.47
     frame: 0
-  - title: Personal Projects
-    text: ''
+  - title: A Recent Personal Project?
+    text: A budget guide to Bikepacking. Get it on Amazon!
     action: link
     link: https://www.amazon.es/Bikepacking-Budget-Cycled-Across-Europe/dp/B0HG7R4TTW/ref=sr_1_2?crid=2F10MW9M0HNPM&dib=eyJ2IjoiMSJ9.Qyinhku2SamxtQ3Cb2sBBDNoa4P6y2ih36ZCAgYSytw9nNlDd1Sw-LO-zX1XEPfesv7XFhEIgj8e2KngafXbizpgTq0kYU-4XFypB-Tp7y9P9h1CA1IB_V_yPUd_JEtp4CGaAhr5_QEeyey7-065iYpcm2HSN3xoyiEXDKWr2X5omXB2FadkKupp_DPmRU9bKXH7imjgJBkN4icZ9E2zpaOOnJGz2ZWTuizuAISrLzMi9Qpfs9Ous7yfnUkJikwZtIpdk-PU5M1LTwL1VOIz7abhkj2eX6-a-V5p4pv93LA.PyGh-wthJdFm55iXXiFUJXgTXGqb5DA00N6RicCWi5Y&dib_tag=se&keywords=bikepacking+on+a+budget&qid=1794936162&sprefix=%2Caps%2C93&sr=8-2
     media: ''
@@ -140,7 +140,7 @@ spots:
     'y': 0.585
     frame: 0
   - title: Music?
-    text: ''
+    text: Check out our Spotify!
     action: link
     link: https://open.spotify.com/artist/08fDg7Bj8Z3axCBL4NHMdd?si=ZjZ86lFqQQ6NV3hwIAC7IA
     media: ''
@@ -161,9 +161,9 @@ spots:
     'y': 0.7887
     frame: 20
   - title: What else?
-    text: ''
-    action: enlarge
-    link: ''
+    text: A quick short on recent adventures.
+    action: link
+    link: https://youtube.com/shorts/ET6iqfG6JBw?feature=share
     media: video
     images: []
     youtube: https://youtube.com/shorts/ET6iqfG6JBw?feature=share
