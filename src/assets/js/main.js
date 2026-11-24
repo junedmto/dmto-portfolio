@@ -121,3 +121,28 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", update, { passive: true });
   update();
 })();
+
+
+/* The phone menu: the burger button opens and closes it. */
+(function () {
+  var header = document.querySelector(".site-nav");
+  var burger = document.querySelector("[data-burger]");
+  if (!header || !burger) return;
+  function setOpen(open) {
+    header.classList.toggle("is-open", open);
+    burger.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  burger.addEventListener("click", function (e) {
+    e.stopPropagation();
+    setOpen(!header.classList.contains("is-open"));
+  });
+  document.addEventListener("click", function (e) {
+    if (header.classList.contains("is-open") && !header.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") setOpen(false);
+  });
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 700) setOpen(false);
+  });
+})();

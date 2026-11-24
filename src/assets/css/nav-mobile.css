@@ -1,0 +1,113 @@
+/* The phone menu: logo on the left, a burger button on the right that opens
+   a panel with Work, About, Contact and Instagram. Wide screens keep the
+   normal strip (this file only switches things on for narrow screens). */
+
+.site-nav__burger,
+.site-nav__menu {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .site-nav {
+    --logo-height: 1.8rem;
+  }
+
+  .site-nav__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.875rem;
+  }
+
+  .site-nav__links {
+    display: none;
+  }
+
+  .site-nav__brand {
+    order: 1;
+  }
+
+  .site-nav__burger {
+    order: 2;
+    display: grid;
+    align-content: center;
+    gap: 5px;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: -0.4rem;
+    padding: 0 0.5rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .site-nav__burger span {
+    display: block;
+    height: 3px;
+    background: currentColor;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+  }
+
+  .site-nav.is-open .site-nav__burger span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .site-nav.is-open .site-nav__burger span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .site-nav.is-open .site-nav__burger span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .site-nav__menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0.875rem 1.25rem;
+    background: #000;
+    color: #fff;
+    box-shadow: 0 10px 16px rgba(0, 0, 0, 0.18);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+
+  .site-nav.is-open .site-nav__menu {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .site-nav__menu a {
+    padding: 0.85rem 0;
+    font-family: "DMTO Pixel", var(--font-display), sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .site-nav__menu a[aria-current="page"] {
+    text-decoration: underline;
+    text-underline-offset: 0.35rem;
+    text-decoration-thickness: 2px;
+  }
+
+  /* The white version of the strip (pages that turn white when scrolling),
+     and an open menu stays solid so it can always be read. */
+  .site-nav--turns.is-scrolled .site-nav__menu {
+    background: #fff;
+    color: #000;
+  }
+
+  .site-nav--turns.is-scrolled .site-nav__burger {
+    color: #000;
+  }
+}

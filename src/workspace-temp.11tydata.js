@@ -6,6 +6,7 @@ module.exports = {
   layout: "layouts/workspace.njk",
   permalink: "/",
   eleventyExcludeFromCollections: true,
+  mobileHome: true, // on a phone this page sends you to /work/ instead
   noReveal: true, // one full-screen picture, so no playground under it
   hideFooter: true,
   bodyClass: "page-workspace",
