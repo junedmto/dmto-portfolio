@@ -164,6 +164,7 @@ collections:
                 options:
                   - { label: "Go to the link", value: "link" }
                   - { label: "Enlarge the picture or video", value: "enlarge" }
+               	  - { label: "Open the notebook", value: "flipbook" }
               - label: "Link when clicked"
                 name: link
                 widget: string

@@ -32,6 +32,11 @@ layout: layouts/base.njk
   screen: laptop or monitor, then a video (a file) or an image, and
   play: loop (always playing) or hover (only while the mouse is over it).
 
+  A dot whose action is "Open the notebook" turns the pages in
+  assets/img/notebook/ (01.webp, 02.webp ... in order; two per spread: left
+  page, right page). To change the notebook, replace those pictures and set
+  data-book-pages below to how many there are.
+
   A dot's "action" decides what a click does: "link" goes to its link,
   "enlarge" shows its picture or video big in the middle of the window.
   A dot with a "link" leads there when it is clicked: a page of this site
@@ -49,6 +54,8 @@ layout: layouts/base.njk
         data-path="{{ '/assets/img/workspace/' | url }}"
         data-ext="webp"
         data-invert="false"
+        data-book-path="{{ '/assets/img/notebook/' | url }}"
+        data-book-pages="12"
         role="img"
         aria-label="An interactive view of the workspace. Move the mouse left and right, up and down, to look around."></canvas>
 <p class="ws__status" data-workspace-status aria-live="polite"></p>

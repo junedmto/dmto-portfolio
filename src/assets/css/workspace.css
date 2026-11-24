@@ -911,3 +911,238 @@ a.ws-spot__go:focus-visible {
     transition: none;
   }
 }
+
+
+/* ---- The notebook flipbook ---- */
+.ws-book {
+  --page-ratio: 0.6526; /* width / height of one page (set by the script) */
+  position: fixed;
+  inset: 0;
+  z-index: 1250;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3.5rem 1.25rem 1.25rem;
+  background: rgba(8, 8, 8, 0.7);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: opacity 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.ws-book.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s ease;
+}
+
+.ws-book__close {
+  position: absolute;
+  top: var(--page-inset, 0.875rem);
+  right: var(--page-inset, 0.875rem);
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.ws-book__desk {
+  perspective: 2600px;
+  perspective-origin: 50% 40%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  transform: scale(0.94);
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ws-book.is-open .ws-book__desk {
+  transform: none;
+}
+
+/* The open book: two pages side by side. Its height is whatever fits. */
+.ws-book__book {
+  --h: min(calc(100vh - 9rem), calc(94vw / (var(--page-ratio) * 2)));
+  position: relative;
+  height: var(--h);
+  width: calc(var(--h) * var(--page-ratio) * 2);
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 22px 40px rgba(0, 0, 0, 0.55));
+}
+
+.ws-book__base,
+.ws-book__leaf {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+}
+
+.ws-book__base {
+  left: 0;
+  z-index: 0;
+  background: #f2efe6;
+  border-radius: 6px 0 0 6px;
+  overflow: hidden;
+}
+
+.ws-book__leaf {
+  left: 50%;
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+  transition: none;
+}
+
+.ws-book__leaf.is-turning {
+  transition: transform 0.9s cubic-bezier(0.45, 0.05, 0.25, 1);
+}
+
+.ws-book__leaf.is-flipped {
+  transform: rotateY(-180deg);
+}
+
+.ws-book__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #f2efe6;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.ws-book__face--front {
+  border-radius: 0 6px 6px 0;
+}
+
+.ws-book__face--back {
+  transform: rotateY(180deg);
+  border-radius: 6px 0 0 6px;
+}
+
+.ws-book__face img,
+.ws-book__base img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* A shadow that sweeps over a page while it turns. */
+.ws-book__face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0) 60%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ws-book__face--back::after {
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0) 60%);
+}
+
+.ws-book__leaf.is-turning .ws-book__face::after {
+  animation: ws-book-shade 0.9s ease-in-out;
+}
+
+@keyframes ws-book-shade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* The soft crease down the middle. */
+.ws-book__gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 1.6rem);
+  width: 3.2rem;
+  z-index: 500;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.16) 48%, rgba(0,0,0,0.22) 50%, rgba(0,0,0,0.16) 52%, rgba(0,0,0,0) 100%);
+}
+
+.ws-book__bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  color: #fff;
+  font-family: "DMTO Pixel", var(--font-display, sans-serif);
+  font-size: 1.1rem;
+}
+
+.ws-book__nav {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.ws-book__nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.ws-book__count {
+  min-width: 8rem;
+  text-align: center;
+}
+
+/* One page at a time on a narrow portrait screen. */
+.ws-book.is-single .ws-book__book {
+  --h: min(calc(100vh - 10rem), calc(92vw / var(--page-ratio)));
+  width: calc(var(--h) * var(--page-ratio));
+}
+
+.ws-book.is-single .ws-book__leaf {
+  left: 0;
+  width: 100%;
+}
+
+.ws-book.is-single .ws-book__gutter {
+  display: none;
+}
+
+.ws-book.is-single .ws-book__face--front {
+  border-radius: 6px;
+}
+
+.ws-book.is-single .ws-book__leaf.is-flipped {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease 0.5s;
+}
+
+.ws-book.is-single .ws-book__leaf.is-turning.is-flipped {
+  transition: transform 0.9s cubic-bezier(0.45, 0.05, 0.25, 1), opacity 0.35s ease 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-book,
+  .ws-book__desk,
+  .ws-book__leaf.is-turning {
+    transition: none;
+  }
+  .ws-book__leaf.is-turning .ws-book__face::after {
+    animation: none;
+  }
+}

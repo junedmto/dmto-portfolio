@@ -124,7 +124,7 @@
   }
 
   function setFromPointer(e) {
-    if (pinned || hovering || (lightbox && lightbox.open)) return; // a dot is open or under the mouse: hold still so it can be read
+    if (pinned || hovering || (lightbox && lightbox.open) || (book && book.open)) return; // a dot is open or under the mouse: hold still so it can be read
     var t = clamp01((e.clientX / window.innerWidth - EDGE) / (1 - EDGE * 2));
     target = invert ? 1 - t : t;
     targetY = clamp01((e.clientY / window.innerHeight - EDGE) / (1 - EDGE * 2));
@@ -472,6 +472,10 @@
       // can be read) and the next tap, on the dot or on "Open page", follows.
       var go = s.el.querySelector("a.ws-spot__go");
       var touch = e.pointerType === "touch" || e.pointerType === "pen";
+      if (s.action === "flipbook") {
+        openBook(s);
+        return;
+      }
       if (s.action === "enlarge" && s.mediaEl) {
         openLightbox(s);
         return;
@@ -491,7 +495,8 @@
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") {
-        if (lightbox && lightbox.open) closeLightbox(true);
+        if (book && book.open) closeBook(true);
+        else if (lightbox && lightbox.open) closeLightbox(true);
         else unpin();
       }
     });
@@ -615,6 +620,218 @@
     }, 400);
     if (viaKeyboard && from && from.btn) from.btn.focus({ preventScroll: true });
   }
+
+
+  /* ---- The notebook: a flipbook of real-looking pages ---- */
+  /* The pages are pictures called 01.webp, 02.webp ... in the folder set by
+     data-book-path / data-book-pages on the canvas (see workspace.njk). On a
+     wide screen they show as an open book (two pages, the right-hand page
+     turns over like paper); on a narrow phone, one page at a time. */
+  var book = null;
+  var BOOK_PATH = canvas.dataset.bookPath || "/assets/img/notebook/";
+  var BOOK_PAGES = parseInt(canvas.dataset.bookPages, 10) || 12;
+  var BOOK_TURN = 900; // milliseconds a page takes to turn
+
+  function bookSrc(n) {
+    return BOOK_PATH + (n < 10 ? "0" : "") + n + ".webp";
+  }
+
+  function buildBook() {
+    var root = document.createElement("div");
+    root.className = "ws-book";
+    root.setAttribute("role", "dialog");
+    root.setAttribute("aria-modal", "true");
+    root.setAttribute("aria-hidden", "true");
+    root.setAttribute("aria-label", "The notebook");
+    root.innerHTML =
+      '<button class="ws-book__close" type="button" aria-label="Close">' +
+      '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="square"/></svg>' +
+      "</button>" +
+      '<div class="ws-book__desk"><div class="ws-book__book" data-book-el></div></div>' +
+      '<div class="ws-book__bar">' +
+      '<button class="ws-book__nav" type="button" data-book-prev aria-label="Previous page">&lt;</button>' +
+      '<span class="ws-book__count" data-book-count></span>' +
+      '<button class="ws-book__nav" type="button" data-book-next aria-label="Next page">&gt;</button>' +
+      "</div>";
+    document.body.appendChild(root);
+    book = { el: root, open: false, from: null, k: 0, max: 0, busy: false, single: false, leaves: [] };
+    book.bookEl = root.querySelector("[data-book-el]");
+    book.count = root.querySelector("[data-book-count]");
+
+    root.querySelector(".ws-book__close").addEventListener("click", function (e) {
+      e.stopPropagation();
+      closeBook(false);
+    });
+    root.querySelector("[data-book-prev]").addEventListener("click", function (e) {
+      e.stopPropagation();
+      turnBook(-1);
+    });
+    root.querySelector("[data-book-next]").addEventListener("click", function (e) {
+      e.stopPropagation();
+      turnBook(1);
+    });
+    // Click the right half of the book for the next page, the left half for the previous one;
+    // click the dark space around it to close.
+    root.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (book.swiped) return;
+      var r = book.bookEl.getBoundingClientRect();
+      var inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      if (!inside) {
+        if (!e.target.closest(".ws-book__bar")) closeBook(false);
+        return;
+      }
+      var right = e.clientX > r.left + r.width / 2;
+      turnBook(right ? 1 : -1);
+    });
+    // Swipe sideways to turn.
+    var sx = null;
+    root.addEventListener("pointerdown", function (e) {
+      sx = e.clientX;
+    });
+    root.addEventListener("pointerup", function (e) {
+      if (sx === null) return;
+      var dx = e.clientX - sx;
+      sx = null;
+      if (Math.abs(dx) > 60) {
+        turnBook(dx < 0 ? 1 : -1);
+        book.swiped = true;
+        setTimeout(function () { book.swiped = false; }, 50);
+      }
+    });
+    document.addEventListener("keydown", function (e) {
+      if (!book || !book.open) return;
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        e.preventDefault();
+        turnBook(1);
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        turnBook(-1);
+      }
+    });
+  }
+
+  function leafHTML(front, back) {
+    return (
+      '<div class="ws-book__face ws-book__face--front"><img src="' + front + '" alt="" draggable="false"></div>' +
+      '<div class="ws-book__face ws-book__face--back">' + (back ? '<img src="' + back + '" alt="" draggable="false">' : "") + "</div>"
+    );
+  }
+
+  function layoutBook() {
+    var single = window.matchMedia("(max-width: 700px) and (orientation: portrait)").matches;
+    book.single = single;
+    book.el.classList.toggle("is-single", single);
+    var b = book.bookEl;
+    b.innerHTML = "";
+    book.leaves = [];
+    var n = BOOK_PAGES;
+    var i;
+    if (single) {
+      for (i = 1; i <= n; i++) book.leaves.push({ f: bookSrc(i), b: null });
+      book.max = n - 1;
+    } else {
+      var base = document.createElement("div");
+      base.className = "ws-book__base";
+      base.innerHTML = '<img src="' + bookSrc(1) + '" alt="" draggable="false">';
+      b.appendChild(base);
+      for (i = 2; i <= n; i += 2) book.leaves.push({ f: bookSrc(i), b: i + 1 <= n ? bookSrc(i + 1) : null });
+      book.max = book.leaves.length - 1;
+    }
+    book.leaves.forEach(function (lf, j) {
+      var el = document.createElement("div");
+      el.className = "ws-book__leaf";
+      el.innerHTML = leafHTML(lf.f, lf.b);
+      b.appendChild(el);
+      lf.el = el;
+    });
+    var gutter = document.createElement("div");
+    gutter.className = "ws-book__gutter";
+    b.appendChild(gutter);
+    book.k = Math.min(book.k, book.max);
+    book.leaves.forEach(function (lf, j) {
+      setLeaf(lf, j, j < book.k, false);
+    });
+    updateBookCount();
+  }
+
+  function setLeaf(lf, j, flipped, animate) {
+    var el = lf.el;
+    el.classList.toggle("is-flipped", flipped);
+    el.style.zIndex = flipped ? String(j + 1) : String(book.leaves.length - j);
+    if (!animate) el.classList.remove("is-turning");
+  }
+
+  function updateBookCount() {
+    var n = BOOK_PAGES;
+    var txt;
+    if (book.single) txt = book.k + 1 + " / " + n;
+    else txt = "Pages " + (book.k * 2 + 1) + "–" + Math.min(n, book.k * 2 + 2) + " / " + n;
+    book.count.textContent = txt;
+    book.el.querySelector("[data-book-prev]").disabled = book.k <= 0;
+    book.el.querySelector("[data-book-next]").disabled = book.k >= book.max;
+  }
+
+  function turnBook(dir) {
+    if (!book || !book.open || book.busy) return;
+    var next = book.k + dir;
+    if (next < 0 || next > book.max) return;
+    var j = dir > 0 ? book.k : next; // the leaf that moves
+    var lf = book.leaves[j];
+    book.busy = true;
+    lf.el.classList.add("is-turning");
+    lf.el.style.zIndex = "200"; // on top while it moves
+    // Force the start state to register, then flip.
+    void lf.el.offsetWidth;
+    lf.el.classList.toggle("is-flipped", dir > 0);
+    book.k = next;
+    updateBookCount();
+    setTimeout(function () {
+      setLeaf(lf, j, dir > 0, false);
+      book.busy = false;
+    }, BOOK_TURN + 40);
+  }
+
+  function openBook(s) {
+    if (!book) buildBook();
+    unpin();
+    book.from = s;
+    book.k = 0;
+    book.busy = false;
+    layoutBook();
+    // Fit the book to the first page's real shape once it is known.
+    var probe = new Image();
+    probe.onload = function () {
+      if (probe.naturalWidth) book.el.style.setProperty("--page-ratio", (probe.naturalWidth / probe.naturalHeight).toFixed(4));
+    };
+    probe.src = bookSrc(1);
+    // Fetch the rest of the pages so turning never waits.
+    for (var i = 2; i <= BOOK_PAGES; i++) new Image().src = bookSrc(i);
+    book.open = true;
+    book.el.classList.add("is-open");
+    book.el.setAttribute("aria-hidden", "false");
+    book.el.querySelector(".ws-book__close").focus({ preventScroll: true });
+  }
+
+  function closeBook(viaKeyboard) {
+    if (!book || !book.open) return;
+    book.open = false;
+    book.el.classList.remove("is-open");
+    book.el.setAttribute("aria-hidden", "true");
+    var from = book.from;
+    if (viaKeyboard && from && from.btn) from.btn.focus({ preventScroll: true });
+  }
+
+  window.addEventListener("resize", function () {
+    if (book && book.open && !book.busy) {
+      var single = window.matchMedia("(max-width: 700px) and (orientation: portrait)").matches;
+      if (single !== book.single) {
+        // keep roughly the same place in the book when the layout changes
+        book.k = single ? Math.min(BOOK_PAGES - 1, book.k * 2) : Math.floor(book.k / 2);
+        layoutBook();
+      }
+    }
+  });
 
   // Put every dot where its item is now.
   function updateSpots() {
