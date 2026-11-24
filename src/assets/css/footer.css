@@ -1,0 +1,55 @@
+/* The footer: black with white letters, taller than before. The name is large
+   in the pixel typeface, followed by links to every page. (This file replaces
+   the older footer styling in style.css.) */
+
+.site-footer {
+  margin-top: var(--space-6);
+  padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 0;
+  background: #000;
+  color: #fff;
+  font-family: "DMTO Pixel", var(--font-display), sans-serif;
+}
+
+.site-footer__inner {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 3rem);
+  padding: 0 var(--page-inset, 1rem);
+}
+
+/* The name: as wide as the page allows, on one line where it fits. */
+.site-footer .site-footer__name {
+  font-size: clamp(2rem, 11.2vw, 11rem);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.site-footer .site-footer__links a {
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.site-footer .site-footer__links a:hover {
+  transform: scale(1.08);
+}
+
+.site-footer__small {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}

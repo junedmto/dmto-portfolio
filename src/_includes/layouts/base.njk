@@ -86,6 +86,7 @@
 
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | url }}">
   <link rel="stylesheet" href="{{ '/assets/css/nav-mobile.css' | url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/footer.css' | url }}">
   {# Extra stylesheets a page asks for with "extraCss: [...]". #}
   {% for css in extraCss %}<link rel="stylesheet" href="{{ css | url }}">{% endfor %}
   {# The playground at the bottom of every page (see below). #}
@@ -155,10 +156,19 @@
   </main>
 
   {% if not hideFooter and noReveal %}
+  {# The footer: black, with the name large in the pixel typeface and links to
+     every page. Styles are in assets/css/footer.css. #}
   <footer class="site-footer">
-    <div class="wrap">
-      <span>{{ site.name }} · {{ currentYear }}</span>
-      <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>
+    <div class="site-footer__inner">
+      <a class="site-footer__name" href="{{ '/' | url }}" data-mobile-home="{{ '/explore/' | url }}">{{ site.name }}</a>
+      <nav class="site-footer__links" aria-label="Footer">
+        <a href="{{ '/work/' | url }}">Work</a>
+        <a href="{{ '/explore/' | url }}">Explore</a>
+        <a href="{{ '/about/' | url }}">About</a>
+        <a href="{{ '/contact/' | url }}">Contact</a>
+        <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+      <p class="site-footer__small">&copy; {{ currentYear }} {{ site.name }}</p>
     </div>
   </footer>
   {% endif %}
