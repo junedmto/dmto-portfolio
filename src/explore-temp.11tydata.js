@@ -11,7 +11,24 @@ const fs = require("fs");
 const path = require("path");
 const { imageSize } = require("image-size");
 const { execFileSync } = require("child_process");
-const { isVideo, thumbName, THUMB_URL } = require("../tools/explore-thumbs.js");
+const crypto = require("crypto");
+
+// File types treated as video; the name of a picture's small copy.
+// (The same naming is used by tools/make-explore-thumbs.js.)
+const THUMB_URL = "/assets/img/thumbs/";
+const isVideo = (p) =>
+  typeof p === "string" && [".mp4", ".webm", ".mov", ".m4v"].includes(path.extname(p).toLowerCase());
+function thumbName(src) {
+  const base = path
+    .basename(src)
+    .replace(/\.[^.]+$/, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40);
+  const hash = crypto.createHash("md5").update(src).digest("hex").slice(0, 6);
+  return `${base}-${hash}.${isVideo(src) ? "mp4" : "jpg"}`;
+}
 
 let ffprobePath = "ffprobe";
 try {
@@ -61,7 +78,9 @@ module.exports = {
   eleventyComputed: {
     exploreItems: (data) => {
       const items = [];
+      let projectIndex = -1;
       for (const project of (data.collections && data.collections.projects) || []) {
+        projectIndex++;
         for (const entry of project.data.gallery || []) {
           const src = entryPath(entry);
           if (typeof src !== "string" || !src) continue;
@@ -71,6 +90,7 @@ module.exports = {
             s: has ? THUMB_URL + small : src, // the picture to show
             r: ratioOf(src), // width / height
             v: isVideo(src) ? 1 : 0,
+            p: projectIndex, // which project it belongs to (so each project gets an equal share)
             u: project.url, // tapping goes to this project
             t: project.data.title,
           });
