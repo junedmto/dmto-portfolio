@@ -156,18 +156,27 @@
   </main>
 
   {% if not hideFooter and noReveal %}
-  {# The footer: black, with the name large in the pixel typeface and links to
-     every page. Styles are in assets/css/footer.css. #}
+  {# The footer: black, with the name large in the pixel typeface, then two
+     columns: the pages of the site, and other places to find June. To change
+     a link, edit it below (Instagram comes from "instagram" in
+     src/_data/site.json). Styles are in assets/css/footer.css. #}
   <footer class="site-footer">
     <div class="site-footer__inner">
-      <a class="site-footer__name" href="{{ '/' | url }}" data-mobile-home="{{ '/explore/' | url }}">{{ site.name }}</a>
-      <nav class="site-footer__links" aria-label="Footer">
-        <a href="{{ '/work/' | url }}">Work</a>
-        <a href="{{ '/explore/' | url }}">Explore</a>
-        <a href="{{ '/about/' | url }}">About</a>
-        <a href="{{ '/contact/' | url }}">Contact</a>
-        <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>
-      </nav>
+      <a class="site-footer__name" href="{{ '/' | url }}" data-mobile-home="{{ '/explore/' | url }}" aria-label="{{ site.name }}"><span>Department</span> <span>of Making</span></a>
+      <div class="site-footer__cols">
+        <nav class="site-footer__col" aria-label="Pages">
+          <a href="{{ '/work/' | url }}">Work</a>
+          <a href="{{ '/explore/' | url }}">Explore</a>
+          <a href="{{ '/about/' | url }}">About</a>
+          <a href="{{ '/contact/' | url }}">Contact</a>
+        </nav>
+        <nav class="site-footer__col" aria-label="Elsewhere">
+          <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.youtube.com/@JuneDmto" target="_blank" rel="noopener">YouTube</a>
+          <a href="https://www.amazon.es/dp/B0HG7R4TTW" target="_blank" rel="noopener">Amazon</a>
+          <a href="https://open.spotify.com/artist/08fDg7Bj8Z3axCBL4NHMdd" target="_blank" rel="noopener">Spotify</a>
+        </nav>
+      </div>
       <p class="site-footer__small">&copy; {{ currentYear }} {{ site.name }}</p>
     </div>
   </footer>
