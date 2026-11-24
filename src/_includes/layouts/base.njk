@@ -11,6 +11,11 @@
   is just text to Nunjucks, so a template expression written inside one
   still runs and leaks its output into the page.
 #}
+{# The playground at the bottom of pages is switched off everywhere: every page
+   counts as "noReveal". The Contact page is the playground itself, and loads
+   it through its own settings. To bring the bottom playground back on other
+   pages, delete the next line. #}
+{% set noReveal = true %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
