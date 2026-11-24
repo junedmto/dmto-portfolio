@@ -87,8 +87,15 @@
     </div>
   </div>
 
+  {# The header: a slim black strip. Logo in the middle, menu on either side
+     (Work and About on the left, Contact and Instagram on the right). The
+     Instagram link comes from "instagram" in src/_data/site.json. #}
   <header class="site-nav">
     <div class="site-nav__row">
+      <nav class="site-nav__links site-nav__links--left" aria-label="Main">
+        <a href="{{ '/work/' | url }}" {% if page.url == ('/work/' | url) %}aria-current="page"{% endif %}>Work</a>
+        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
+      </nav>
       <a class="site-nav__brand" href="{{ '/' | url }}">
         {% if hasLogo %}
         <img src="{{ site.logo | url }}" alt="{{ site.name }}" class="site-nav__logo">
@@ -96,14 +103,10 @@
         {{ site.name }}
         {% endif %}
       </a>
-      <nav class="site-nav__links">
-        {# Each menu item is an image if its file exists (see "nav_about" and
-           "nav_contact" in src/_data/site.json), otherwise plain text. #}
-        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>
-          {% if navImages.about %}<img src="{{ site.nav_about | url }}" alt="About" class="site-nav__link-img">{% else %}About{% endif %}
-        </a>
-        <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>
-          {% if navImages.contact %}<img src="{{ site.nav_contact | url }}" alt="Contact" class="site-nav__link-img">{% else %}Contact{% endif %}
+      <nav class="site-nav__links site-nav__links--right" aria-label="Contact">
+        <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>Contact</a>
+        <a class="site-nav__icon" href="{{ site.instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="0.6" fill="currentColor"/></svg>
         </a>
       </nav>
     </div>

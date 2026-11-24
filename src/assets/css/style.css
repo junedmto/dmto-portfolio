@@ -137,46 +137,38 @@ p {
   padding: 0 var(--space-3);
 }
 
-/* Header: logo on the left, menu on the right, both lined up with the
-   edges of the galleries below. It stays fixed to the top of the window
-   as you scroll, on a white background so content slides underneath it. */
+/* Header: a slim black strip across the top. Logo in the middle, menu on
+   either side, written in the pixel typeface with no boxes. It stays fixed to
+   the top of the window as you scroll. */
 .site-nav {
   position: sticky;
   top: 0;
-  z-index: 5; /* above the page, below the full-screen image viewer */
-  /* Transparent header. Everything in it is drawn white and blended with
-     "difference", so it shows the inverse of whatever is behind it: black on
-     the white page, light over dark photos, and so on. */
-  background: transparent;
-  mix-blend-mode: difference;
+  z-index: 25; /* above the page and the desk picture */
+  background: #000;
   color: #fff;
-  pointer-events: none; /* clicks pass through the empty parts */
-  /* One height shared by the logo and the menu images. Change it here. */
-  --header-img-height: 2.75rem;
-  /* Header height: increase the padding for a taller header. */
-  padding: var(--space-3) 0;
+  /* Strip height and logo height: change them here. */
+  --strip-height: 2.75rem;
+  --logo-height: 1.1rem;
+  height: var(--strip-height);
 }
 
 .site-nav__row {
-  display: flex;
-  justify-content: space-between;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--space-3);
-  /* Side margin: the header sits further in than the galleries. Increase
-     the extra amount (2rem) to push it further in. */
-  padding: 0 calc(var(--page-inset) + 2rem);
+  padding: 0 calc(var(--page-inset) + 1rem);
 }
 
 .site-nav__brand {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--step-3);
-  letter-spacing: -0.01em;
-  text-decoration: none;
-  color: #fff;
   display: flex;
   align-items: center;
-  pointer-events: auto;
+  justify-content: center;
+  font-family: "DMTO Pixel", var(--font-display), sans-serif;
+  font-size: 1rem;
+  text-decoration: none;
+  color: #fff;
   transition: transform 0.2s ease;
 }
 
@@ -184,9 +176,8 @@ p {
   transform: scale(1.06);
 }
 
-/* Adjust --logo-height to make the logo bigger or smaller. */
 .site-nav__logo {
-  height: var(--header-img-height);
+  height: var(--logo-height);
   width: auto;
   filter: brightness(0) invert(1); /* any logo colour becomes white */
 }
@@ -197,36 +188,36 @@ p {
   gap: var(--space-4);
 }
 
+.site-nav__links--left { justify-content: flex-start; }
+.site-nav__links--right { justify-content: flex-end; }
+
 .site-nav__links a {
+  font-family: "DMTO Pixel", var(--font-display), sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-decoration: none;
-  font-size: var(--step-1);
-  font-weight: 500;
   color: #fff;
-  pointer-events: auto;
-  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .site-nav__links a:hover {
   transform: scale(1.1);
 }
 
+/* The page you are on is underlined. */
 .site-nav__links a[aria-current="page"] {
-  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+  text-decoration-thickness: 2px;
 }
 
-/* Menu items drawn as images. Adjust --link-height to make them bigger or
-   smaller. The current page gets an underline, since an image can't go bold. */
-.site-nav__link-img {
+.site-nav__icon svg {
   display: block;
-  height: var(--header-img-height);
-  width: auto;
-  filter: brightness(0) invert(1); /* any colour becomes white */
-  transition: opacity 0.2s ease;
-}
-
-.site-nav__links a[aria-current="page"]:has(.site-nav__link-img) {
-  border-bottom: 2px solid #fff;
-  padding-bottom: 0.2rem;
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 main {
@@ -707,22 +698,24 @@ main {
     grid-template-columns: 1fr;
   }
 
-  /* Smaller logo and menu so both fit on one line on a phone. */
-  .site-nav__brand {
-    font-size: var(--step-1);
+  /* Smaller strip on a phone so everything fits on one line. */
+  .site-nav {
+    --strip-height: 2.5rem;
+    --logo-height: 0.85rem;
   }
 
-  .site-nav {
-    --header-img-height: 1.75rem;
-    padding: var(--space-3) 0;
+  .site-nav__row {
+    padding: 0 0.75rem;
+    gap: 0.5rem;
   }
 
   .site-nav__links {
-    gap: var(--space-2);
+    gap: 0.75rem;
   }
 
   .site-nav__links a {
-    font-size: var(--step-0);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
   }
 
   /* On a narrow screen, justified rows would squeeze images down to

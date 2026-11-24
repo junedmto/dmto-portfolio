@@ -7,10 +7,13 @@
   height: 100svh;
 }
 
+/* The black strip sits on top of the picture (the picture itself still fills
+   the whole window, so the dots keep their places). */
 .page-workspace .site-nav {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 20; /* above the picture */
+  left: 0;
+  right: 0;
 }
 
 .ws {
