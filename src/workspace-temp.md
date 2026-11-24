@@ -58,8 +58,8 @@ spots:
     'y': 0.645
     frame: 0
   - title: The notebook
-    text: Everything starts here before it goes anywhere near a screen.
-    action: ''
+    text: Hides my deepest secrets.
+    action: flipbook
     link: ''
     media: ''
     images: []
