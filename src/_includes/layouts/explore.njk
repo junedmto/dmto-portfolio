@@ -1,0 +1,14 @@
+---
+layout: layouts/base.njk
+---
+{#
+  layouts/explore.njk — the endless gallery page (/explore-temp/).
+  The list of pictures comes from src/explore-temp.11tydata.js. The script
+  (assets/js/explore.js) lays them out in an endless grid you can drag in any
+  direction.
+#}
+<h1 class="visually-hidden">{{ title }}</h1>
+<div class="explore" data-explore aria-label="Every project, endlessly">
+  <div class="explore__world" data-explore-world></div>
+</div>
+<script type="application/json" id="explore-data">{{ exploreItems | dump | safe }}</script>

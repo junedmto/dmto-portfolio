@@ -1,0 +1,66 @@
+/* The endless gallery (/explore-temp/): one full-window stage; the script
+   places pictures on it and moves it when you drag. */
+
+html,
+body.page-explore {
+  overflow: hidden;
+  overscroll-behavior: none;
+  height: 100%;
+}
+
+body.page-explore main {
+  min-height: 0;
+}
+
+.explore {
+  position: relative;
+  /* the window minus the header strip */
+  height: calc(100vh - var(--strip-height, 3rem));
+  height: calc(100svh - var(--strip-height, 3rem));
+  overflow: hidden;
+  background: #111;
+  touch-action: none; /* we handle dragging ourselves */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.explore.is-dragging {
+  cursor: grabbing;
+}
+
+.explore__world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  will-change: transform;
+}
+
+.explore__cell {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  background: #1b1b1b;
+  -webkit-user-drag: none;
+}
+
+.explore__cell img,
+.explore__cell video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.explore__cell img.is-in,
+.explore__cell video.is-in {
+  opacity: 1;
+}
