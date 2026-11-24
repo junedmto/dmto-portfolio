@@ -32,7 +32,7 @@ spots:
   - title: Projects
     text: Check out my work!
     action: link
-    link: /
+    link: /work/
     media: photos
     images:
       - /assets/img/uploads/backNewGendo.png
