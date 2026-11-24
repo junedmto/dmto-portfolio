@@ -74,10 +74,11 @@ collections:
       preview: false
     files:
       - name: home
-        label: Homepage
+        label: Work page
         file: src/_data/home.json
         format: json
         fields:
+          - { label: "Header turns white when scrolling", name: header_light, widget: boolean, default: true, required: false }
           - label: Photos per row (optional, e.g. 2, 1, 3)
             name: row_layout
             widget: string
@@ -91,6 +92,7 @@ collections:
           - { label: SEO description, name: description, widget: string }
           - { label: Bio, name: body, widget: markdown }
           - { label: Photo, name: photo, widget: image, required: false }
+          - { label: "Header turns white when scrolling", name: headerLight, widget: boolean, default: true, required: false }
           - label: Education
             name: education
             widget: list
@@ -123,7 +125,7 @@ collections:
 
 
       - name: workspace_temp
-        label: Workspace (temporary)
+        label: Workspace (desk scene)
         file: src/workspace-temp.md
         fields:
           - { label: Title, name: title, widget: string }
