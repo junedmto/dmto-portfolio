@@ -22,10 +22,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% if mobileHome %}
-  {# On a phone the homepage is the Work page: the desk scene is skipped. #}
+  {# On a phone the homepage is the endless gallery (/explore-temp/): the desk scene is skipped. #}
   <script>
     if (window.matchMedia("(max-width: 700px), (hover: none) and (pointer: coarse) and (max-width: 950px)").matches) {
-      location.replace("{{ '/work/' | url }}");
+      location.replace("{{ '/explore-temp/' | url }}");
     }
   </script>
   {% endif %}
@@ -117,7 +117,7 @@
         <a href="{{ '/work/' | url }}" {% if page.url == ('/work/' | url) %}aria-current="page"{% endif %}>Work</a>
         <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
       </nav>
-      <a class="site-nav__brand" href="{{ '/' | url }}">
+      <a class="site-nav__brand" href="{{ '/' | url }}" data-mobile-home="{{ '/explore-temp/' | url }}">
         {% if hasLogo %}
         <img src="{{ site.logo | url }}" alt="{{ site.name }}" class="site-nav__logo">
         {% else %}

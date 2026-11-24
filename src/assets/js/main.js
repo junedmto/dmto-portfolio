@@ -146,3 +146,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.innerWidth > 700) setOpen(false);
   });
 })();
+
+
+/* On a phone the logo leads to the endless gallery (the phone homepage). */
+(function () {
+  var brand = document.querySelector("[data-mobile-home]");
+  if (!brand) return;
+  var phone = window.matchMedia("(max-width: 700px), (hover: none) and (pointer: coarse) and (max-width: 950px)");
+  function apply() {
+    if (!brand.dataset.desktopHref) brand.dataset.desktopHref = brand.getAttribute("href");
+    brand.setAttribute("href", phone.matches ? brand.dataset.mobileHome : brand.dataset.desktopHref);
+  }
+  apply();
+  if (phone.addEventListener) phone.addEventListener("change", apply);
+})();
