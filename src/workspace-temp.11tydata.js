@@ -7,6 +7,7 @@ module.exports = {
   permalink: "/",
   eleventyExcludeFromCollections: true,
   mobileHome: true, // on a phone this page sends you to /work/ instead
+  waitForScene: true, // the loading screen stays until every picture is in
   noReveal: true, // one full-screen picture, so no playground under it
   hideFooter: true,
   bodyClass: "page-workspace",

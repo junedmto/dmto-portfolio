@@ -78,3 +78,18 @@
     bottom: 0.75rem;
   }
 }
+
+/* About page: the video leaves a strip of this height at the bottom of the
+   window, so the start of the information peeks out underneath it. */
+.page-about {
+  --about-peek: 6rem;
+}
+
+.page-about .hv {
+  height: calc(100vh - var(--hv-header) - var(--about-peek));
+  height: calc(100svh - var(--hv-header) - var(--about-peek));
+}
+
+.page-about .about {
+  padding-top: var(--space-4);
+}

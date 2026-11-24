@@ -23,6 +23,11 @@ layout: layouts/base.njk
 
 <h1 class="visually-hidden">{{ title }}</h1>
 
+{# The video comes first, filling the window apart from a strip at the bottom,
+   so the start of the information shows underneath it. It is the "youtube"
+   line in about.md; leave it empty to hide the video. #}
+{% include "partials/hero-video.njk" %}
+
 <div>
 
 <div class="about">
@@ -80,8 +85,5 @@ layout: layouts/base.njk
 
 </div>
 
-{# The video, under the information: the "youtube" line in about.md. Leave it
-   empty to hide it. #}
-{% include "partials/hero-video.njk" %}
 
 </div>

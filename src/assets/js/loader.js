@@ -116,11 +116,23 @@
     return;
   }
 
+  // The homepage (desk scene) asks the loading screen to stay until all of
+  // its pictures are in: it sets data-wait-scene on <html> and workspace.js
+  // reports progress (window.dmtoSceneProgress, 0 to 1).
+  var waitScene = root.hasAttribute("data-wait-scene");
+  var SCENE_MAX_WAIT = 20000; // never wait longer than this for the scene
+  function sceneProgress() {
+    if (!waitScene) return 1;
+    if (performance.now() - started > SCENE_MAX_WAIT) return 1;
+    return window.dmtoSceneProgress || 0;
+  }
+
   function tick(now) {
     if (leaving) return;
     var t = Math.min(1, (now - started) / DURATION);
-    show(ease(t));
-    if (t < 1) {
+    var p = Math.min(ease(t), sceneProgress());
+    show(p);
+    if (t < 1 || p < 1) {
       requestAnimationFrame(tick);
       return;
     }

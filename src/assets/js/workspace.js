@@ -55,6 +55,9 @@
   }
 
   function setStatus() {
+    // Tell the loading screen (loader.js) how far along the pictures are.
+    window.dmtoSceneProgress = loaded / N;
+    if (loaded >= N) window.dispatchEvent(new Event("dmto:scene-ready"));
     if (!statusEl) return;
     if (loaded >= N) statusEl.classList.add("is-done");
     else statusEl.textContent = "Loading " + loaded + " / " + N;

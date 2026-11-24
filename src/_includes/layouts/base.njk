@@ -53,13 +53,20 @@
       var nav = false;
       try { nav = sessionStorage.getItem("dmto-nav"); sessionStorage.removeItem("dmto-nav"); } catch (e) {}
       if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      {% if waitForScene %}
+      /* The homepage: always the full loading screen, until the desk scene
+         has loaded completely (loader.js waits for it). */
+      r.setAttribute("data-wait-scene", "");
+      r.classList.add("is-loading");
+      {% else %}
       if (nav) {
         r.classList.add("is-loading", "is-transition");
       } else {
         try { if (ONLY_FIRST_VISIT && sessionStorage.getItem("dmto-loaded")) return; } catch (e) {}
         r.classList.add("is-loading");
       }
-      setTimeout(function () { r.classList.remove("is-loading"); }, 8000); // safety net
+      {% endif %}
+      setTimeout(function () { r.classList.remove("is-loading"); }, {% if waitForScene %}25000{% else %}8000{% endif %}); // safety net
     })();
   </script>
   <link rel="preload" href="{{ '/assets/fonts/DMTOPixel.woff2' | url }}" as="font" type="font/woff2" crossorigin>

@@ -5,7 +5,7 @@
 module.exports = {
   // Ticked until you untick it in /admin -> Pages -> About.
   headerLight: true,
-  bodyClass: "page-homevideo",
+  bodyClass: "page-homevideo page-about",
   extraCss: ["/assets/css/homevideo.css"],
   extraJs: ["/assets/js/homevideo.js"],
 };
