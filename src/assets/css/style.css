@@ -148,7 +148,7 @@ p {
   color: #fff;
   /* Strip height and logo height: change them here. */
   --strip-height: 3.5rem;
-  --logo-height: 1.8rem;
+  --logo-height: 1.1rem;
   height: var(--strip-height);
   /* A very subtle shadow under the strip. */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
@@ -161,6 +161,32 @@ p {
   align-items: center;
   gap: var(--space-3);
   padding: 0 calc(var(--page-inset) + 1rem);
+}
+
+/* Pages with "Header turns white when scrolling" ticked in /admin: once you
+   scroll, the strip becomes white with black text and logo. */
+.site-nav--turns {
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-nav--turns .site-nav__logo,
+.site-nav--turns a {
+  transition: filter 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.site-nav--turns.is-scrolled {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.site-nav--turns.is-scrolled .site-nav__brand,
+.site-nav--turns.is-scrolled .site-nav__links a {
+  color: #000;
+}
+
+.site-nav--turns.is-scrolled .site-nav__logo {
+  filter: brightness(0); /* any logo colour becomes black */
 }
 
 .site-nav__brand {

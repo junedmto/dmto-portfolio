@@ -90,7 +90,7 @@
   {# The header: a slim black strip. Logo in the middle, menu on either side
      (Work and About on the left, Contact and Instagram on the right). The
      Instagram link comes from "instagram" in src/_data/site.json. #}
-  <header class="site-nav">
+  <header class="site-nav{% if headerLight %} site-nav--turns{% endif %}">
     <div class="site-nav__row">
       <nav class="site-nav__links site-nav__links--left" aria-label="Main">
         <a href="{{ '/work/' | url }}" {% if page.url == ('/work/' | url) %}aria-current="page"{% endif %}>Work</a>

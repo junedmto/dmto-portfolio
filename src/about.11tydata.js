@@ -3,6 +3,8 @@
 // markdown file, so saving from /admin can never remove them.
 // They load the video under the text.
 module.exports = {
+  // Ticked until you untick it in /admin -> Pages -> About.
+  headerLight: true,
   bodyClass: "page-homevideo",
   extraCss: ["/assets/css/homevideo.css"],
   extraJs: ["/assets/js/homevideo.js"],

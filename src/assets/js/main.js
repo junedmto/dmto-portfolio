@@ -108,3 +108,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.key === "Escape") close();
   });
 });
+
+
+/* The header strip turns white once the page is scrolled (only on pages that
+   have "Header turns white when scrolling" ticked in /admin). */
+(function () {
+  var header = document.querySelector(".site-nav--turns");
+  if (!header) return;
+  function update() {
+    header.classList.toggle("is-scrolled", window.scrollY > 24);
+  }
+  window.addEventListener("scroll", update, { passive: true });
+  update();
+})();
