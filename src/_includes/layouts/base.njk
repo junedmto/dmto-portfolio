@@ -22,10 +22,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% if mobileHome %}
-  {# On a phone the homepage is the endless gallery (/explore-temp/): the desk scene is skipped. #}
+  {# On a phone the homepage is the endless gallery (/explore/): the desk scene is skipped. #}
   <script>
     if (window.matchMedia("(max-width: 700px), (hover: none) and (pointer: coarse) and (max-width: 950px)").matches) {
-      location.replace("{{ '/explore-temp/' | url }}");
+      location.replace("{{ '/explore/' | url }}");
     }
   </script>
   {% endif %}
@@ -109,15 +109,15 @@
   </div>
 
   {# The header: a slim black strip. Logo in the middle, menu on either side
-     (Work and About on the left, Contact and Instagram on the right). The
+     (Work and Explore on the left, About, Contact and Instagram on the right). The
      Instagram link comes from "instagram" in src/_data/site.json. #}
   <header class="site-nav{% if headerLight %} site-nav--turns{% endif %}">
     <div class="site-nav__row">
       <nav class="site-nav__links site-nav__links--left" aria-label="Main">
         <a href="{{ '/work/' | url }}" {% if page.url == ('/work/' | url) %}aria-current="page"{% endif %}>Work</a>
-        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
+        <a href="{{ '/explore/' | url }}" {% if page.url == ('/explore/' | url) %}aria-current="page"{% endif %}>Explore</a>
       </nav>
-      <a class="site-nav__brand" href="{{ '/' | url }}" data-mobile-home="{{ '/explore-temp/' | url }}">
+      <a class="site-nav__brand" href="{{ '/' | url }}" data-mobile-home="{{ '/explore/' | url }}">
         {% if hasLogo %}
         <img src="{{ site.logo | url }}" alt="{{ site.name }}" class="site-nav__logo">
         {% else %}
@@ -125,6 +125,7 @@
         {% endif %}
       </a>
       <nav class="site-nav__links site-nav__links--right" aria-label="Contact">
+        <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
         <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>Contact</a>
         <a class="site-nav__icon" href="{{ site.instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="0.6" fill="currentColor"/></svg>
@@ -137,6 +138,7 @@
     </div>
     <nav class="site-nav__menu" id="site-menu" aria-label="Menu" data-menu>
       <a href="{{ '/work/' | url }}" {% if page.url == ('/work/' | url) %}aria-current="page"{% endif %}>Work</a>
+      <a href="{{ '/explore/' | url }}" {% if page.url == ('/explore/' | url) %}aria-current="page"{% endif %}>Explore</a>
       <a href="{{ '/about/' | url }}" {% if page.url == ('/about/' | url) %}aria-current="page"{% endif %}>About</a>
       <a href="{{ '/contact/' | url }}" {% if page.url == ('/contact/' | url) %}aria-current="page"{% endif %}>Contact</a>
       <a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram</a>

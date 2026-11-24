@@ -5,7 +5,7 @@
   "description": "Department of Making portfolio site \u2014 static site built with Eleventy, edited through Sveltia CMS.",
   "scripts": {
     "start": "eleventy --serve",
-    "build": "eleventy",
+    "build": "node tools/optimize-media.js && eleventy && node tools/optimize-output.js",
     "build:lanyard": "esbuild tools/lanyard/entry.jsx --bundle --minify --format=iife --jsx=automatic --jsx-import-source=preact --alias:react=preact/compat --alias:react-dom=preact/compat --outfile=src/assets/js/lanyard.bundle.js",
     "build:playground": "esbuild tools/playground/entry.js --bundle --minify --format=iife --outfile=src/assets/js/playground.bundle.js"
   },

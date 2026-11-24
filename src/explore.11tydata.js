@@ -1,10 +1,10 @@
-// explore-temp.11tydata.js
-// A temporary page at /explore-temp/ (hidden from search engines): an endless
+// explore.11tydata.js
+// The Explore page at /explore/ (also the homepage on phones): an endless
 // gallery of every photo and video from every project, in random order, with
 // no margins or gaps. Drag in any direction and it keeps going.
 //
 // This file collects the pictures from the projects. Small copies of each one
-// live in src/assets/img/thumbs/ (made by tools/make-explore-thumbs.js); a
+// live in src/assets/img/thumbs/ (made automatically at build time by tools/optimize-media.js); a
 // picture without a small copy yet is used at full size instead.
 
 const fs = require("fs");
@@ -67,8 +67,7 @@ function ratioOf(src) {
 
 module.exports = {
   layout: "layouts/explore.njk",
-  permalink: "/explore-temp/",
-  noindex: true,
+  permalink: "/explore/",
   eleventyExcludeFromCollections: true,
   hideFooter: true,
   noReveal: true,
