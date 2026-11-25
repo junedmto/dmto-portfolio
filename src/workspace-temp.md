@@ -11,7 +11,7 @@ spots:
     text: My newest passion.
     action: enlarge
     link: ''
-    media: ''
+    media: video
     images: []
     youtube: ''
     video: /assets/img/uploads/sony lens.mov
